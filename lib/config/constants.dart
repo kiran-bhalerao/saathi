@@ -19,6 +19,9 @@ class AppConstants {
   static const int saltLength = 16;
   static const int aesKeyLength = 32; // 256 bits
   
+  // ========== Messages ==========
+  static const int messageRetentionDays = 100;  // Auto-delete messages after this period
+  
   // ========== Bluetooth (Phase 2) ==========
   static const String bluetoothServiceUUID = 'your-saathi-service-uuid-here';
   static const String bluetoothCharacteristicUUID = 'your-characteristic-uuid-here';

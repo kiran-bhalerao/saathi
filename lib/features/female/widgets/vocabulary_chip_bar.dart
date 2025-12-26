@@ -1,50 +1,52 @@
 import 'package:flutter/material.dart';
+import '../../../config/app_colors.dart';
 
 /// Vocabulary chip bar for quick text insertion
 class VocabularyChipBar extends StatelessWidget {
-  final List<String> vocabularyTerms;
-  final Function(String) onChipTapped;
+  final List<String> terms;
+  final Function(String) onTermSelected;
 
   const VocabularyChipBar({
     super.key,
-    required this.vocabularyTerms,
-    required this.onChipTapped,
+    required this.terms,
+    required this.onTermSelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (vocabularyTerms.isEmpty) {
+    if (terms.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      height: 46,
+      padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.white,
         border: Border(
-          top: BorderSide(color: Colors.grey[200]!, width: 1),
+          bottom: BorderSide(color: Colors.grey[200]!, width: 1),
         ),
       ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        itemCount: vocabularyTerms.length,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: terms.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.only(right: 8),
             child: ActionChip(
               label: Text(
-                vocabularyTerms[index],
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFFE57373),
+                terms[index],
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               backgroundColor: Colors.white,
-              side: const BorderSide(color: Color(0xFFE57373), width: 1),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-              onPressed: () => onChipTapped(vocabularyTerms[index]),
+              side: BorderSide(color: AppColors.primary, width: 1),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              onPressed: () => onTermSelected(terms[index]),
             ),
           );
         },

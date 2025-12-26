@@ -1,6 +1,7 @@
 import '../models/chapter_model.dart';
 import '../models/sync_models.dart';
 import '../../core/database/database_service.dart';
+import '../../config/constants.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
@@ -17,8 +18,8 @@ class DiscussionRepository {
   }) async {
     final db = await _databaseService.database;
     
-    // Auto-delete after 7 days (optional feature)
-    final autoDeleteAt = DateTime.now().add(const Duration(days: 7));
+    // Auto-delete after configured retention period
+    final autoDeleteAt = DateTime.now().add(Duration(days: AppConstants.messageRetentionDays));
     
     final message = DiscussionMessage(
       id: _uuid.v4(),
@@ -84,5 +85,53 @@ class DiscussionRepository {
     );
     
     return result.first['count'] as int;
+  }
+
+  /// Delete all messages (for complete data wipe)
+  Future<void> deleteAllMessages() async {
+    final db = await _databaseService.database;
+    await db.delete('discussion_messages');
+  }
+
+  /// Get chapter discussion thread (messages + pinged sections merged chronologically)
+  Future<List<Map<String, dynamic>>> getChapterThread(int chapterNumber) async {
+    final db = await _databaseService.database;
+    
+    // Get messages
+    final messages = await getMessagesForChapter(chapterNumber);
+    
+    // Get pinged sections for this chapter
+    final pingsResult = await db.query(
+      'pinged_sections',
+      where: 'chapter_number = ?',
+      whereArgs: [chapterNumber],
+      orderBy: 'pinged_at ASC',
+    );
+    
+    // Combine and sort chronologically
+    final thread = <Map<String, dynamic>>[];
+    
+    // Add messages
+    for (final message in messages) {
+      thread.add({
+        'type': 'message',
+        'data': message,
+        'timestamp': message.sentAt,
+      });
+    }
+    
+    // Add pinged sections
+    for (final ping in pingsResult) {
+      thread.add({
+        'type': 'ping',
+        'data': ping,
+        'timestamp': DateTime.parse(ping['pinged_at'] as String),
+      });
+    }
+    
+    // Sort by timestamp
+    thread.sort((a, b) => (a['timestamp'] as DateTime).compareTo(b['timestamp'] as DateTime));
+    
+    return thread;
   }
 }

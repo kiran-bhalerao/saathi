@@ -241,18 +241,25 @@ class ContentParser {
       if (line.startsWith('##')) break;
       if (line.isEmpty) continue;
       
-      // Format: **Term**: Definition
+      // Format: **Term**: Definition OR **Term** — Definition
       if (line.startsWith('**')) {
-        final parts = line.split('**:');
-        if (parts.length == 2) {
-          final term = parts[0].replaceAll('**', '').trim();
-          final definition = parts[1].trim();
+        // pattern to find separator: **: or ** - or ** —
+        final regex = RegExp(r'\*\*\s*[:\-\—]\s*');
+        final match = regex.firstMatch(line);
+        
+        if (match != null) {
+          final termPart = line.substring(0, match.start).trim();
+          final definitionPart = line.substring(match.end).trim();
           
-          terms.add(VocabularyTerm(
-            term: term,
-            definition: definition,
-            chapterNumber: chapterNumber,
-          ));
+          final term = termPart.replaceAll('**', '').trim();
+          
+          if (term.isNotEmpty && definitionPart.isNotEmpty) {
+            terms.add(VocabularyTerm(
+              term: term,
+              definition: definitionPart,
+              chapterNumber: chapterNumber,
+            ));
+          }
         }
       }
     }

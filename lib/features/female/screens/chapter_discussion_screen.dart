@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/sync_models.dart';
 import '../../../data/repositories/discussion_repository.dart';
-import '../../../data/repositories/ping_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/vocabulary_chip_bar.dart';
 import '../widgets/chat_input.dart';
@@ -22,29 +23,35 @@ class ChapterDiscussionScreen extends StatefulWidget {
 
 class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   final DiscussionRepository _discussionRepo = DiscussionRepository();
-  final PingRepository _pingRepo = PingRepository();
+  final UserRepository _userRepo = UserRepository();
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textController = TextEditingController();
   
-  List<DiscussionMessage> _messages = [];
-  List<PingedSection> _pingedSections = [];
+  List<Map<String, dynamic>> _thread = [];  // Merged messages + pings
   List<String> _vocabularyTerms = [];
   bool _isLoading = true;
+  String _currentUserType = 'female';
 
   @override
   void initState() {
     super.initState();
     _loadData();
     _prepareVocabulary();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    final user = await _userRepo.getUser();
+    if (user != null) {
+      setState(() => _currentUserType = user.userType);
+    }
   }
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     
-    // Load messages
-    _messages = await _discussionRepo.getMessagesForChapter(widget.chapter.number);
-    
-    // Load pinged sections for this chapter
-    _pingedSections = await _pingRepo.getPingsByChapter(widget.chapter.number);
+    // Load merged thread (messages + pings chronologically)
+    _thread = await _discussionRepo.getChapterThread(widget.chapter.number);
     
     setState(() => _isLoading = false);
     
@@ -67,144 +74,85 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   }
 
   Future<void> _sendMessage(String messageText) async {
+    if (messageText.trim().isEmpty) return;
+    
     await _discussionRepo.sendMessage(
       chapterNumber: widget.chapter.number,
-      sender: 'female', // TODO: Get from user profile
+      sender: _currentUserType,
       messageText: messageText,
     );
     
+    _textController.clear();
     await _loadData();
   }
 
   void _insertVocabularyTerm(String term) {
-    // Find the ChatInput widget and insert text
-    // This will be handled by passing a key to ChatInput
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Tap in the text field and use: $term'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    // Try to get the vocabulary definition
+    String message;
+    try {
+      final vocab = widget.chapter.vocabulary.firstWhere(
+        (v) => v.term == term,
+      );
+      // Send with term on first line (will be bolded) and definition below
+      message = '**$term**\n${vocab.definition}';
+    } catch (e) {
+      // No definition found, just send the term in bold
+      message = '**$term**';
+    }
+    
+    _sendMessage(message);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFAF8F8),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.5,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
         centerTitle: true,
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: Icon(Icons.arrow_back, color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          children: [
-            Text(
-              widget.chapter.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF2D2D2D),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              'Chapter ${widget.chapter.number}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ],
+        title: Text(
+          widget.chapter.title,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
       ),
       body: Column(
         children: [
-          // Pinged sections (if any)
-          if (_pingedSections.isNotEmpty)
-            Container(
-              height: 100,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE57373).withOpacity(0.05),
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey[200]!, width: 1),
-                ),
-              ),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _pingedSections.length,
-                itemBuilder: (context, index) {
-                  final section = _pingedSections[index];
-                  return Container(
-                    width: 200,
-                    margin: const EdgeInsets.only(right: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE57373), width: 1),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.push_pin, size: 14, color: Color(0xFFE57373)),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                section.sectionTitle,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFFE57373),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Expanded(
-                          child: Text(
-                            'Shared section',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+          // Vocabulary chips
+          if (_vocabularyTerms.isNotEmpty)
+            VocabularyChipBar(
+              terms: _vocabularyTerms,
+              onTermSelected: _insertVocabularyTerm,
             ),
 
-          // Messages list
+          // Thread (messages + pinged sections)
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: Color(0xFFE57373)))
-                : _messages.isEmpty
+                ? Center(child: CircularProgressIndicator(color: AppColors.primary))
+                : _thread.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -213,26 +161,35 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                             const SizedBox(height: 16),
                             Text(
                               'No messages yet',
-                              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Start a conversation about this chapter',
-                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                              style: TextStyle(fontSize: 14, color: AppColors.textLight),
                             ),
                           ],
                         ),
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        itemCount: _messages.length,
+                        padding: const EdgeInsets.only(top: 12, bottom: 12),  // Only top/bottom padding
+                        itemCount: _thread.length,
                         itemBuilder: (context, index) {
-                          final message = _messages[index];
-                          return MessageBubble(
-                            message: message,
-                            isCurrentUser: message.sender == 'female',
-                          );
+                          final item = _thread[index];
+                          final type = item['type'] as String;
+                          
+                          if (type == 'message') {
+                            final message = item['data'] as DiscussionMessage;
+                            return MessageBubble(
+                              message: message,
+                              isCurrentUser: message.sender == _currentUserType,
+                            );
+                          } else {
+                            // Pinged section
+                            final ping = item['data'] as Map<String, dynamic>;
+                            return _buildPingedSection(ping);
+                          }
                         },
                       ),
           ),
@@ -240,11 +197,102 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
           // Chat input at bottom
           SafeArea(
             child: ChatInput(
+              textController: _textController,
               onSendMessage: _sendMessage,
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildPingedSection(Map<String, dynamic> ping) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end, // Always right aligned for sender
+        children: [
+          SizedBox(
+            width: screenWidth * 0.8,
+            child: Container(
+              margin: const EdgeInsets.only(right: 12), // Align with MessageBubble
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.share, size: 14, color: AppColors.primary),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Shared Content',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ping['section_title'] as String? ?? 'Shared Quote',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2D2D2D),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    ping['section_content_json'] as String,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      _formatTimestamp(DateTime.parse(ping['pinged_at'] as String)),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimestamp(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
   }
 }

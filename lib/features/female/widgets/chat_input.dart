@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../config/app_colors.dart';
 
 /// Chat input widget with send button
 class ChatInput extends StatefulWidget {
   final Function(String) onSendMessage;
+  final TextEditingController? textController;  // Optional external controller
   final VoidCallback? onShareSection;
 
   const ChatInput({
     super.key,
     required this.onSendMessage,
+    this.textController,
     this.onShareSection,
   });
 
@@ -16,12 +19,13 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
-  final TextEditingController _controller = TextEditingController();
+  late final TextEditingController _controller;
   bool _hasText = false;
 
   @override
   void initState() {
     super.initState();
+    _controller = widget.textController ?? TextEditingController();
     _controller.addListener(() {
       setState(() {
         _hasText = _controller.text.trim().isNotEmpty;
@@ -31,7 +35,10 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    // Only dispose if we created the controller
+    if (widget.textController == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
