@@ -203,3 +203,22 @@ There's one more area some couples are curious about.
 Chapter 9 talks about anal play — what it is, why some people enjoy it, and the CRITICAL safety rules that MUST be followed.
 
 This is sensitive territory. Read carefully. 🚪
+
+---
+
+## Quiz
+
+Question: Is oral sex a normal part of intimate relationships?
+Answer: Yes
+
+Question: Can oral sex be pleasurable for women?
+Answer: Yes
+
+Question: Should partners feel comfortable discussing their boundaries around oral sex?
+Answer: Yes
+
+Question: Is hygiene important before oral intimacy?
+Answer: Yes
+
+Question: Can couples choose what sexual activities they're comfortable with?
+Answer: Yes

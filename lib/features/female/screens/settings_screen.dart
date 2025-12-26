@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
-import '../../../shared/widgets/quick_exit_button.dart';
+
 import '../../../shared/widgets/pin_input_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../core/services/data_export_service.dart';
@@ -24,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
-        actions: const [QuickExitButton()],
+
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),

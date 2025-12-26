@@ -236,3 +236,22 @@ After years of marriage, things can become... routine. Boring.
 Chapter 10 explores **"Spicing It Up"** — fantasies, toys, and novelty that keep desire alive for decades.
 
 Ready to add some flavor? 🌶️
+
+---
+
+## Quiz
+
+Question: Is consent especially important for anal sex?
+Answer: Yes
+
+Question: Does anal sex require more preparation and lubrication than vaginal sex?
+Answer: Yes
+
+Question: Is it okay to say no to anal sex if you're not comfortable?
+Answer: Yes
+
+Question: Can anal sex cause pain if not done carefully?
+Answer: Yes
+
+Question: Should couples go slowly and communicate during anal intimacy?
+Answer: Yes

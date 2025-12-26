@@ -4,6 +4,8 @@ import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/chapter_progress_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
+import 'chapter_discussion_screen.dart';
+import 'chapter_quiz_screen.dart';
 
 /// Chapter reader screen - displays chapter content with rich formatting
 class ChapterReaderScreen extends StatefulWidget {
@@ -50,124 +52,75 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          // Gradient header
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            backgroundColor: const Color(0xFFE57373),
-            leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18),
-              ),
-              onPressed: () => Navigator.pop(context),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              shape: BoxShape.circle,
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.exit_to_app, color: Colors.white, size: 18),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil('/decoy', (route) => false);
-                  },
-                ),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFE57373),
-                      Color(0xFFEF5350),
-                      Color(0xFFEC407A),
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    // Decorative circles
-                    Positioned(
-                      top: -30,
-                      right: -30,
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.08),
-                        ),
-                      ),
-                    ),
-                    // Content
-                    SafeArea(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 30),
-                            // Chapter badge
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                'Chapter ${widget.chapter.number}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            // Title
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 32),
-                              child: Text(
-                                widget.chapter.title,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
           ),
-          
-          // Chapter content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Chapter ${widget.chapter.number}',
+          style: const TextStyle(
+            color: Color(0xFF2D2D2D),
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.chat_bubble_outline, color: Color(0xFFE57373), size: 22),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChapterDiscussionScreen(chapter: widget.chapter),
+                ),
+              );
+            },
+            tooltip: 'Discussion',
+          ),
+        ],
+
+      ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Divider under app bar
+            Container(
+              height: 1,
+              color: Colors.grey[200],
+            ),
+            
+            // Chapter title header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(32, 40, 32, 32),
+              child: Text(
+                widget.chapter.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF2D2D2D),
+                  height: 1.3,
+                ),
+              ),
+            ),
+            
+            // Content sections
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -180,53 +133,64 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   
                   const SizedBox(height: 40),
                   
-                  // Completion button
+                  // Take quiz button
                   Center(
                     child: Container(
                       width: double.infinity,
-                      height: 56,
+                      height: 52,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE57373), Color(0xFFEC407A)],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFE57373).withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                        color: const Color(0xFFE57373),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: ElevatedButton(
-                        onPressed: () async {
-                          await _markAsCompleted();
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text('Chapter completed! 🎉'),
-                                backgroundColor: AppColors.success,
+                        onPressed: () {
+                          if (widget.chapter.quizQuestions.isEmpty) {
+                            // No quiz - just mark as complete
+                            _markAsCompleted().then((_) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Chapter completed! 🎉'),
+                                    backgroundColor: AppColors.success,
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              }
+                            });
+                          } else {
+                            // Navigate to quiz
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChapterQuizScreen(chapter: widget.chapter),
                               ),
                             );
-                            Navigator.pop(context);
                           }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.check_circle_outline, color: Colors.white, size: 22),
-                            SizedBox(width: 10),
+                            Icon(
+                              widget.chapter.quizQuestions.isEmpty 
+                                  ? Icons.check_circle_outline 
+                                  : Icons.quiz_outlined,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
                             Text(
-                              'Mark as Completed',
-                              style: TextStyle(
-                                fontSize: 16,
+                              widget.chapter.quizQuestions.isEmpty
+                                  ? 'Mark as Completed'
+                                  : 'Take Quiz',
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -241,8 +205,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -258,7 +222,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               child: Text(
                 section.title,
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF2D2D2D),
                   height: 1.3,
@@ -267,17 +231,10 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             ),
             // Share button
             IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.share_outlined,
-                  size: 18,
-                  color: Colors.grey[600],
-                ),
+              icon: Icon(
+                Icons.share_outlined,
+                size: 20,
+                color: Colors.grey[400],
               ),
               onPressed: () => _shareSection(section),
             ),
@@ -314,14 +271,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         margin: const EdgeInsets.symmetric(vertical: 16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFFE57373).withOpacity(0.08),
-          borderRadius: BorderRadius.circular(16),
-          border: Border(
-            left: BorderSide(
-              color: const Color(0xFFE57373).withOpacity(0.5),
-              width: 4,
-            ),
-          ),
+          color: const Color(0xFFE57373).withOpacity(0.06),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,8 +354,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(top: 8),
-                    width: 6,
-                    height: 6,
+                    width: 5,
+                    height: 5,
                     decoration: const BoxDecoration(
                       color: Color(0xFFE57373),
                       shape: BoxShape.circle,
@@ -435,7 +386,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         child: Text(
           block.text,
           style: TextStyle(
-            fontSize: block.level == 3 ? 20 : 18,
+            fontSize: block.level == 3 ? 18 : 16,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF2D2D2D),
           ),
@@ -449,7 +400,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           block.content,

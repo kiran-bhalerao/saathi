@@ -30,7 +30,7 @@ class DatabaseService {
     
     return await sqflite.openDatabase(
       path,
-      version: AppConstants.databaseVersion,
+      version: 2, // Updated version to trigger migration
       password: password,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
@@ -83,7 +83,9 @@ class DatabaseService {
         completed INTEGER DEFAULT 0,
         current_section_id TEXT,
         last_read_at TEXT,
-        reading_time_seconds INTEGER DEFAULT 0
+        reading_time_seconds INTEGER DEFAULT 0,
+        quiz_completed INTEGER DEFAULT 0,
+        quiz_score INTEGER
       )
     ''');
 
@@ -181,11 +183,11 @@ class DatabaseService {
 
   /// Handle database upgrades
   Future<void> _onUpgrade(sqflite.Database db, int oldVersion, int newVersion) async {
-    // Future migrations will go here
-    // Example:
-    // if (oldVersion < 2) {
-    //   await db.execute('ALTER TABLE user_profile ADD COLUMN new_field TEXT');
-    // }
+    // Migration from version 1 to 2: Add quiz tracking fields
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE chapter_progress ADD COLUMN quiz_completed INTEGER DEFAULT 0');
+      await db.execute('ALTER TABLE chapter_progress ADD COLUMN quiz_score INTEGER');
+    }
   }
 
   /// Get database file path (for export/import)

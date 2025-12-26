@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
-import '../../../shared/widgets/quick_exit_button.dart';
+
 import '../../../data/repositories/content_parser.dart';
 import '../../../data/models/chapter_model.dart';
+import '../../../data/repositories/chapter_progress_repository.dart';
+import '../../../data/models/chapter_progress_model.dart';
 
 /// Chapter detail screen - shows chapter info before reading
 class ChapterDetailScreen extends StatefulWidget {
@@ -52,7 +54,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
         backgroundColor: AppColors.background,
         appBar: AppBar(
           backgroundColor: AppColors.primary,
-          actions: const [QuickExitButton()],
+
         ),
        body: const Center(child: CircularProgressIndicator()),
       );
@@ -64,7 +66,6 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
         appBar: AppBar(
           title: Text('Chapter ${widget.chapterNumber}'),
           backgroundColor: AppColors.primary,
-          actions: const [QuickExitButton()],
         ),
         body: Center(
           child: Padding(
@@ -465,11 +466,37 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                 ],
               ),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    '/chapter-reader',
-                    arguments: chapter,
-                  );
+                onPressed: () async {
+                  // Mark chapter as in progress
+                  final progressRepo = ChapterProgressRepository();
+                  final existingProgress = await progressRepo.getChapterProgress(chapter.number);
+                  
+                  if (existingProgress == null) {
+                    // Create new progress entry
+                    await progressRepo.updateProgress(
+                      ChapterProgress(
+                        chapterNumber: chapter.number,
+                        completed: false,
+                        lastReadAt: DateTime.now(),
+                        readingTimeSeconds: 0,
+                        quizCompleted: false,
+                      ),
+                    );
+                  } else if (!existingProgress.completed) {
+                    // Update last read time if not completed
+                    await progressRepo.updateProgress(
+                      existingProgress.copyWith(
+                        lastReadAt: DateTime.now(),
+                      ),
+                    );
+                  }
+                  
+                  if (context.mounted) {
+                    Navigator.of(context).pushNamed(
+                      '/chapter-reader',
+                      arguments: chapter,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,

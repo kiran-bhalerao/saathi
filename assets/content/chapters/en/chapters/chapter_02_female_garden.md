@@ -229,3 +229,22 @@ Ever wondered *exactly* how babies are made? And why sex isn't *only* for making
 Chapter 3 will explain the "Baby Maker" — and reveal a secret that most married couples don't fully understand.
 
 Get ready to look at intimacy in a whole new way. 🍼✨
+
+---
+
+## Quiz
+
+Question: Are the vulva and vagina the same thing?
+Answer: No
+
+Question: Does the female body have three separate openings in the genital area?
+Answer: Yes
+
+Question: Is it normal for inner lips (labia) to look different sizes or lengths?
+Answer: Yes
+
+Question: Is the vagina a self-cleaning organ?
+Answer: Yes
+
+Question: Should you use soap inside the vagina for cleaning?
+Answer: No

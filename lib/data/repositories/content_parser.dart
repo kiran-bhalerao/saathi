@@ -69,6 +69,7 @@ class ContentParser {
     int wordCount = 0;
     List<ContentBlock> currentBlocks = [];
     String? currentSectionTitle;
+    List<QuizQuestion> quizQuestions = [];
     
     for (int i = 0; i < lines.length; i++) {
       final line = lines[i].trim();
@@ -128,6 +129,13 @@ class ContentParser {
           continue;
         }
         
+        // Skip Quiz section - parse separately, don't add to sections
+        if (currentSectionTitle == 'Quiz' || currentSectionTitle == 'Chapter Quiz') {
+          quizQuestions = _parseQuiz(lines, i + 1);
+          currentSectionTitle = null;
+          continue;
+        }
+        
         continue;
       }
       
@@ -154,6 +162,7 @@ class ContentParser {
       subtitle: subtitle,
       sections: sections,
       vocabulary: vocabulary,
+      quizQuestions: quizQuestions,
       reflection: reflection,
       comingUpNext: comingUpNext,
       wordCount: wordCount,
@@ -277,5 +286,38 @@ class ContentParser {
     }
     
     return null;
+  }
+  
+  /// Parse quiz questions section
+  List<QuizQuestion> _parseQuiz(List<String> lines, int startIndex) {
+    final questions = <QuizQuestion>[];
+    String? currentQuestion;
+    
+    for (int i = startIndex; i < lines.length; i++) {
+      final line = lines[i].trim();
+      
+      // Stop at next section
+      if (line.startsWith('##')) break;
+      if (line.isEmpty) continue;
+      
+      // Format: Question: [question text]
+      if (line.toLowerCase().startsWith('question:')) {
+        currentQuestion = line.substring(line.indexOf(':') + 1).trim();
+      }
+      // Format: Answer: Yes/No
+      else if (line.toLowerCase().startsWith('answer:') && currentQuestion != null) {
+        final answerText = line.substring(line.indexOf(':') + 1).trim();
+        final correctAnswer = answerText.toLowerCase() == 'yes';
+        
+        questions.add(QuizQuestion(
+          question: currentQuestion,
+          correctAnswer: correctAnswer,
+        ));
+        
+        currentQuestion = null; // Reset for next question
+      }
+    }
+    
+    return questions;
   }
 }

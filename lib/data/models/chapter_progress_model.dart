@@ -6,6 +6,8 @@ class ChapterProgress {
   final String? currentSectionId;
   final DateTime? lastReadAt;
   final int readingTimeSeconds;
+  final bool quizCompleted;
+  final int? quizScore; // 0-5
 
   ChapterProgress({
     this.id,
@@ -14,6 +16,8 @@ class ChapterProgress {
     this.currentSectionId,
     this.lastReadAt,
     this.readingTimeSeconds = 0,
+    this.quizCompleted = false,
+    this.quizScore,
   });
 
   /// Calculate progress percentage (0.0 to 1.0)
@@ -31,6 +35,8 @@ class ChapterProgress {
       'current_section_id': currentSectionId,
       'last_read_at': lastReadAt?.toIso8601String(),
       'reading_time_seconds': readingTimeSeconds,
+      'quiz_completed': quizCompleted ? 1 : 0,
+      'quiz_score': quizScore,
     };
   }
 
@@ -44,6 +50,8 @@ class ChapterProgress {
           ? DateTime.parse(map['last_read_at'] as String)
           : null,
       readingTimeSeconds: map['reading_time_seconds'] as int? ?? 0,
+      quizCompleted: (map['quiz_completed'] as int?) == 1,
+      quizScore: map['quiz_score'] as int?,
     );
   }
 
@@ -54,6 +62,8 @@ class ChapterProgress {
     String? currentSectionId,
     DateTime? lastReadAt,
     int? readingTimeSeconds,
+    bool? quizCompleted,
+    int? quizScore,
   }) {
     return ChapterProgress(
       id: id ?? this.id,
@@ -62,6 +72,8 @@ class ChapterProgress {
       currentSectionId: currentSectionId ?? this.currentSectionId,
       lastReadAt: lastReadAt ?? this.lastReadAt,
       readingTimeSeconds: readingTimeSeconds ?? this.readingTimeSeconds,
+      quizCompleted: quizCompleted ?? this.quizCompleted,
+      quizScore: quizScore ?? this.quizScore,
     );
   }
 }

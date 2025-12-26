@@ -217,3 +217,22 @@ How you communicate — what you say, how you say it — can transform everythin
 Chapter 11 is about **"The Feedback Loop"** — how to guide your partner without hurting egos, and how to keep improving together for years.
 
 Learn to talk, and you'll never stop growing. 🗣️
+
+---
+
+## Quiz
+
+Question: Can variety and experimentation improve intimacy in long-term relationships?
+Answer: Yes
+
+Question: Is it healthy for couples to explore new things together?
+Answer: Yes
+
+Question: Should both partners be comfortable with any new activities they try?
+Answer: Yes
+
+Question: Can trying different positions or locations add excitement?
+Answer: Yes
+
+Question: Is it important to keep intimacy fun and playful?
+Answer: Yes

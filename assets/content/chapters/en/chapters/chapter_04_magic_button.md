@@ -217,3 +217,22 @@ Okay, so the magic button exists. But how does it lead to that "fireworks" feeli
 In Chapter 5, we'll climb **"The Ladder to the Stars"** — understanding how arousal builds slowly and what an orgasm actually feels like.
 
 Get ready to learn the journey from "nice touch" to "amazing peak." 🌟
+
+---
+
+## Quiz
+
+Question: Does the clitoris have more nerve endings than the penis tip?
+Answer: Yes
+
+Question: Is the clitoris the primary source of orgasm for most women?
+Answer: Yes
+
+Question: Can penetration alone satisfy most women?
+Answer: No
+
+Question: Does the clitoris need direct or indirect stimulation to feel good?
+Answer: Yes
+
+Question: Is touching the clitoris wrong or shameful?
+Answer: No

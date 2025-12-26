@@ -166,3 +166,22 @@ Not because they're ignorant. Because nobody ever taught them!
 In Chapter 2, we'll take a tour of *"The Female Garden"* — with a simple map that will change everything you think you know.
 
 Trust us. This will be eye-opening. 🌸
+
+---
+
+## Quiz
+
+Question: Should both partners in a marriage be equally happy?
+Answer: Yes
+
+Question: Is wanting to feel pleasure during intimacy selfish?
+Answer: No
+
+Question: Does consent mean just "allowing" something because you feel you have to?
+Answer: No
+
+Question: Can a woman enjoy intimacy and still be a "good wife"?
+Answer: Yes
+
+Question: Is tiredness only physical, or can it also be emotional?
+Answer: Yes

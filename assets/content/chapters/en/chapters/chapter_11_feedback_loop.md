@@ -248,3 +248,22 @@ But there's one more thing most couples overlook:
 Chapter 12 — our final chapter — covers **"Aftercare"** — the often-ignored truth that what happens after the act matters just as much.
 
 The grand finale awaits. 💫
+
+---
+
+## Quiz
+
+Question: Is giving feedback to your partner about what feels good important?
+Answer: Yes
+
+Question: Should communication about intimacy happen outside the bedroom too?
+Answer: Yes
+
+Question: Can honest feedback improve sexual satisfaction over time?
+Answer: Yes
+
+Question: Is it okay to tell your partner what doesn't feel good?
+Answer: Yes
+
+Question: Does positive communication strengthen intimate relationships?
+Answer: Yes

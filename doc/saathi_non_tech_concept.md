@@ -114,20 +114,29 @@ This is the **most important feature** that makes the app unique.
 
 ### 4. Discussion Mode (Chapter-Specific Chat)
 
-For each chapter, there's a private chat space where partners can communicate.
+Each chapter has its own private conversation space accessible via a **chat icon** in the chapter reader screen. This is where partners discuss pinged content and communicate about that chapter's topics.
+
+**Accessing Discussion:**
+- Tap the chat icon (top right) while reading any chapter
+- Opens that chapter's dedicated conversation thread
+- All pinged sections from that chapter automatically appear here for discussion
 
 **Features:**
-- Chat stays specific to that chapter (keeps conversations focused)
-- Quick vocabulary buttons at the bottom insert relevant terms
-- Example buttons: [Foreplay] [Arousal] [Clitoris] [Comfort]
-- Can ping additional sections during the conversation
-- Messages auto-delete after 7 days for privacy (optional)
-- No message editing (prevents manipulation or deletion of important conversations)
+- **Chapter-Focused:** Chat stays specific to that chapter (keeps conversations organized)
+- **Ping Integration:** When female shares/pings a section, it goes directly to that chapter's discussion
+- **Quick Vocabulary:** Buttons at bottom insert chapter-relevant terms
+  - Example buttons: [Foreplay] [Arousal] [Clitoris] [Comfort]
+- **Privacy:** Messages auto-delete after 7 days (optional)
+- **Integrity:** No message editing (prevents manipulation of conversations)
+- **Additional Pings:** Can share more sections mid-conversation
 
 **Interface Visual:**
 ```
 ┌────────────────────────────────┐
-│ Chapter 10: Making Love         │
+│ 💬 Chapter 10: Making Love     │
+├────────────────────────────────┤
+│ [Pinged section card]          │
+│ "Understanding Arousal"        │
 ├────────────────────────────────┤
 │ [Chat messages area]           │
 │ Her: I learned arousal needs   │
@@ -163,24 +172,44 @@ After completing a chapter, the app presents the woman with **pre-written discus
 - Action-oriented: "Can we try..."
 - Some questions focus on his feelings too
 
-### 6. Gamification (Text-Based)
+### 6. Gamification with Chapter Quizzes
 
-To keep women engaged and motivated, the app includes game-like elements:
+To keep women engaged and ensure comprehension, each chapter ends with an interactive quiz game.
+
+**Chapter Completion Quiz:**
+- **5 Yes/No Questions** at the end of each chapter (instead of direct "Mark Complete")
+- **Tinder-Style Interface:**  
+  - Question appears on a card
+  - Swipe **right** for "Yes"
+  - Swipe **left** for "No"
+  - Visual feedback on correct/incorrect answers
+- **Questions & Answers:** Pre-written in the chapter markdown file
+- **Scoring:** Shows score at end (e.g., "4 out of 5 correct! 🎉")
+- **Two Options:**
+  - **Retry:** Take quiz again to improve score
+  - **Mark Complete:** Proceed only after completing quiz (any score)
+- **Chapter Locking:** Next chapters remain **locked** until current chapter is completed (quiz taken)
+
+**Example Quiz Flow:**
+```
+┌────────────────────────────────┐
+│  Question 1/5                  │
+│                                │
+│  "Is the clitoris important    │
+│   for female pleasure?"        │
+│                                │
+│  👈 Swipe left for NO          │
+│  👉 Swipe right for YES        │
+│                                │
+└────────────────────────────────┘
+```
 
 **Progress Tracking:**
 - Chapter completion percentage
 - "Knowledge points" earned per chapter
 - Reading streak counter: "7 days in a row! 🌟"
+- Quiz scores tracked
 - Milestone badges: "Chapter 5 Complete!"
-
-**Interactive Elements:**
-- Choose-your-path scenarios:
-  *"Your partner seems uncomfortable. Do you:*
-  *A) Stop and ask if they're okay*
-  *B) Continue as before*
-  *C) Try a different approach?"*
-- Fill-in-blank quizzes: "The _____ requires stimulation for most women to orgasm"
-- Reflection prompts: "Write one thing you learned today"
 
 **Couple Progress (Both Partners See):**
 - "Learning together for 2 weeks! 🎉"

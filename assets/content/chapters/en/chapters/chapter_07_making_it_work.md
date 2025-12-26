@@ -256,3 +256,22 @@ It's the tongue. Soft, precise, and gentle.
 Chapter 8 explores **"Using Your Mouth"** — oral sex basics for both partners.
 
 This is a topic that some find uncomfortable. That's okay. Read it anyway. Knowledge removes fear. 👅
+
+---
+
+## Quiz
+
+Question: Is foreplay important for female pleasure and arousal?
+Answer: Yes
+
+Question: Can different sexual techniques improve satisfaction for both partners?
+Answer: Yes
+
+Question: Is communication about what feels good important during intimacy?
+Answer: Yes
+
+Question: Should couples be willing to try different approaches to find what works?
+Answer: Yes
+
+Question: Is it okay to guide your partner to what feels good for you?
+Answer: Yes

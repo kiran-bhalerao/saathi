@@ -20,6 +20,8 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   UserModel? _user;
   int _completedChapters = 0;
   bool _isLoading = true;
+  bool _hasLoadedOnce = false;
+  int _rebuildCounter = 0; // Used to force chapter card rebuilds
 
   @override
   void initState() {
@@ -28,19 +30,33 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   }
 
   Future<void> _loadData() async {
+    // Skip if already loading to avoid multiple simultaneous calls
+    if (_isLoading && _hasLoadedOnce) return;
+    
+    if (!_hasLoadedOnce) {
+      setState(() => _isLoading = true);
+    }
+    
     try {
       final user = await _userRepo.getUser();
       final completedCount = await _progressRepo.getCompletedCount();
       
-      setState(() {
-        _user = user;
-        _completedChapters = completedCount;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _user = user;
+          _completedChapters = completedCount;
+          _isLoading = false;
+          _hasLoadedOnce = true;
+          _rebuildCounter++; // Increment to force chapter card rebuilds
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasLoadedOnce = true;
+        });
+      }
     }
   }
 
@@ -209,17 +225,21 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, index) {
+                   (context, index) {
                     final chapterNumber = index + 1;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: ChapterCard(
+                        // Use ValueKey with rebuild counter to force refresh
+                        key: ValueKey('chapter_$chapterNumber\_$_rebuildCounter'),
                         chapterNumber: chapterNumber,
-                        onTap: () {
-                          Navigator.of(context).pushNamed(
+                        onTap: () async {
+                          await Navigator.of(context).pushNamed(
                             '/chapter-detail',
                             arguments: chapterNumber,
                           );
+                          // Reload data when returning from chapter detail
+                          _loadData();
                         },
                       ),
                     );

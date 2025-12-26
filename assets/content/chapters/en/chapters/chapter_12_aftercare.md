@@ -288,3 +288,22 @@ Now go — gently, patiently, confidently — and build the intimate life you de
 ---
 
 *Thank you for trusting us on this journey.*
+
+---
+
+## Quiz
+
+Question: Is aftercare (cuddling, talking after sex) important for emotional bonding?
+Answer: Yes
+
+Question: Should partners check in with each other's feelings after intimacy?
+Answer: Yes
+
+Question: Can aftercare make both partners feel valued and cared for?
+Answer: Yes
+
+Question: Is it normal to want closeness and affection after sex?
+Answer: Yes
+
+Question: Does taking care of each other after intimacy strengthen the relationship?
+Answer: Yes

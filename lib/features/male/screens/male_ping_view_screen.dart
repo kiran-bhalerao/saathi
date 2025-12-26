@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 import '../../../config/app_text_styles.dart';
-import '../../../shared/widgets/quick_exit_button.dart';
+
 import '../../../data/models/sync_models.dart';
 import '../../../data/models/chapter_model.dart';
 import 'dart:convert';
@@ -26,7 +26,7 @@ class MalePingViewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chapter ${ping.chapterNumber}'),
-        actions: const [QuickExitButton()],
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

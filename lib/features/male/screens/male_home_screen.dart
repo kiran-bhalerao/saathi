@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
-import '../../../shared/widgets/quick_exit_button.dart';
+
 import '../../../shared/widgets/empty_state.dart';
 import '../../../data/repositories/ping_repository.dart';
 import '../../../data/models/sync_models.dart';
@@ -51,7 +51,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shared with You'),
-        actions: const [QuickExitButton()],
+
       ),
       body: _pings.isEmpty
           ? const EmptyState(

@@ -242,3 +242,22 @@ That's almost HALF the women not reaching the peak!
 In Chapter 6, we'll explore **"The Orgasm Gap"** — why this happens, and how to fix it.
 
 Prepare to feel validated. You're not broken. The METHOD is broken. 📊
+
+---
+
+## Quiz
+
+Question: Does arousal take time to build up, like climbing a ladder?
+Answer: Yes
+
+Question: Can women jump straight to intercourse without foreplay and feel pleasure?
+Answer: No
+
+Question: Is mental relaxation important for physical arousal?
+Answer: Yes
+
+Question: Do women and men have the same arousal timelines?
+Answer: No
+
+Question: Is rushing through intimacy likely to lead to female satisfaction?
+Answer: No

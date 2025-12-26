@@ -217,3 +217,22 @@ And yet most women don't know it exists. They've never touched it. Their husband
 Chapter 4 will introduce you to the **Magic Button** — the single most important thing for female pleasure.
 
 This is where everything changes. 💫
+
+---
+
+## Quiz
+
+Question: Is sex only for making babies?
+Answer: No
+
+Question: Can a woman enjoy sex without wanting to get pregnant?
+Answer: Yes
+
+Question: Do sperm and egg need to meet for pregnancy to happen?
+Answer: Yes
+
+Question: Can intimacy be enjoyable even when not trying to conceive?
+Answer: Yes
+
+Question: Is it natural for women to want pleasure during intimacy?
+Answer: Yes

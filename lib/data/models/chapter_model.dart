@@ -201,6 +201,31 @@ class Section {
   }
 }
 
+///  Quiz question model
+class QuizQuestion {
+  final String question;
+  final bool correctAnswer; // true = Yes, false = No
+
+  QuizQuestion({
+    required this.question,
+    required this.correctAnswer,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'question': question,
+      'correct_answer': correctAnswer,
+    };
+  }
+
+  factory QuizQuestion.fromJson(Map<String, dynamic> json) {
+    return QuizQuestion(
+      question: json['question'] as String,
+      correctAnswer: json['correct_answer'] as bool,
+    );
+  }
+}
+
 /// Vocabulary term
 class VocabularyTerm {
   final String term;
@@ -254,6 +279,7 @@ class Chapter {
   final String subtitle;
   final List<Section> sections;
   final List<VocabularyTerm> vocabulary;
+  final List<QuizQuestion> quizQuestions;
   final ReflectionBlock? reflection;
   final String? comingUpNext;
   final int wordCount;
@@ -265,6 +291,7 @@ class Chapter {
     required this.subtitle,
     required this.sections,
     this.vocabulary = const [],
+    this.quizQuestions = const [],
     this.reflection,
     this.comingUpNext,
     required this.wordCount,
@@ -278,6 +305,7 @@ class Chapter {
       'subtitle': subtitle,
       'sections': sections.map((s) => s.toJson()).toList(),
       'vocabulary': vocabulary.map((v) => v.toJson()).toList(),
+      'quiz_questions': quizQuestions.map((q) => q.toJson()).toList(),
       'reflection': reflection?.toJson(),
       'coming_up_next': comingUpNext,
       'word_count': wordCount,
@@ -295,6 +323,9 @@ class Chapter {
           .toList(),
       vocabulary: (json['vocabulary'] as List? ?? [])
           .map((v) => VocabularyTerm.fromJson(v as Map<String, dynamic>))
+          .toList(),
+      quizQuestions: (json['quiz_questions'] as List? ?? [])
+          .map((q) => QuizQuestion.fromJson(q as Map<String, dynamic>))
           .toList(),
       reflection: json['reflection'] != null
           ? ReflectionBlock.fromJson(json['reflection'] as Map<String, dynamic>)

@@ -28,13 +28,33 @@ class _ChapterCardState extends State<ChapterCard> {
     super.initState();
     _loadProgress();
   }
+  
+  @override
+  void didUpdateWidget(ChapterCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload progress if chapter number changed or after navigation
+    if (oldWidget.chapterNumber != widget.chapterNumber) {
+      _loadProgress();
+    }
+  }
 
   Future<void> _loadProgress() async {
     final progress = await _progressRepo.getChapterProgress(widget.chapterNumber);
-    setState(() {
-      _progress = progress;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _progress = progress;
+        _isLoading = false;
+      });
+    }
+  }
+  
+  Future<bool> _isChapterLocked() async {
+    // Chapter 1 is always unlocked
+    if (widget.chapterNumber == 1) return false;
+    
+    // Check if previous chapter is completed
+    final previousProgress = await _progressRepo.getChapterProgress(widget.chapterNumber - 1);
+    return previousProgress?.completed != true;
   }
 
   // Chapter titles (static for now)
@@ -61,150 +81,160 @@ class _ChapterCardState extends State<ChapterCard> {
   Widget build(BuildContext context) {
     final isCompleted = _progress?.completed == true;
     
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
+    return FutureBuilder<bool>(
+      future: _isChapterLocked(),
+      builder: (context, snapshot) {
+        final isLocked = snapshot.data ?? false;
+        
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isLocked ? null : widget.onTap,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isCompleted 
-                  ? AppColors.success.withOpacity(0.3) 
-                  : Colors.grey.withOpacity(0.08),
-              width: isCompleted ? 1.5 : 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Chapter number circle with gradient
-              Container(
-                width: 50,
-                height: 50,
+            child: Opacity(
+              opacity: isLocked ? 0.5 : 1.0,
+              child: Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: isCompleted 
-                      ? const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF66BB6A), Color(0xFF4CAF50)],
-                        )
-                      : const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFFE57373), Color(0xFFEC407A)],
-                        ),
-                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(0.08),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: (isCompleted ? const Color(0xFF66BB6A) : const Color(0xFFE57373)).withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Center(
-                  child: isCompleted
-                      ? const Icon(
-                          Icons.check_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        )
-                      : Text(
-                          widget.chapterNumber.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              
-              // Chapter info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      'Chapter ${widget.chapterNumber}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[500],
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _chapterTitle,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D2D2D),
-                        height: 1.2,
-                      ),
-                    ),
-                    if (_progress?.lastReadAt != null) ...[
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: isCompleted 
-                                  ? AppColors.success 
-                                  : const Color(0xFFE57373),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            isCompleted ? 'Completed' : 'In progress',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: isCompleted 
-                                  ? AppColors.success 
-                                  : const Color(0xFFE57373),
-                            ),
+                    // Chapter number circle with gradient
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: isLocked
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Colors.grey[400]!, Colors.grey[500]!],
+                              )
+                            : const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFFE57373), Color(0xFFEC407A)],
+                              ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isLocked 
+                                ? Colors.grey[400]! 
+                                : const Color(0xFFE57373)).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
-                    ],
+                      child: Center(
+                        child: isLocked
+                            ? const Icon(
+                                Icons.lock_rounded,
+                                color: Colors.white,
+                                size: 24,
+                              )
+                            : Text(
+                                widget.chapterNumber.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    
+                    // Chapter info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Chapter ${widget.chapterNumber}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[500],
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _chapterTitle,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: isLocked ? Colors.grey[500] : const Color(0xFF2D2D2D),
+                              height: 1.2,
+                            ),
+                          ),
+                          if (_progress?.lastReadAt != null && !isLocked) ...[
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: isCompleted 
+                                        ? AppColors.success 
+                                        : const Color(0xFFE57373),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  isCompleted ? 'Completed' : 'In progress',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: isCompleted 
+                                        ? AppColors.success 
+                                        : const Color(0xFFE57373),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    
+                    // Arrow icon or lock indicator
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.08),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isLocked ? Icons.lock_rounded : Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: Colors.grey[400],
+                      ),
+                    ),
                   ],
                 ),
               ),
-              
-              // Arrow icon
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.08),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: Colors.grey[400],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
