@@ -30,7 +30,7 @@ class DatabaseService {
     
     return await sqflite.openDatabase(
       path,
-      version: 2, // Updated version to trigger migration
+      version: 4, // Updated for Bluetooth pairing enhancements
       password: password,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
@@ -152,25 +152,42 @@ class DatabaseService {
       )
     ''');
 
+    // New Schema for Bluetooth Pairing Features
     await db.execute('''
       CREATE TABLE sync_queue (
         id TEXT PRIMARY KEY,
         data_type TEXT NOT NULL CHECK(data_type IN ('ping', 'message', 'question', 'status')),
         payload_json TEXT NOT NULL,
         created_at TEXT NOT NULL,
-        synced INTEGER DEFAULT 0,
-        retry_count INTEGER DEFAULT 0
+        synced_at TEXT,
+        retry_count INTEGER DEFAULT 0,
+        last_error TEXT
       )
     ''');
 
     await db.execute('''
       CREATE TABLE partner_pairing (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         partner_device_id TEXT UNIQUE,
-        pairing_code TEXT,
+        pairing_code TEXT NOT NULL,
         paired_at TEXT,
+        is_paired INTEGER DEFAULT 0,
+        last_connected_at TEXT,
         encryption_key_hash TEXT,
-        last_synced_at TEXT
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE sync_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sync_type TEXT NOT NULL CHECK(sync_type IN ('manual', 'auto')),
+        started_at TEXT NOT NULL,
+        completed_at TEXT,
+        items_sent INTEGER DEFAULT 0,
+        items_received INTEGER DEFAULT 0,
+        status TEXT CHECK(status IN ('success', 'failed', 'partial')),
+        error_message TEXT
       )
     ''');
 
@@ -178,7 +195,7 @@ class DatabaseService {
     await db.execute('CREATE INDEX idx_chapter_progress_number ON chapter_progress(chapter_number)');
     await db.execute('CREATE INDEX idx_pinged_sections_synced ON pinged_sections(synced)');
     await db.execute('CREATE INDEX idx_messages_chapter ON discussion_messages(chapter_number)');
-    await db.execute('CREATE INDEX idx_sync_queue_synced ON sync_queue(synced, created_at)');
+    await db.execute('CREATE INDEX idx_sync_queue_synced ON sync_queue(synced_at, created_at)');
   }
 
   /// Handle database upgrades
@@ -187,6 +204,53 @@ class DatabaseService {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE chapter_progress ADD COLUMN quiz_completed INTEGER DEFAULT 0');
       await db.execute('ALTER TABLE chapter_progress ADD COLUMN quiz_score INTEGER');
+    }
+    
+    // Migration from version 2/3 to 4: Bluetooth pairing enhancements
+    if (oldVersion < 4) {
+      // Drop and recreate partner_pairing table with new schema
+      await db.execute('DROP TABLE IF EXISTS partner_pairing');
+      await db.execute('''
+        CREATE TABLE partner_pairing (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          partner_device_id TEXT UNIQUE,
+          pairing_code TEXT NOT NULL,
+          paired_at TEXT,
+          is_paired INTEGER DEFAULT 0,
+          last_connected_at TEXT,
+          encryption_key_hash TEXT,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      ''');
+      
+      // Create sync_log table if it doesn't exist
+      await db.execute('DROP TABLE IF EXISTS sync_log');
+      await db.execute('''
+        CREATE TABLE sync_log (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          sync_type TEXT NOT NULL CHECK(sync_type IN ('manual', 'auto')),
+          started_at TEXT NOT NULL,
+          completed_at TEXT,
+          items_sent INTEGER DEFAULT 0,
+          items_received INTEGER DEFAULT 0,
+          status TEXT CHECK(status IN ('success', 'failed', 'partial')),
+          error_message TEXT
+        )
+      ''');
+      
+      // Update sync_queue columns
+      final result = await db.rawQuery(
+        "SELECT sql FROM sqlite_master WHERE name='sync_queue'"
+      );
+      if (result.isNotEmpty) {
+        final sql = result.first['sql'] as String;
+        if (!sql.contains('synced_at')) {
+          await db.execute('ALTER TABLE sync_queue ADD COLUMN synced_at TEXT');
+        }
+        if (!sql.contains('last_error')) {
+          await db.execute('ALTER TABLE sync_queue ADD COLUMN last_error TEXT');
+        }
+      }
     }
   }
 

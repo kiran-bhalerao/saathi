@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Saathi needs Bluetooth to connect with your partner's device for sharing content and syncing progress.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Saathi needs Bluetooth to connect with your partner's device for sharing content and syncing progress.</string>
 </dict>
 </plist>

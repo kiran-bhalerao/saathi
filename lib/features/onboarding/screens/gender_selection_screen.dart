@@ -46,11 +46,13 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       
       if (!mounted) return;
       
-      // Navigate to appropriate home screen based on gender
+      // Navigate to pairing screens based on gender
       if (_selectedGender == 'female') {
-        Navigator.of(context).pushReplacementNamed('/female-home');
+        // Female: Show pairing code screen (can skip)
+        Navigator.of(context).pushReplacementNamed('/pairing-code');
       } else {
-        Navigator.of(context).pushReplacementNamed('/male-home');
+        // Male: Enter code screen (blocking until paired)
+        Navigator.of(context).pushReplacementNamed('/enter-code');
       }
     } catch (e) {
       if (!mounted) return;

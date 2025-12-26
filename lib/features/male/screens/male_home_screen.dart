@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../config/app_colors.dart';
-
+import '../../../data/models/bluetooth_enums.dart';
+import '../../../providers/bluetooth_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../data/repositories/ping_repository.dart';
 import '../../../data/models/sync_models.dart';
@@ -51,7 +53,19 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shared with You'),
-
+        actions: [
+          // Bluetooth connection icon
+          Consumer<BluetoothProvider>(
+            builder: (context, bt, _) => IconButton(
+              icon: Icon(
+                Icons.bluetooth,
+                color: _getBluetoothIconColor(bt.connectionStatus),
+              ),
+              onPressed: () => _handleBluetoothTap(bt),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: _pings.isEmpty
           ? const EmptyState(
@@ -214,6 +228,52 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
       return '${difference.inHours}h ago';
     } else {
       return '${difference.inDays}d ago';
+    }
+  }
+
+  /// Get Bluetooth icon color based on connection status
+  Color _getBluetoothIconColor(ConnectionStatus status) {
+    switch (status) {
+      case ConnectionStatus.connected:
+        return AppColors.primary; // Connected - primary blue
+      case ConnectionStatus.syncing:
+        return const Color(0xFFE57373); // Syncing - coral
+      case ConnectionStatus.scanning:
+      case ConnectionStatus.connecting:
+        return Colors.blue[300]!; // Connecting - light blue
+      case ConnectionStatus.disconnected:
+      default:
+        return Colors.grey[400]!; // Disconnected - gray
+    }
+  }
+
+  /// Handle Bluetooth icon tap
+  void _handleBluetoothTap(BluetoothProvider provider) {
+    if (!provider.isPaired) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Not paired with partner. Go to Settings to pair.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else if (provider.isConnected) {
+      // Trigger manual sync
+      provider.syncNow();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Syncing with partner...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      // Try to reconnect
+      provider.reconnect();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Reconnecting to partner...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 }

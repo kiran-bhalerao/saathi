@@ -3,9 +3,12 @@ import '../features/onboarding/screens/splash_screen.dart';
 import '../features/onboarding/screens/welcome_screen.dart';
 import '../features/onboarding/screens/pin_setup_screen.dart';
 import '../features/onboarding/screens/gender_selection_screen.dart';
+import '../features/onboarding/screens/pairing_code_screen.dart';
+import '../features/onboarding/screens/enter_code_screen.dart';
 import '../features/female/screens/female_home_screen.dart';
 import '../features/female/screens/chapter_detail_screen.dart';
 import '../features/female/screens/chapter_reader_screen.dart';
+import '../features/female/screens/partner_connection_screen.dart';
 import '../features/male/screens/male_home_screen.dart';
 import '../features/male/screens/male_ping_view_screen.dart';
 import '../features/female/screens/settings_screen.dart';
@@ -19,12 +22,15 @@ class AppRoutes {
   static const String welcome = '/welcome';
   static const String pinSetup = '/pin-setup';
   static const String genderSelection = '/gender-selection';
+  static const String pairingCode = '/pairing-code';
+  static const String enterCode = '/enter-code';
   static const String femaleHome = '/female-home';
   static const String maleHome = '/male-home';
   static const String chapterDetail = '/chapter-detail';
   static const String chapterReader = '/chapter-reader';
   static const String malePingView = '/male-ping-view';
   static const String settings = '/settings';
+  static const String partnerConnection = '/partner-connection';
 
   /// Generate routes
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -40,6 +46,12 @@ class AppRoutes {
         
       case genderSelection:
         return MaterialPageRoute(builder: (_) => const GenderSelectionScreen());
+      
+      case pairingCode:
+        return MaterialPageRoute(builder: (_) => const PairingCodeScreen());
+      
+      case enterCode:
+        return MaterialPageRoute(builder: (_) => const EnterCodeScreen());
         
       case femaleHome:
         return MaterialPageRoute(builder: (_) => const FemaleHomeScreen());
@@ -67,6 +79,9 @@ class AppRoutes {
       
       case '/settings':
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+      
+      case partnerConnection:
+        return MaterialPageRoute(builder: (_) => const PartnerConnectionScreen());
       
       default:
         return MaterialPageRoute(

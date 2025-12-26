@@ -51,6 +51,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          // Bluetooth Section (moved to top)
+          _buildSectionHeader('Bluetooth'),
+          const SizedBox(height: 12),
+          _buildSettingCard(
+            icon: Icons.bluetooth_connected,
+            title: 'Partner Connection',
+            subtitle: 'Manage device pairing and sync',
+            onTap: () => Navigator.of(context).pushNamed('/partner-connection'),
+          ),
+          
+          const SizedBox(height: 32),
+          
           // Data Management Section
           _buildSectionHeader('Data Management'),
           const SizedBox(height: 12),
