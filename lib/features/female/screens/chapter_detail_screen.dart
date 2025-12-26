@@ -116,24 +116,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.exit_to_app, color: Colors.white, size: 18),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil('/decoy', (route) => false);
-                  },
-                ),
-              ),
-            ],
+            actions: [],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(

@@ -22,24 +22,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFAF8F8),
       appBar: AppBar(
-        title: const Text('Settings'),
-
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Settings',
+          style: TextStyle(
+            color: Color(0xFF2D2D2D),
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         children: [
           // Data Management Section
           _buildSectionHeader('Data Management'),
+          const SizedBox(height: 12),
           _buildSettingCard(
-            icon: Icons.upload_file,
+            icon: Icons.upload_file_outlined,
             title: 'Export Data',
             subtitle: 'Create a backup of your data',
             onTap: _showExportDialog,
           ),
           const SizedBox(height: 12),
           _buildSettingCard(
-            icon: Icons.download,
+            icon: Icons.download_outlined,
             title: 'Import Data',
             subtitle: 'Restore from a backup file',
             onTap: _showImportDialog,
@@ -49,8 +72,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           
           // Privacy Section
           _buildSectionHeader('Privacy'),
+          const SizedBox(height: 12),
           _buildSettingCard(
-            icon: Icons.delete_forever,
+            icon: Icons.delete_outline,
             title: 'Delete All Data',
             subtitle: 'Permanently erase all app data',
             onTap: _showDeleteDialog,
@@ -61,6 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           
           // About Section
           _buildSectionHeader('About'),
+          const SizedBox(height: 12),
           _buildInfoTile('App Version', 'v1.0.0'),
           _buildInfoTile('Database', 'Encrypted with SQLCipher'),
           _buildInfoTile('Privacy', '100% Offline - No data collection'),
@@ -70,14 +95,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textSecondary,
-            ),
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF9E9E9E),
+        letterSpacing: 0.5,
       ),
     );
   }
@@ -97,21 +121,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.divider),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: (isDestructive ? AppColors.error : AppColors.primary)
+                color: (isDestructive ? const Color(0xFFFF5252) : const Color(0xFFE57373))
                     .withOpacity(0.1),
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: isDestructive ? AppColors.error : AppColors.primary,
-                size: 24,
+                color: isDestructive ? const Color(0xFFFF5252) : const Color(0xFFE57373),
+                size: 22,
               ),
             ),
             const SizedBox(width: 16),
@@ -121,24 +151,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2D2D2D),
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ],
               ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: AppColors.textLight,
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: Colors.grey[400],
             ),
           ],
         ),
@@ -148,19 +181,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildInfoTile(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: const TextStyle(
+              fontSize: 15,
+              color: Color(0xFF2D2D2D),
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),

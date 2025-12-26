@@ -91,23 +91,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                     child: const Icon(Icons.settings_outlined, color: Colors.white, size: 20),
                   ),
                   onPressed: () => Navigator.of(context).pushNamed('/settings'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.exit_to_app, color: Colors.white, size: 20),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('/decoy', (route) => false);
-                    },
-                  ),
-                ),
+                )
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
