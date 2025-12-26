@@ -1,12 +1,14 @@
 import 'dart:math';
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import '../data/models/bluetooth_enums.dart';
 import '../data/repositories/pairing_repository.dart';
 import '../core/bluetooth/bluetooth_manager.dart';
 
 /// Bluetooth state management provider
-/// Phase 3: Now with real Bluetooth integration
-class BluetoothProvider extends ChangeNotifier {
+/// Phase 6: Auto-reconnect and lifecycle management
+class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
   final PairingRepository _pairingRepository;
   final BluetoothManager _bluetoothManager;
 
@@ -16,6 +18,12 @@ class BluetoothProvider extends ChangeNotifier {
   String? _errorMessage;
   int _pendingSyncItems = 0;
   bool _isBluetoothAvailable = false;
+  
+  // Auto-reconnect state
+  int _reconnectAttempts = 0;
+  Timer? _reconnectTimer;
+  static const int maxReconnectAttempts = 3;
+  bool _isReconnecting = false;
 
   BluetoothProvider({
     required PairingRepository pairingRepository,
@@ -23,6 +31,7 @@ class BluetoothProvider extends ChangeNotifier {
   })  : _pairingRepository = pairingRepository,
         _bluetoothManager = bluetoothManager {
     _initialize();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   // Getters
@@ -49,6 +58,11 @@ class BluetoothProvider extends ChangeNotifier {
     // Load pending sync count
     _pendingSyncItems = await _pairingRepository.getPendingSyncCount();
     
+    // Start connection monitoring if paired
+    if (isPaired) {
+      _startConnectionMonitoring();
+    }
+    
     notifyListeners();
   }
 
@@ -73,7 +87,7 @@ class BluetoothProvider extends ChangeNotifier {
 
   /// Generate new pairing code and start advertising (Female onboarding)
   Future<String> generatePairingCode() async {
-    final code = _generateRandomCode();
+    final code = _generateCode();
     _pairingCode = code;
     
     // Save to database
@@ -164,10 +178,13 @@ class BluetoothProvider extends ChangeNotifier {
 
     try {
       // Perform Bluetooth sync
-      await _bluetoothManager.performSync();
+      final result = await _bluetoothManager.performSync();
       
       _pendingSyncItems = await _pairingRepository.getPendingSyncCount();
       _connectionStatus = ConnectionStatus.connected;
+      
+      // Log success (result available for future use)
+      print('Sync completed: sent=${result.sent}, received=${result.received}');
       
       notifyListeners();
     } catch (e) {
@@ -251,14 +268,91 @@ class BluetoothProvider extends ChangeNotifier {
   }
 
   /// Generate 4-digit random code
-  String _generateRandomCode() {
+  String _generateCode() {
     final random = Random();
-    final code = (1000 + random.nextInt(9000)).toString();
-    return code;
+    return (1000 + random.nextInt(9000)).toString();
+  }
+
+  // ========== Phase 6: Auto-Reconnect System ==========
+
+  /// Start connection monitoring
+  void _startConnectionMonitoring() {
+    // Periodic check every 30 seconds
+    Timer.periodic(const Duration(seconds: 30), (timer) {
+      if (!isPaired) {
+        timer.cancel();
+        return;
+      }
+      
+      if (!isConnected && !_isReconnecting) {
+        _attemptAutoReconnect();
+      }
+    });
+  }
+
+  /// Handle connection state changes
+  Future<void> _handleConnectionStateChange(ConnectionStatus newStatus) async {
+    if (newStatus == ConnectionStatus.disconnected && isPaired && !_isReconnecting) {
+      // Device disconnected - attempt auto-reconnect
+      await _attemptAutoReconnect();
+    } else if (newStatus == ConnectionStatus.connected && _pendingSyncItems > 0) {
+      // Just reconnected with pending items - auto-trigger sync
+      await syncNow();
+    }
+  }
+
+  /// Attempt auto-reconnect with exponential backoff
+  Future<void> _attemptAutoReconnect() async {
+    if (_reconnectAttempts >= maxReconnectAttempts) {
+      _errorMessage = 'Failed to reconnect after $maxReconnectAttempts attempts';
+      _isReconnecting = false;
+      notifyListeners();
+      return;
+    }
+
+    _isReconnecting = true;
+    _reconnectAttempts++;
+    
+    // Exponential backoff: 2s, 4s, 8s
+    final delay = Duration(seconds: pow(2, _reconnectAttempts).toInt());
+    
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(delay, () async {
+      try {
+        await reconnect();
+        _reconnectAttempts = 0; // Reset on success
+        _isReconnecting = false;
+      } catch (e) {
+        _isReconnecting = false;
+        // Will retry on next periodic check
+      }
+    });
+  }
+
+  /// App lifecycle state handler
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && isPaired) {
+      // App came to foreground - check connection
+      _checkAndReconnect();
+    } else if (state == AppLifecycleState.paused) {
+      // App going to background - cancel pending reconnects
+      _reconnectTimer?.cancel();
+    }
+  }
+
+  /// Check connection and reconnect if needed
+  Future<void> _checkAndReconnect() async {
+    if (!isConnected && isPaired && !_isReconnecting) {
+      _reconnectAttempts = 0; // Reset attempts when app resumes
+      await reconnect();
+    }
   }
 
   @override
   void dispose() {
+    _reconnectTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     _bluetoothManager.dispose();
     super.dispose();
   }

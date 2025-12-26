@@ -134,4 +134,21 @@ class DiscussionRepository {
     
     return thread;
   }
+
+  /// Get chapters that have discussions or pings (for male home screen)
+  Future<List<Map<String, dynamic>>> getChaptersWithActivity() async {
+    final db = await _databaseService.database;
+    
+    final results = await db.rawQuery('''
+      SELECT DISTINCT chapter_number 
+      FROM (
+        SELECT chapter_number FROM discussion_messages
+        UNION
+        SELECT chapter_number FROM pinged_sections
+      )
+      ORDER BY chapter_number
+    ''');
+    
+    return results;
+  }
 }

@@ -222,11 +222,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showExportDialog() {
     showDialog(
       context: context,
-      builder: (context) => _PINVerificationDialog(
+      builder: (dialogContext) => _PINVerificationDialog(
         title: 'Export Data',
-        message: 'Enter your PIN to export your data',
+        message: 'Enter your PIN to verify and export your data',
+        hint: 'Remember this PIN! You will need it to import this backup on any device.',
         onConfirm: (pin) async {
-          Navigator.pop(context);
+          Navigator.pop(dialogContext);
+          
+          if (!mounted) return;
           LoadingOverlay.show(context, message: 'Exporting data...');
           
           try {
@@ -298,29 +301,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
     
     showDialog(
       context: context,
-      builder: (context) => _PINVerificationDialog(
+      builder: (dialogContext) => _PINVerificationDialog(
         title: 'Import Data',
-        message: 'Enter your PIN to import data\n\nWARNING: This will replace all current data!',
+        message: 'Enter the PIN that was used to encrypt this backup',
+        hint: 'This is the PIN from the device where you created the backup.',
         onConfirm: (pin) async {
-          Navigator.pop(context);
-          LoadingOverlay.show(context, message: 'Importing data...');
+          Navigator.pop(dialogContext);
           
-          try {
-            await _exportService.importDatabase(filePath, pin);
-            
-            if (!mounted) return;
-            LoadingOverlay.hide(context);
-            
-            _showImportSuccessDialog();
-          } catch (e) {
-            if (!mounted) return;
-            LoadingOverlay.hide(context);
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Import failed: ${e.toString()}')),
-            );
-          }
+          if (!mounted) return;
+          
+          // Show confirmation dialog before proceeding
+          _showImportConfirmDialog(filePath, pin);
         },
+      ),
+    );
+  }
+
+  void _showImportConfirmDialog(String filePath, String pin) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            const SizedBox(width: 12),
+            const Text('Confirm Import'),
+          ],
+        ),
+        content: const Text(
+          'This action will override all existing data:\n\n'
+          '• Chapter progress\n'
+          '• Shared content\n'
+          '• Discussion messages\n\n'
+          'Your current PIN will be preserved.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              
+              if (!mounted) return;
+              LoadingOverlay.show(context, message: 'Importing data...');
+              
+              try {
+                await _exportService.importDatabase(filePath, pin);
+                
+                if (!mounted) return;
+                LoadingOverlay.hide(context);
+                
+                _showImportSuccessDialog();
+              } catch (e) {
+                if (!mounted) return;
+                LoadingOverlay.hide(context);
+                
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Import failed: ${e.toString()}')),
+                );
+              }
+            },
+            child: const Text('Continue'),
+          ),
+        ],
       ),
     );
   }
@@ -385,11 +433,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _confirmDeleteWithPIN() {
     showDialog(
       context: context,
-      builder: (context) => _PINVerificationDialog(
+      builder: (dialogContext) => _PINVerificationDialog(
         title: 'Confirm Deletion',
         message: 'Enter your PIN to confirm deletion',
         onConfirm: (pin) async {
-          Navigator.pop(context);
+          Navigator.pop(dialogContext);
+          
+          if (!mounted) return;
           LoadingOverlay.show(context, message: 'Deleting data...');
           
           try {
@@ -422,11 +472,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class _PINVerificationDialog extends StatefulWidget {
   final String title;
   final String message;
+  final String? hint;  // Optional hint message
   final Function(String pin) onConfirm;
 
   const _PINVerificationDialog({
     required this.title,
     required this.message,
+    this.hint,
     required this.onConfirm,
   });
 
@@ -447,6 +499,7 @@ class _PINVerificationDialogState extends State<_PINVerificationDialog> {
       title: Text(widget.title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.message),
           const SizedBox(height: 24),
@@ -455,8 +508,40 @@ class _PINVerificationDialogState extends State<_PINVerificationDialog> {
             onCompleted: _onPINEntered,
             errorMessage: _errorMessage,
           ),
+          if (widget.hint != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.hint!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+      ],
     );
   }
 }

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../config/app_colors.dart';
-import '../../../data/models/bluetooth_enums.dart';
-import '../../../providers/bluetooth_provider.dart';
-import '../../../shared/widgets/empty_state.dart';
-import '../../../data/repositories/ping_repository.dart';
-import '../../../data/models/sync_models.dart';
-import 'dart:convert';
 import '../../../data/models/chapter_model.dart';
+import '../../../data/repositories/content_parser.dart';
+import '../../../data/repositories/discussion_repository.dart';
+import '../../female/screens/chapter_discussion_screen.dart';
 
-/// Male home screen - view content shared by partner
+/// Male Home Screen - Shows chapters with active discussions or shared pings
 class MaleHomeScreen extends StatefulWidget {
   const MaleHomeScreen({super.key});
 
@@ -18,262 +14,223 @@ class MaleHomeScreen extends StatefulWidget {
 }
 
 class _MaleHomeScreenState extends State<MaleHomeScreen> {
-  final PingRepository _pingRepo = PingRepository();
-  List<PingedSection> _pings = [];
+  final ContentParser _contentParser = ContentParser();
+  final DiscussionRepository _discussionRepo = DiscussionRepository();
+  
+  List<Map<String, dynamic>> _activeChapters = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadPings();
+    _loadActiveChapters();
   }
 
-  Future<void> _loadPings() async {
-    try {
-      final pings = await _pingRepo.getAllPings();
-      setState(() {
-        _pings = pings;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+  Future<void> _loadActiveChapters() async {
+    setState(() => _isLoading = true);
+    
+    // Get chapters with activity
+    final chapterNumbers = await _discussionRepo.getChaptersWithActivity();
+    
+    // Load full chapter data for each
+    final chapters = <Map<String, dynamic>>[];
+    for (final item in chapterNumbers) {
+      final chapterNum = item['chapter_number'] as int;
+      final chapter = await _contentParser.parseChapter(chapterNum);
+      
+      if (chapter != null) {
+        // Get thread to check for activity count
+        final thread = await _discussionRepo.getChapterThread(chapterNum);
+        
+        chapters.add({
+          'chapter': chapter,
+          'messageCount': thread.length,
+          'lastActivity': thread.isNotEmpty 
+            ? thread.last['timestamp'] as DateTime
+            : DateTime.now(),
+        });
+      }
     }
+    
+    // Sort by last activity (most recent first)
+    chapters.sort((a, b) => 
+      (b['lastActivity'] as DateTime).compareTo(a['lastActivity'] as DateTime)
+    );
+    
+    setState(() {
+      _activeChapters = chapters;
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
+      backgroundColor: const Color(0xFFFAF8F8),
       appBar: AppBar(
-        title: const Text('Shared with You'),
-        actions: [
-          // Bluetooth connection icon
-          Consumer<BluetoothProvider>(
-            builder: (context, bt, _) => IconButton(
-              icon: Icon(
-                Icons.bluetooth,
-                color: _getBluetoothIconColor(bt.connectionStatus),
-              ),
-              onPressed: () => _handleBluetoothTap(bt),
-            ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Discussions',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
           ),
-          const SizedBox(width: 8),
+        ),
+        actions: [
+          // Settings icon
+          IconButton(
+            icon: Icon(Icons.settings_outlined, color: AppColors.textSecondary),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
         ],
       ),
-      body: _pings.isEmpty
-          ? const EmptyState(
-              icon: Icons.inbox_outlined,
-              title: 'No Content Shared Yet',
-              message:
-                  'Your partner hasn\'t shared any sections with you.\n\nWhen they do, you\'ll see them here.',
-            )
-          : RefreshIndicator(
-              onRefresh: _loadPings,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(24),
-                itemCount: _pings.length,
-                itemBuilder: (context, index) {
-                  final ping = _pings[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildPingCard(ping),
-                  );
-                },
-              ),
-            ),
-    );
-  }
-
-  Widget _buildPingCard(PingedSection ping) {
-    return InkWell(
-      onTap: () => _viewPing(ping),
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: ping.readByPartner ? Colors.white : AppColors.primary.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: ping.readByPartner ? AppColors.divider : AppColors.primary.withOpacity(0.3),
-            width: ping.readByPartner ? 1 : 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadow,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Chapter number badge
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Chapter ${ping.chapterNumber}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
+      body: _isLoading
+        ? Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : _activeChapters.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey[300]),
+                  const SizedBox(height: 24),
+                  Text(
+                    'No discussions yet',
+                    style: TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
                     ),
                   ),
-                ),
-                const Spacer(),
-                if (!ping.readByPartner)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      'NEW',
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Text(
+                      'Your partner hasn\'t shared any content',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppColors.textLight,
                       ),
                     ),
                   ),
-              ],
+                ],
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _activeChapters.length,
+              itemBuilder: (context, index) {
+                final item = _activeChapters[index];
+                final chapter = item['chapter'] as Chapter;
+                final count = item['messageCount'] as int;
+                
+                return _ChapterCard(
+                  chapter: chapter,
+                  messageCount: count,
+                  onTap: () async {
+                    // Navigate to shared discussion screen
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChapterDiscussionScreen(chapter: chapter),
+                      ),
+                    );
+                    // Reload after returning
+                    _loadActiveChapters();
+                  },
+                );
+              },
             ),
-            const SizedBox(height: 12),
-            
-            // Section title
-            Text(
-              ping.sectionTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            
-            // Timestamp
-            Text(
-              'Shared ${_formatTimestamp(ping.pingedAt)}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-            ),
-            const SizedBox(height: 12),
-            
-            // Read/View button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton.icon(
-                  onPressed: () => _viewPing(ping),
-                  icon: Icon(
-                    ping.readByPartner ? Icons.visibility : Icons.visibility_outlined,
-                    size: 18,
-                  ),
-                  label: Text(ping.readByPartner ? 'View Again' : 'Read Now'),
+    );
+  }
+}
+
+class _ChapterCard extends StatelessWidget {
+  final Chapter chapter;
+  final int messageCount;
+  final VoidCallback onTap;
+
+  const _ChapterCard({
+    required this.chapter,
+    required this.messageCount,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey[200]!),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Chapter icon/number
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
-          ],
+                child: Center(
+                  child: Text(
+                    '${chapter.number}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              
+              // Chapter info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chapter.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF2D2D2D),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$messageCount ${messageCount == 1 ? 'item' : 'items'}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textLight,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // Arrow
+              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  void _viewPing(PingedSection ping) {
-    // Mark as read
-    if (!ping.readByPartner) {
-      _pingRepo.markAsRead(ping.id);
-      setState(() {
-        ping = PingedSection(
-          id: ping.id,
-          chapterNumber: ping.chapterNumber,
-          sectionId: ping.sectionId,
-          sectionTitle: ping.sectionTitle,
-          sectionContentJson: ping.sectionContentJson,
-          pingedAt: ping.pingedAt,
-          synced: ping.synced,
-          readByPartner: true,
-          readAt: DateTime.now(),
-        );
-      });
-    }
-
-    // Navigate to content view
-    Navigator.of(context).pushNamed(
-      '/male-ping-view',
-      arguments: ping,
-    );
-  }
-
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else {
-      return '${difference.inDays}d ago';
-    }
-  }
-
-  /// Get Bluetooth icon color based on connection status
-  Color _getBluetoothIconColor(ConnectionStatus status) {
-    switch (status) {
-      case ConnectionStatus.connected:
-        return AppColors.primary; // Connected - primary blue
-      case ConnectionStatus.syncing:
-        return const Color(0xFFE57373); // Syncing - coral
-      case ConnectionStatus.scanning:
-      case ConnectionStatus.connecting:
-        return Colors.blue[300]!; // Connecting - light blue
-      case ConnectionStatus.disconnected:
-      default:
-        return Colors.grey[400]!; // Disconnected - gray
-    }
-  }
-
-  /// Handle Bluetooth icon tap
-  void _handleBluetoothTap(BluetoothProvider provider) {
-    if (!provider.isPaired) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Not paired with partner. Go to Settings to pair.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else if (provider.isConnected) {
-      // Trigger manual sync
-      provider.syncNow();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Syncing with partner...'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      // Try to reconnect
-      provider.reconnect();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reconnecting to partner...'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
   }
 }

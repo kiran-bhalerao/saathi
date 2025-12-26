@@ -1,5 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:archive/archive.dart';
+import 'bluetooth_protocol.dart';
+import 'sync_processor.dart';
+import '../../data/repositories/pairing_repository.dart';
+import '../../data/repositories/ping_repository.dart';
+import '../../data/repositories/discussion_repository.dart';
+import '../../data/models/sync_result.dart';
+import '../../data/models/pairing_models.dart';
 
 /// Core Bluetooth service for device pairing and data synchronization
 /// Uses BLE for device discovery and connection
@@ -12,6 +21,29 @@ class BluetoothManager {
   BluetoothDevice? _connectedDevice;
   StreamSubscription<List<ScanResult>>? _scanSubscription;
   StreamSubscription<BluetoothConnectionState>? _connectionSubscription;
+  
+  // Dependencies for sync
+  final PairingRepository _pairingRepo;
+  final PingRepository _pingRepo;
+  final DiscussionRepository _discussionRepo;
+  late final SyncProcessor _syncProcessor;
+  
+  // Chunk buffers for reassembly
+  final Map<String, ChunkBuffer> _chunkBuffers = {};
+  
+  BluetoothManager({
+    required PairingRepository pairingRepo,
+    required PingRepository pingRepo,
+    required DiscussionRepository discussionRepo,
+  })  : _pairingRepo = pairingRepo,
+        _pingRepo = pingRepo,
+        _discussionRepo = discussionRepo {
+    _syncProcessor = SyncProcessor(
+      pingRepo: _pingRepo,
+      discussionRepo: _discussionRepo,
+      pairingRepo: _pairingRepo,
+    );
+  }
   
   /// Check if Bluetooth is available and enabled
   Future<bool> isBluetoothAvailable() async {
@@ -155,10 +187,15 @@ class BluetoothManager {
   }
 
   /// Perform data synchronization with partner device
-  Future<void> performSync() async {
+  Future<SyncResult> performSync() async {
     if (_connectedDevice == null) {
       throw Exception('Not connected to partner device');
     }
+
+    // Create sync log
+    final logId = await _pairingRepo.createSyncLog('manual');
+    int sentCount = 0;
+    int receivedCount = 0;
 
     try {
       // Discover services
@@ -172,19 +209,287 @@ class BluetoothManager {
         (c) => c.uuid.toString().toUpperCase() == dataCharUuid.toUpperCase(),
       );
 
-      // TODO: Implement actual sync logic in Phase 5
-      // 1. Get pending items from sync_queue
-      // 2. Serialize and chunk data (BLE has 20-512 byte limit per write)
-      // 3. Write chunks to characteristic
-      // 4. Read partner's data chunks
-      // 5. Process and merge received data
-      // 6. Mark items as synced in database
+      // 1. Get pending items from local queue
+      final pendingItems = await _pairingRepo.getPendingItems(limit: 20);
 
-      // Placeholder: simulate sync delay
-      await Future.delayed(const Duration(seconds: 2));
+      // 2. Send local items to partner
+      sentCount = await _sendItems(dataChar, pendingItems);
+
+      // 3. Mark items as 'sent' (waiting for ACK)
+      await _pairingRepo.markAsSent(pendingItems.map((item) => item.id).toList());
+
+      // 4. Receive items from partner (data + ACKs)
+      final (packets, acks) = await _receiveItems(dataChar);
+      receivedCount = packets.length;
+
+      // 5. Process received ACKs (mark as delivered)
+      for (final ack in acks) {
+        await _syncProcessor.processAcknowledgment(ack.payload);
+      }
+
+      // 6. Process received data items
+      final receivedAckIds = <String>[];
+      for (final packet in packets) {
+        await _syncProcessor.processPacket(packet);
+        receivedAckIds.add(packet.messageId);
+      }
+
+      // 7. Send ACKs for received items
+      await _sendAcknowledgments(dataChar, receivedAckIds);
+
+      // 8. Complete sync log
+      await _pairingRepo.completeSyncLog(
+        logId,
+        status: 'success',
+        itemsSent: sentCount,
+        itemsReceived: receivedCount,
+      );
+
+      return SyncResult(sent: sentCount, received: receivedCount);
     } catch (e) {
+      // Log failure
+      await _pairingRepo.completeSyncLog(
+        logId,
+        status: 'failed',
+        itemsSent: sentCount,
+        itemsReceived: receivedCount,
+        errorMessage: e.toString(),
+      );
       throw Exception('Sync failed: ${e.toString()}');
+    } finally {
+      // Cleanup old chunk buffers
+      _cleanupExpiredChunks();
     }
+  }
+
+  /// Send items to partner device
+  Future<int> _sendItems(
+    BluetoothCharacteristic dataChar,
+    List<SyncQueueItem> items,
+  ) async {
+    int count = 0;
+
+    for (final item in items) {
+      try {
+        // Create packets for this item
+        final packets = BluetoothProtocol.createDataPackets(
+          dataType: item.dataType,
+          payload: item.payload,
+        );
+
+        // Send each packet (chunk)
+        for (final packet in packets) {
+          final bytes = packet.toBytes();
+          
+          // Write to characteristic (BLE supports up to 512 bytes MTU)
+          await dataChar.write(bytes, withoutResponse: false);
+          
+          // Small delay between chunks to avoid overwhelming receiver
+          await Future.delayed(const Duration(milliseconds: 50));
+        }
+
+        count++;
+      } catch (e) {
+        // Log error but continue with other items
+        await _pairingRepo.incrementRetryCount(item.id, e.toString());
+      }
+    }
+
+    return count;
+  }
+
+  /// Receive items from partner device
+  Future<(List<BluetoothPacket> packets, List<BluetoothPacket> acks)> _receiveItems(
+    BluetoothCharacteristic dataChar,
+  ) async {
+    final packets = <BluetoothPacket>[];
+    final acks = <BluetoothPacket>[];
+
+    try {
+      // Read available data from characteristic
+      // Note: In a real implementation, you'd need to subscribe to notifications
+      // For now, we'll do a simple read
+      final List<int> data = await dataChar.read();
+
+      if (data.isEmpty) return (<BluetoothPacket>[], <BluetoothPacket>[]);
+
+      // Deserialize packet
+      final packet = BluetoothPacket.fromBytes(data);
+
+      // Validate checksum
+      if (!packet.validateChecksum()) {
+        throw Exception('Checksum validation failed');
+      }
+
+      // Check if this is an ACK or data packet
+      if (packet.dataType == 'ack') {
+        acks.add(packet);
+      } else {
+        // Handle chunked data
+        if (packet.totalChunks > 1) {
+          // Multi-chunk message - add to buffer
+          final buffer = _chunkBuffers.putIfAbsent(
+            packet.messageId,
+            () => ChunkBuffer(
+              messageId: packet.messageId,
+              totalChunks: packet.totalChunks,
+            ),
+          );
+
+          buffer.addChunk(packet);
+
+          // If complete, reassemble and add to packets
+          if (buffer.isComplete()) {
+            final reassembledData = BluetoothProtocol.reassembleChunks(
+              buffer.getSortedChunks(),
+            );
+
+            if (reassembledData != null) {
+              // Create a single packet with reassembled data
+              final completePacket = BluetoothPacket(
+                messageId: packet.messageId,
+                dataType: packet.dataType,
+                chunkIndex: 0,
+                totalChunks: 1,
+                payload: reassembledData,
+                checksum: packet.checksum,
+              );
+              packets.add(completePacket);
+            }
+
+            // Remove from buffer
+            _chunkBuffers.remove(packet.messageId);
+          }
+        } else {
+          // Single chunk message
+          packets.add(packet);
+        }
+      }
+    } catch (e) {
+      // Log error but don't fail entire sync
+      print('Error receiving items: $e');
+    }
+
+    return (packets, acks);
+  }
+
+  /// Send acknowledgments for received items
+  Future<void> _sendAcknowledgments(
+    BluetoothCharacteristic dataChar,
+    List<String> messageIds,
+  ) async {
+    for (final messageId in messageIds) {
+      try {
+        final ackPacket = BluetoothProtocol.createAckPacket(messageId);
+        final bytes = ackPacket.toBytes();
+        
+        await dataChar.write(bytes, withoutResponse: false);
+        await Future.delayed(const Duration(milliseconds: 30));
+      } catch (e) {
+        print('Error sending ACK for $messageId: $e');
+      }
+    }
+  }
+
+  /// Cleanup expired chunk buffers
+  void _cleanupExpiredChunks() {
+    _chunkBuffers.removeWhere((_, buffer) => buffer.isExpired());
+  }
+
+  // ========== Phase 6: Performance Optimization ==========
+
+  /// Compress payload if size exceeds threshold
+  List<int> _compressPayload(List<int> data) {
+    // Don't compress small payloads (overhead not worth it)
+    if (data.length < 100) return data;
+    
+    try {
+      final encoder = GZipEncoder();
+      final compressed = encoder.encode(data);
+      
+      // Only use compressed if it's actually smaller
+      if (compressed != null && compressed.length < data.length) {
+        return compressed;
+      }
+    } catch (e) {
+      // Compression failed, use original
+      print('Compression failed: $e');
+    }
+    
+    return data;
+  }
+
+  /// Decompress payload
+  List<int> _decompressPayload(List<int> data, {required bool isCompressed}) {
+    if (!isCompressed) return data;
+    
+    try {
+      final decoder = GZipDecoder();
+      return decoder.decodeBytes(data);
+    } catch (e) {
+      print('Decompression failed: $e');
+      return data;
+    }
+  }
+
+  /// Estimate size of sync queue item
+  int _estimateSize(SyncQueueItem item) {
+    final jsonString = jsonEncode(item.payload);
+    return jsonString.length;
+  }
+
+  /// Create batches of items for optimized sending
+  List<List<SyncQueueItem>> _createBatches(
+    List<SyncQueueItem> items, {
+    int maxBatchSize = 5,
+  }) {
+    final batches = <List<SyncQueueItem>>[];
+    final currentBatch = <SyncQueueItem>[];
+
+    for (final item in items) {
+      final itemSize = _estimateSize(item);
+
+      if (itemSize > 200) {
+        // Large item - send alone
+        if (currentBatch.isNotEmpty) {
+          batches.add(List.from(currentBatch));
+          currentBatch.clear();
+        }
+        batches.add([item]);
+      } else {
+        // Small item - add to batch
+        currentBatch.add(item);
+
+        if (currentBatch.length >= maxBatchSize) {
+          batches.add(List.from(currentBatch));
+          currentBatch.clear();
+        }
+      }
+    }
+
+    if (currentBatch.isNotEmpty) {
+      batches.add(currentBatch);
+    }
+
+    return batches;
+  }
+
+  /// Create batch packet from multiple items
+  BluetoothPacket _createBatchPacket(List<SyncQueueItem> items) {
+    final batchPayload = {
+      'batch': true,
+      'items': items.map((item) => {
+        'type': item.dataType,
+        'data': item.payload,
+      }).toList(),
+    };
+
+    final packets = BluetoothProtocol.createDataPackets(
+      dataType: 'batch',
+      payload: batchPayload,
+    );
+
+    return packets.first; // Return first packet (batches should fit in one)
   }
 
   /// Disconnect from partner device

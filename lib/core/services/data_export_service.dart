@@ -46,9 +46,9 @@ class DataExportService {
       final timestamp = DateTime.now().toIso8601String().split('.')[0].replaceAll(':', '-');
       final fileName = 'saathi_backup_$timestamp.saathi';
 
-      // 7. Get downloads directory
-      final downloadsDir = await getExternalStorageDirectory();
-      final exportPath = join(downloadsDir!.path, fileName);
+      // 7. Get app documents directory (works on both iOS and Android)
+      final exportDir = await getApplicationDocumentsDirectory();
+      final exportPath = join(exportDir.path, fileName);
 
       // 8. Write encrypted file
       final exportFile = File(exportPath);
@@ -68,10 +68,16 @@ class DataExportService {
   /// Import database from encrypted file
   Future<void> importDatabase(String filePath, String pin) async {
     try {
-      // 1. Verify PIN first
-      final isValid = await _pinManager.verifyPIN(pin);
-      if (!isValid) {
-        throw Exception('Invalid PIN');
+      // 1. Save current PIN before import (to preserve it)
+      String? currentPinHash;
+      try {
+        final currentDb = await _db.database;
+        final result = await currentDb.query('users', columns: ['pin_hash'], limit: 1);
+        if (result.isNotEmpty) {
+          currentPinHash = result.first['pin_hash'] as String?;
+        }
+      } catch (e) {
+        print('Could not read current PIN: $e');
       }
 
       // 2. Read encrypted file
@@ -82,7 +88,7 @@ class DataExportService {
 
       final encryptedBytes = await importFile.readAsBytes();
 
-      // 3. Decrypt with PIN
+      // 3. Decrypt with provided PIN (will fail if wrong PIN)
       final decryptedBytes = _decryptWithPIN(encryptedBytes, pin);
 
       // 4. Close current database
@@ -103,15 +109,25 @@ class DataExportService {
 
       // 7. Try to open the new database
       try {
-        await _db.database;
+        final newDb = await _db.database;
         
-        // 8. Delete temporary backup if successful
+        // 8. Restore current device's PIN (if we had one)
+        if (currentPinHash != null) {
+          await newDb.update(
+            'users',
+            {'pin_hash': currentPinHash},
+            where: 'id = ?',
+            whereArgs: [1],
+          );
+        }
+        
+        // 9. Delete temporary backup if successful
         final backupFile = File(backupPath);
         if (await backupFile.exists()) {
           await backupFile.delete();
         }
       } catch (e) {
-        // 9. Restore from backup if import failed
+        // 10. Restore from backup if import failed
         final backupFile = File(backupPath);
         if (await backupFile.exists()) {
           await backupFile.copy(dbPath);
@@ -137,8 +153,8 @@ class DataExportService {
   /// Pick file for import
   Future<String?> pickImportFile() async {
     final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['saathi', 'db'],
+      type: FileType.any,  // Allow any file type for iOS compatibility
+      allowMultiple: false,
     );
 
     if (result != null && result.files.single.path != null) {

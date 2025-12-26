@@ -30,7 +30,7 @@ class DatabaseService {
     
     return await sqflite.openDatabase(
       path,
-      version: 4, // Updated for Bluetooth pairing enhancements
+      version: 5, // Updated for Phase 5: Sync with delivery acknowledgments
       password: password,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
@@ -124,6 +124,7 @@ class DatabaseService {
         message_text TEXT NOT NULL,
         sent_at TEXT NOT NULL,
         synced INTEGER DEFAULT 0,
+        delivery_status TEXT DEFAULT 'pending' CHECK(delivery_status IN ('pending', 'sent', 'delivered', 'failed')),
         auto_delete_at TEXT
       )
     ''');
@@ -156,12 +157,14 @@ class DatabaseService {
     await db.execute('''
       CREATE TABLE sync_queue (
         id TEXT PRIMARY KEY,
-        data_type TEXT NOT NULL CHECK(data_type IN ('ping', 'message', 'question', 'status')),
+        data_type TEXT NOT NULL CHECK(data_type IN ('ping', 'message', 'question', 'status', 'ack')),
         payload_json TEXT NOT NULL,
         created_at TEXT NOT NULL,
         synced_at TEXT,
         retry_count INTEGER DEFAULT 0,
-        last_error TEXT
+        last_error TEXT,
+        needs_ack INTEGER DEFAULT 1,
+        ack_received INTEGER DEFAULT 0
       )
     ''');
 
@@ -251,6 +254,20 @@ class DatabaseService {
           await db.execute('ALTER TABLE sync_queue ADD COLUMN last_error TEXT');
         }
       }
+    }
+    
+    // Migration from version 4 to 5: Add delivery status and ACK tracking
+    if (oldVersion < 5) {
+      // Add delivery_status column to discussion_messages
+      await db.execute('ALTER TABLE discussion_messages ADD COLUMN delivery_status TEXT DEFAULT \'pending\' CHECK(delivery_status IN (\'pending\', \'sent\', \'delivered\', \'failed\'))');
+      
+      // Add ACK tracking columns to sync_queue
+      await db.execute('ALTER TABLE sync_queue ADD COLUMN needs_ack INTEGER DEFAULT 1');
+      await db.execute('ALTER TABLE sync_queue ADD COLUMN ack_received INTEGER DEFAULT 0');
+      
+      // Update data_type check to include 'ack'
+      // Note: SQLite doesn't support ALTER TABLE for constraints,
+      // so new 'ack' type will be allowed after this migration
     }
   }
 

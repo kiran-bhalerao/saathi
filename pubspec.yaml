@@ -51,6 +51,7 @@ dependencies:
   share_plus: ^7.2.2
   file_picker: ^6.2.1
   package_info_plus: ^5.0.1
+  archive: ^3.4.0
   
   # UI & Fonts
   google_fonts: ^6.2.1

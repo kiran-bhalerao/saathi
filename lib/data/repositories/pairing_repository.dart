@@ -218,4 +218,104 @@ class PairingRepository {
       whereArgs: [cutoff.toIso8601String()],
     );
   }
+
+  /// Get pending items (unsynced or un-acked)
+  Future<List<SyncQueueItem>> getPendingItems({int limit = 10}) async {
+    final db = await _dbService.database;
+    
+    final results = await db.query(
+      'sync_queue',
+      where: 'synced_at IS NULL OR (needs_ack = 1 AND ack_received = 0)',
+      orderBy: 'created_at ASC',
+      limit: limit,
+    );
+
+    return results.map((map) => SyncQueueItem.fromMap(map)).toList();
+  }
+
+  /// Mark items as sent (waiting for ACK)
+  Future<void> markAsSent(List<String> ids) async {
+    if (ids.isEmpty) return;
+    
+    final db = await _dbService.database;
+    final placeholders = List.filled(ids.length, '?').join(', ');
+    
+    await db.update(
+      'sync_queue',
+      {'synced_at': DateTime.now().toIso8601String()},
+      where: 'id IN ($placeholders) AND needs_ack = 1',
+      whereArgs: ids,
+    );
+  }
+
+  /// Process acknowledgment (mark as delivered)
+  Future<void> markAsAcknowledged(String messageId) async {
+    final db = await _dbService.database;
+    
+    await db.update(
+      'sync_queue',
+      {'ack_received': 1},
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
+  }
+
+  /// Increment retry count for failed items
+  Future<void> incrementRetryCount(String id, String error) async {
+    final db = await _dbService.database;
+    
+    final result = await db.query(
+      'sync_queue',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      final currentRetry = result.first['retry_count'] as int? ?? 0;
+      
+      await db.update(
+        'sync_queue',
+        {
+          'retry_count': currentRetry + 1,
+          'last_error': error,
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+  }
+
+  /// Clear old synced items (housekeeping)
+  Future<void> clearSyncedItems({DateTime? olderThan}) async {
+    final db = await _dbService.database;
+    final cutoff = olderThan ?? DateTime.now().subtract(const Duration(days: 7));
+    
+    await db.delete(
+      'sync_queue',
+      where: 'synced_at IS NOT NULL AND ack_received = 1 AND synced_at < ?',
+      whereArgs: [cutoff.toIso8601String()],
+    );
+  }
+
+  /// Update message delivery status
+  Future<void> updateMessageDeliveryStatus(String messageId, String status) async {
+    final db = await _dbService.database;
+    
+    await db.update(
+      'discussion_messages',
+      {'delivery_status': status},
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
+  }
+
+  /// Get undelivered messages
+  Future<int> getUndeliveredCount() async {
+    final db = await _dbService.database;
+    
+    final result = await db.rawQuery(
+      "SELECT COUNT(*) as count FROM discussion_messages WHERE delivery_status != 'delivered'",
+    );
+    return result.first['count'] as int? ?? 0;
+  }
 }

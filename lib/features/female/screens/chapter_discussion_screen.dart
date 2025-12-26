@@ -7,6 +7,8 @@ import '../../../data/repositories/user_repository.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/vocabulary_chip_bar.dart';
 import '../widgets/chat_input.dart';
+import '../../shared/widgets/ping_card.dart';
+import '../../shared/widgets/ping_content_modal.dart';
 
 /// Chapter Discussion Screen - per-chapter chat
 class ChapterDiscussionScreen extends StatefulWidget {
@@ -141,8 +143,8 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
       ),
       body: Column(
         children: [
-          // Vocabulary chips
-          if (_vocabularyTerms.isNotEmpty)
+          // Vocabulary chips - ONLY for female users
+          if (_currentUserType == 'female' && _vocabularyTerms.isNotEmpty)
             VocabularyChipBar(
               terms: _vocabularyTerms,
               onTermSelected: _insertVocabularyTerm,
@@ -186,9 +188,15 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                               isCurrentUser: message.sender == _currentUserType,
                             );
                           } else {
-                            // Pinged section
+                            // Pinged section - use shared PingCard
                             final ping = item['data'] as Map<String, dynamic>;
-                            return _buildPingedSection(ping);
+                            return PingCard(
+                              ping: ping,
+                              // Add tap handler for male to view full content
+                              onTap: _currentUserType == 'male' 
+                                ? () => _showPingContent(ping)
+                                : null,
+                            );
                           }
                         },
                       ),
@@ -206,77 +214,14 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
     );
   }
 
-  Widget _buildPingedSection(Map<String, dynamic> ping) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end, // Always right aligned for sender
-        children: [
-          SizedBox(
-            width: screenWidth * 0.8,
-            child: Container(
-              margin: const EdgeInsets.only(right: 12), // Align with MessageBubble
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.share, size: 14, color: AppColors.primary),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Shared Content',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    ping['section_title'] as String? ?? 'Shared Quote',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF2D2D2D),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    ping['section_content_json'] as String,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      color: AppColors.textSecondary,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text(
-                      _formatTimestamp(DateTime.parse(ping['pinged_at'] as String)),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+  /// Show ping content in modal (for male users)
+  void _showPingContent(Map<String, dynamic> ping) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => PingContentModal(
+        sectionTitle: ping['section_title'] as String? ?? 'Shared Content',
+        content: ping['section_content_json'] as String,
       ),
     );
   }
