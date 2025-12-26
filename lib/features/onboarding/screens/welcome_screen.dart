@@ -8,102 +8,120 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
+              const Spacer(flex: 2),
               
-              // Icon
-              Icon(
-                Icons.favorite_rounded,
-                size: 80,
-                color: AppColors.primary,
+              // Illustration/Icon
+              Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primary.withOpacity(0.05),
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.favorite_rounded,
+                    size: 80,
+                    color: AppColors.primary,
+                  ),
+                ),
               ),
-              const SizedBox(height: 32),
+              
+              const SizedBox(height: 40),
               
               // Title
               Text(
                 'Welcome to Saathi',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.3,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
               
-              // Subtitle
-              Text(
-                'Your Companion for a Better Relationship',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
               
               // Description
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'Learn and communicate about intimate health topics in a safe, private, and culturally sensitive way.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    height: 1.6,
+                    letterSpacing: 0.1,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              
+              const Spacer(flex: 3),
+              
+              // Privacy message
               Text(
-                'Saathi helps married couples learn and communicate about '
-                'intimate health topics in a safe, private, and culturally '
-                'sensitive way.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                      height: 1.6,
-                    ),
+                '100% Private & Offline',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
               
-              // Privacy note
+              const SizedBox(height: 10),
+              
+              // Get Started button
               Container(
-                padding: const EdgeInsets.all(16),
+                width: double.infinity,
+                height: 56,
                 decoration: BoxDecoration(
-                  color: AppColors.cardBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.lock_outlined,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '100% Private & Offline\nNo internet required, your data stays on your device',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                      ),
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withOpacity(0.85),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
-              ),
-              
-              const Spacer(),
-              
-              // Get Started button
-              CustomButton(
-                text: 'Get Started',
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/pin-setup');
-                },
-                width: double.infinity,
-              ),
-              const SizedBox(height: 16),
-              
-              // Privacy policy link
-              TextButton(
-                onPressed: () {
-                  // TODO: Show privacy policy
-                },
-                child: const Text('Privacy Policy'),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/pin-setup');
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Center(
+                      child: Text(
+                        'Get Started',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
