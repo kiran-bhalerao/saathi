@@ -100,165 +100,175 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         leading: IconButton(
           icon: Container(
-            padding: const EdgeInsets.all(6), // Adjusted padding to match refined look
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFFE57373), width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: IconButton(
-              icon: const Icon(Icons.chat_bubble_outline, color: Color(0xFFE57373), size: 24),
-              onPressed: () {
-                if (_chapter != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChapterDiscussionScreen(chapter: _chapter!),
-                    ),
-                  );
-                }
-              },
-              tooltip: 'Discussion',
-            ),
+          IconButton(
+            icon: const Icon(Icons.chat_bubble_outline, color: Color(0xFFE57373), size: 22),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChapterDiscussionScreen(chapter: _chapter!),
+                ),
+              );
+            },
+            tooltip: 'Discussion',
           ),
         ],
       ),
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(28, 10, 28, 120), // Increased bottom padding
+            // Removed global padding to allow full-width divider
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Minimal Chapter Badge
+                // Divider under app bar
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE57373).withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'CHAPTER ${chapter.number}',
-                    style: const TextStyle(
-                      color: Color(0xFFE57373),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
+                  height: 1,
+                  color: Colors.grey[200],
                 ),
                 
-                const SizedBox(height: 16),
-                
-                // Big Title
-                Text(
-                  chapter.title,
-                  style: const TextStyle(
-                    fontSize: 34, // Slightly larger
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF1F1F1F),
-                    height: 1.1,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // Subtitle
-                Text(
-                  chapter.subtitle,
-                  style: TextStyle(
-                    fontSize: 17,
-                    color: Colors.grey[600],
-                    height: 1.5,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Stats Row with Dividers
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 24, 28, 120),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildStatItem(Icons.schedule, '${chapter.estimatedReadMinutes} min', 'Read Time'),
-                      Container(width: 1, height: 24, color: Colors.grey[300]),
-                      _buildStatItem(Icons.style_outlined, '${chapter.sections.length}', 'Sections'),
+                      // Minimal Chapter Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE57373).withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'CHAPTER ${chapter.number}',
+                          style: const TextStyle(
+                            color: Color(0xFFE57373),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Big Title
+                      Text(
+                        chapter.title,
+                        style: const TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF1F1F1F),
+                          height: 1.1,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 12),
+                      
+                      // Subtitle
+                      Text(
+                        chapter.subtitle,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey[600],
+                          height: 1.5,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 32),
+                      
+                      // Stats Row with Dividers
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildStatItem(Icons.schedule, '${chapter.estimatedReadMinutes} min', 'Read Time'),
+                            Container(width: 1, height: 24, color: Colors.grey[300]),
+                            _buildStatItem(Icons.style_outlined, '${chapter.sections.length}', 'Sections'),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 40),
+                      
+                      // Content Title
+                      const Text(
+                        'What You\'ll Learn',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF2D2D2D),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Sections List (Clean Editorial Style)
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: chapter.sections.length,
+                        padding: EdgeInsets.zero,
+                        separatorBuilder: (context, index) => Divider(
+                          color: Colors.grey.withOpacity(0.1),
+                          height: 1,
+                        ),
+                        itemBuilder: (context, index) {
+                          final section = chapter.sections[index];
+                          
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              children: [
+                                Text(
+                                  (index + 1).toString().padLeft(2, '0'),
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                    color: const Color(0xFFE57373).withOpacity(0.3),
+                                    fontFamily: 'monospace',
+                                    letterSpacing: -1,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    section.title,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2D2D2D),
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
-                ),
-                
-                const SizedBox(height: 40),
-                
-                // Content Title
-                const Text(
-                  'What You\'ll Learn',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF2D2D2D),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Sections List (Clean Editorial Style)
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: chapter.sections.length,
-                  padding: EdgeInsets.zero,
-                  separatorBuilder: (context, index) => Divider(
-                    color: Colors.grey.withOpacity(0.1),
-                    height: 1,
-                  ),
-                  itemBuilder: (context, index) {
-                    final section = chapter.sections[index];
-                    
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Row(
-                        children: [
-                          Text(
-                            (index + 1).toString().padLeft(2, '0'),
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.primary.withOpacity(0.15),
-                              fontFamily: 'monospace', // Monospaced for alignment or just stylistic choice
-                              letterSpacing: -1,
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Text(
-                              section.title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF2D2D2D),
-                                height: 1.3,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
                 ),
               ],
             ),
