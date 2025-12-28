@@ -1,9 +1,7 @@
 # Chapter 6: The Orgasm Gap
 ## Why You Might Not Finish
 
----
-
-### A Little Story
+## A Little Story
 
 Meena and Rahul entered a race.
 
@@ -19,15 +17,13 @@ Rahul zooms ahead. Reaches the finish line. Celebrates! 🎉
 
 Meanwhile, Meena is stuck at the third hurdle.
 
-*"Why are you so slow?"* Rahul asks, panting.
+"Why are you so slow?" Rahul asks, panting.
 
-*"Slow? Look at my track!"* Meena points at the obstacles.
+"Slow? Look at my track!" Meena points at the obstacles.
 
-*"Oh..."*
+"Oh..."
 
----
-
-### The Numbers Don't Lie
+## The Numbers Don't Lie
 
 Here's a truth that might shock you:
 
@@ -39,9 +35,7 @@ That's almost HALF of women not reaching the peak!
 
 This difference is called the **"Orgasm Gap."**
 
----
-
-### Why Does This Gap Exist?
+## Why Does This Gap Exist?
 
 Let's be very clear:
 
@@ -55,9 +49,7 @@ But what works for HER (clitoral stimulation) is often ignored or skipped.
 
 It's like racing on his track while she's stuck on hers.
 
----
-
-### The Anatomy Mismatch
+## The Anatomy Mismatch
 
 Remember Chapter 4? The clitoris is the pleasure center.
 
@@ -71,9 +63,7 @@ The penis enters the vagina. It moves in and out.
 
 It's like trying to ring a doorbell by pushing the door. The door might open slightly, but the bell never rings!
 
----
-
-### The "In-Out" Myth
+## The "In-Out" Myth
 
 Many people believe:
 
@@ -87,9 +77,7 @@ Research shows:
 
 **You're not in the minority if penetration doesn't work for you. You're in the MAJORITY.**
 
----
-
-### The Faking Trap
+## The Faking Trap
 
 Here's something many women do (maybe you too):
 
@@ -106,7 +94,7 @@ You moan. You say "yes, yes." You act like you reached the peak.
 
 This is called "faking."
 
-*"So what? It makes him happy!"*
+"So what? It makes him happy!"
 
 Here's the problem:
 
@@ -114,9 +102,7 @@ When you fake, he thinks his method WORKS. So he keeps doing the same thing. Ove
 
 **Nothing improves because he doesn't know there's a problem.**
 
----
-
-### It's Not Selfish to Want Pleasure
+## It's Not Selfish to Want Pleasure
 
 Some women feel guilty:
 
@@ -132,9 +118,7 @@ Pleasure is a gift BOTH partners should receive.
 
 **It's not selfish to want to reach the peak. It's normal.**
 
----
-
-### Teamwork is the Answer
+## Teamwork is the Answer
 
 Here's the key understanding:
 
@@ -149,9 +133,7 @@ But for you, extra effort is needed:
 
 This requires communication and cooperation.
 
----
-
-### What Needs to Change
+## What Needs to Change
 
 ```
      THE OLD WAY (Doesn't Work for Most Women)
@@ -171,30 +153,31 @@ This requires communication and cooperation.
 
 The order can vary. What matters is that BOTH partners get what they need.
 
----
-
-### Simple Solutions
+## Simple Solutions
 
 Here are practical changes:
 
-**1. More foreplay before penetration**
+### 1. More foreplay before penetration
+
 Give her body time to climb the ladder.
 
-**2. Touch the clitoris during penetration**
+### 2. Touch the clitoris during penetration
+
 Either he uses his hand, or she touches herself, or try positions where bodies grind together.
 
-**3. She finishes first (sometimes)**
+### 3. She finishes first (sometimes)
+
 If she's almost there, focus on her before penetration. Then his turn.
 
-**4. Don't stop when he finishes**
+### 4. Don't stop when he finishes
+
 Use fingers or other methods to help her reach the peak even after he's done.
 
-**5. Talk about it!**
-*"I need more time"* or *"Can you touch me here?"* are not complaints — they're instructions!
+### 5. Talk about it!
 
----
+"I need more time" or "Can you touch me here?" are not complaints — they're instructions!
 
-### The Hard Conversation
+## The Hard Conversation
 
 This chapter is something you might want to SHARE with your partner.
 
@@ -206,36 +189,35 @@ Try something like:
 
 It's not blaming him. It's educating both of you.
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Orgasm Gap**: The difference in how often men vs. women reach orgasm.
 
-**Orgasm Gap** — The difference in how often men vs. women reach orgasm.
+**Faking**: Pretending to orgasm when you haven't.
 
-**Faking** — Pretending to orgasm when you haven't.
+**Teamwork**: Both partners cooperating to make sure BOTH feel satisfied.
 
-**Teamwork** — Both partners cooperating to make sure BOTH feel satisfied.
+## Something to Think About
 
----
+Have I been reaching the peak, or have I been faking or just... accepting less? What would change if I believed my pleasure matters just as much as his?
 
-### Something to Think About
+## Coming Up Next
 
-Answer honestly to yourself:
+Okay, so we know the problem: The clitoris needs direct touch and the old method doesn't do that. But HOW exactly do we fix it during actual sex? Chapter 7 will teach **"Making It Work"** — positions, angles, hands, and movements that help the clitoris get the attention it needs during penetration. Get ready for practical tips! 🛏️
 
-*Have I been reaching the peak, or have I been faking or just... accepting less?*
+## Quiz
 
-*What would change if I believed my pleasure matters just as much as his?*
+Question: Is the orgasm gap caused by women being broken?
+Answer: No
 
----
+Question: Can most women reach orgasm from penetration alone?
+Answer: No
 
-### Coming Up Next...
+Question: Does faking orgasm help improve future sexual experiences?
+Answer: No
 
-Okay, so we know the problem:
-- The clitoris needs direct touch
-- The old method doesn't do that
+Question: Should both partners prioritize mutual satisfaction?
+Answer: Yes
 
-But HOW exactly do we fix it during actual sex?
-
-Chapter 7 will teach **"Making It Work"** — positions, angles, hands, and movements that help the clitoris get the attention it needs during penetration.
-
-Get ready for practical tips! 🛏️
+Question: Is it selfish for a woman to want to reach orgasm?
+Answer: No

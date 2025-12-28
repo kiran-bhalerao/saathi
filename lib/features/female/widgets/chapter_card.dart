@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
-import '../../../data/repositories/chapter_progress_repository.dart';
 import '../../../data/models/chapter_progress_model.dart';
+import '../../../data/repositories/chapter_progress_repository.dart';
 
 /// Reusable chapter card widget (following DRY principle)
 class ChapterCard extends StatefulWidget {
@@ -28,7 +29,7 @@ class _ChapterCardState extends State<ChapterCard> {
     super.initState();
     _loadProgress();
   }
-  
+
   @override
   void didUpdateWidget(ChapterCard oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -39,7 +40,8 @@ class _ChapterCardState extends State<ChapterCard> {
   }
 
   Future<void> _loadProgress() async {
-    final progress = await _progressRepo.getChapterProgress(widget.chapterNumber);
+    final progress =
+        await _progressRepo.getChapterProgress(widget.chapterNumber);
     if (mounted) {
       setState(() {
         _progress = progress;
@@ -47,13 +49,14 @@ class _ChapterCardState extends State<ChapterCard> {
       });
     }
   }
-  
+
   Future<bool> _isChapterLocked() async {
     // Chapter 1 is always unlocked
     if (widget.chapterNumber == 1) return false;
-    
+
     // Check if previous chapter is completed
-    final previousProgress = await _progressRepo.getChapterProgress(widget.chapterNumber - 1);
+    final previousProgress =
+        await _progressRepo.getChapterProgress(widget.chapterNumber - 1);
     return previousProgress?.completed != true;
   }
 
@@ -67,25 +70,25 @@ class _ChapterCardState extends State<ChapterCard> {
       'Ladder to the Stars',
       'The Orgasm Gap',
       'Making It Work',
-      'Oral Sex',
+      'Using Your Mouth',
       'The Back Door',
       'Spicing It Up',
       'The Feedback Loop',
       'Aftercare & Connection',
     ];
-    
+
     return titles[widget.chapterNumber - 1];
   }
 
   @override
   Widget build(BuildContext context) {
     final isCompleted = _progress?.completed == true;
-    
+
     return FutureBuilder<bool>(
       future: _isChapterLocked(),
       builder: (context, snapshot) {
         final isLocked = snapshot.data ?? false;
-        
+
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -131,9 +134,10 @@ class _ChapterCardState extends State<ChapterCard> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: (isLocked 
-                                ? Colors.grey[400]! 
-                                : const Color(0xFFE57373)).withOpacity(0.3),
+                            color: (isLocked
+                                    ? Colors.grey[400]!
+                                    : const Color(0xFFE57373))
+                                .withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),
@@ -157,7 +161,7 @@ class _ChapterCardState extends State<ChapterCard> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Chapter info
                     Expanded(
                       child: Column(
@@ -178,7 +182,9 @@ class _ChapterCardState extends State<ChapterCard> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: isLocked ? Colors.grey[500] : const Color(0xFF2D2D2D),
+                              color: isLocked
+                                  ? Colors.grey[500]
+                                  : const Color(0xFF2D2D2D),
                               height: 1.2,
                             ),
                           ),
@@ -190,8 +196,8 @@ class _ChapterCardState extends State<ChapterCard> {
                                   width: 6,
                                   height: 6,
                                   decoration: BoxDecoration(
-                                    color: isCompleted 
-                                        ? AppColors.success 
+                                    color: isCompleted
+                                        ? AppColors.success
                                         : const Color(0xFFE57373),
                                     shape: BoxShape.circle,
                                   ),
@@ -202,8 +208,8 @@ class _ChapterCardState extends State<ChapterCard> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: isCompleted 
-                                        ? AppColors.success 
+                                    color: isCompleted
+                                        ? AppColors.success
                                         : const Color(0xFFE57373),
                                   ),
                                 ),
@@ -213,7 +219,7 @@ class _ChapterCardState extends State<ChapterCard> {
                         ],
                       ),
                     ),
-                    
+
                     // Arrow icon or lock indicator
                     Container(
                       width: 32,
@@ -223,7 +229,9 @@ class _ChapterCardState extends State<ChapterCard> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        isLocked ? Icons.lock_rounded : Icons.arrow_forward_ios_rounded,
+                        isLocked
+                            ? Icons.lock_rounded
+                            : Icons.arrow_forward_ios_rounded,
                         size: 14,
                         color: Colors.grey[400],
                       ),

@@ -6,6 +6,7 @@ import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/content_parser.dart';
 import '../../../data/repositories/discussion_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../female/screens/chapter_discussion_screen.dart';
 import '../../shared/widgets/bluetooth_status_icon.dart';
 
@@ -20,6 +21,7 @@ class MaleHomeScreen extends StatefulWidget {
 class _MaleHomeScreenState extends State<MaleHomeScreen> {
   final ContentParser _contentParser = ContentParser();
   final DiscussionRepository _discussionRepo = DiscussionRepository();
+  final UserRepository _userRepo = UserRepository();
 
   List<Map<String, dynamic>> _activeChapters = [];
   bool _isLoading = true;
@@ -70,9 +72,14 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
     final chapters = <Map<String, dynamic>>[];
     int totalMsgs = 0;
 
+    // Get user's locale preference
+    final user = await _userRepo.getUser();
+    final locale = user?.contentLocale ?? 'en';
+
     for (final item in chapterNumbers) {
       final chapterNum = item['chapter_number'] as int;
-      final chapter = await _contentParser.parseChapter(chapterNum);
+      final chapter =
+          await _contentParser.parseChapter(chapterNum, locale: locale);
 
       // Get thread to check for activity count
       final thread = await _discussionRepo.getChapterThread(chapterNum);

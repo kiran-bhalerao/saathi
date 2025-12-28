@@ -5,7 +5,9 @@ import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/chapter_progress_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
+import '../../../data/repositories/content_parser.dart';
 import '../../../data/repositories/ping_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../providers/bluetooth_provider.dart';
 import 'chapter_discussion_screen.dart';
 import 'chapter_quiz_screen.dart';
@@ -26,17 +28,103 @@ class ChapterReaderScreen extends StatefulWidget {
 class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
   final PingRepository _pingRepo = PingRepository();
+  final UserRepository _userRepo = UserRepository();
+  final ContentParser _parser = ContentParser();
   final ScrollController _scrollController = ScrollController();
+
+  late Chapter _currentChapter;
+  String _currentLocale = 'en';
+  bool _isLoadingLocale = false;
 
   @override
   void initState() {
     super.initState();
+    _currentChapter = widget.chapter;
+    _loadUserLocale();
     _markAsStarted();
+  }
+
+  Future<void> _loadUserLocale() async {
+    final user = await _userRepo.getUser();
+    if (user != null && mounted) {
+      // Check if we need to reload the chapter with the correct locale
+      if (user.contentLocale != 'en') {
+        // User's preference is not English, reload the chapter
+        try {
+          final reloadedChapter = await _parser.parseChapter(
+            widget.chapter.number,
+            locale: user.contentLocale,
+          );
+          setState(() {
+            _currentChapter = reloadedChapter;
+            _currentLocale = user.contentLocale;
+          });
+        } catch (e) {
+          // If reload fails, use the provided chapter
+          setState(() {
+            _currentLocale = user.contentLocale;
+          });
+        }
+      } else {
+        setState(() {
+          _currentLocale = user.contentLocale;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleLocale() async {
+    setState(() => _isLoadingLocale = true);
+
+    try {
+      // Toggle locale
+      final newLocale = _currentLocale == 'en' ? 'mr' : 'en';
+
+      // Update user profile
+      final user = await _userRepo.getUser();
+      if (user != null) {
+        final updatedUser = user.copyWith(contentLocale: newLocale);
+        await _userRepo.updateUser(updatedUser);
+      }
+
+      // Reload chapter with new locale
+      final newChapter = await _parser.parseChapter(
+        _currentChapter.number,
+        locale: newLocale,
+      );
+
+      // Update state with new chapter data (no navigation)
+      if (mounted) {
+        setState(() {
+          _currentChapter = newChapter;
+          _currentLocale = newLocale;
+          _isLoadingLocale = false;
+        });
+
+        // Scroll to top for better UX
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingLocale = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to switch language: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _markAsStarted() async {
     await _progressRepo.updateProgress(ChapterProgress(
-      chapterNumber: widget.chapter.number,
+      chapterNumber: _currentChapter.number,
       lastReadAt: DateTime.now(),
       completed: false,
       quizCompleted: false,
@@ -44,7 +132,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   }
 
   Future<void> _markAsCompleted() async {
-    await _progressRepo.markChapterCompleted(widget.chapter.number);
+    await _progressRepo.markChapterCompleted(_currentChapter.number);
   }
 
   @override
@@ -153,7 +241,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
       final sectionId = 'shared_${DateTime.now().millisecondsSinceEpoch}';
 
       await _pingRepo.pingSection(
-        chapterNumber: widget.chapter.number,
+        chapterNumber: _currentChapter.number,
         sectionId: sectionId,
         sectionTitle: 'Shared Quote',
         sectionContentJson: sanitizedText,
@@ -211,7 +299,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Chapter ${widget.chapter.number}',
+          'Chapter ${_currentChapter.number}',
           style: const TextStyle(
             color: Color(0xFF2D2D2D),
             fontSize: 17,
@@ -220,6 +308,19 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
         actions: [
           IconButton(
+            icon: Icon(
+              _currentLocale == 'en'
+                  ? Icons.translate
+                  : Icons.translate_outlined,
+              color: const Color(0xFFE57373),
+              size: 22,
+            ),
+            onPressed: _isLoadingLocale ? null : _toggleLocale,
+            tooltip: _currentLocale == 'en'
+                ? 'Translate to Marathi'
+                : 'Switch to English',
+          ),
+          IconButton(
             icon: const Icon(Icons.chat_bubble_outline,
                 color: Color(0xFFE57373), size: 22),
             onPressed: () {
@@ -227,7 +328,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      ChapterDiscussionScreen(chapter: widget.chapter),
+                      ChapterDiscussionScreen(chapter: _currentChapter),
                 ),
               );
             },
@@ -250,7 +351,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(32, 40, 32, 32),
               child: Text(
-                widget.chapter.title,
+                _currentChapter.title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 28,
@@ -268,9 +369,9 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Render each section
-                  for (int i = 0; i < widget.chapter.sections.length; i++) ...[
-                    _buildSection(widget.chapter.sections[i], i),
-                    if (i < widget.chapter.sections.length - 1)
+                  for (int i = 0; i < _currentChapter.sections.length; i++) ...[
+                    _buildSection(_currentChapter.sections[i], i),
+                    if (i < _currentChapter.sections.length - 1)
                       const SizedBox(height: 32),
                   ],
 
@@ -287,7 +388,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                          if (widget.chapter.quizQuestions.isEmpty) {
+                          if (_currentChapter.quizQuestions.isEmpty) {
                             // No quiz - just mark as complete
                             _markAsCompleted().then((_) {
                               if (mounted) {
@@ -306,7 +407,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    ChapterQuizScreen(chapter: widget.chapter),
+                                    ChapterQuizScreen(chapter: _currentChapter),
                               ),
                             );
                           }
@@ -322,7 +423,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              widget.chapter.quizQuestions.isEmpty
+                              _currentChapter.quizQuestions.isEmpty
                                   ? Icons.check_circle_outline
                                   : Icons.quiz_outlined,
                               color: Colors.white,
@@ -330,7 +431,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              widget.chapter.quizQuestions.isEmpty
+                              _currentChapter.quizQuestions.isEmpty
                                   ? 'Mark as Completed'
                                   : 'Take Quiz',
                               style: const TextStyle(
@@ -400,6 +501,50 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
     );
   }
 
+  /// Parse markdown-style formatting in text and return TextSpan with proper styling
+  List<TextSpan> _parseMarkdownText(String text, TextStyle baseStyle) {
+    final List<TextSpan> spans = [];
+    final RegExp pattern = RegExp(r'\*\*(.+?)\*\*|\*(.+?)\*');
+    int lastIndex = 0;
+
+    for (final match in pattern.allMatches(text)) {
+      // Add text before the match
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(
+          text: text.substring(lastIndex, match.start),
+          style: baseStyle,
+        ));
+      }
+
+      // Add formatted text
+      if (match.group(1) != null) {
+        // **bold**
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: baseStyle.copyWith(fontWeight: FontWeight.bold),
+        ));
+      } else if (match.group(2) != null) {
+        // *italic*
+        spans.add(TextSpan(
+          text: match.group(2),
+          style: baseStyle.copyWith(fontStyle: FontStyle.italic),
+        ));
+      }
+
+      lastIndex = match.end;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastIndex),
+        style: baseStyle,
+      ));
+    }
+
+    return spans.isEmpty ? [TextSpan(text: text, style: baseStyle)] : spans;
+  }
+
   Widget _buildMergedParagraphs(List<ParagraphBlock> blocks) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -410,22 +555,21 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             final block = entry.value;
             final isLast = index == blocks.length - 1;
 
+            final baseStyle = TextStyle(
+              fontSize: 16,
+              height: 1.7,
+              color: Colors.grey[800],
+              fontWeight: block.formatting?['bold'] == true
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              fontStyle: block.formatting?['italic'] == true
+                  ? FontStyle.italic
+                  : FontStyle.normal,
+            );
+
             return TextSpan(
               children: [
-                TextSpan(
-                  text: block.text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    height: 1.7,
-                    color: Colors.grey[800],
-                    fontWeight: block.formatting?['bold'] == true
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    fontStyle: block.formatting?['italic'] == true
-                        ? FontStyle.italic
-                        : FontStyle.normal,
-                  ),
-                ),
+                ..._parseMarkdownText(block.text, baseStyle),
                 if (!isLast) const TextSpan(text: '\n\n'),
               ],
             );

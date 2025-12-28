@@ -1,29 +1,25 @@
 # Chapter 3: The Baby Maker
 ## Reproduction vs. Fun — The Two Purposes of Sex
 
----
-
-### A Little Story
+## A Little Story
 
 Raju bought a new smartphone last month.
 
-*"Finally!"* he thought. *"Now I can make phone calls!"*
+"Finally!" he thought. "Now I can make phone calls!"
 
 Every day, he used it only for calling his mother, his boss, and sometimes his wife.
 
 One day, his nephew visited and laughed.
 
-*"Raju Uncle, you know this phone can do SO much more, right?"*
+"Raju Uncle, you know this phone can do SO much more, right?"
 
-*"More? Like what?"*
+"More? Like what?"
 
-*"Camera for photos! YouTube for videos! Spotify for music! Games! Maps! Everything!"*
+"Camera for photos! YouTube for videos! Spotify for music! Games! Maps! Everything!"
 
 Raju was shocked. He had been using only 10% of his phone's features!
 
----
-
-### The Phone Analogy
+## The Phone Analogy
 
 Your body is like that smartphone.
 
@@ -40,31 +36,30 @@ Many couples use only the "phone call" (baby-making) and miss all the other feat
 
 **This chapter will change that.**
 
----
-
-### How Babies Are Actually Made
+## How Babies Are Actually Made
 
 Let's get clear on the basics first.
 
-**Step 1: The Egg**
+### Step 1: The Egg
+
 - Every month, your body releases one tiny egg
 - This egg travels from the ovary into a tube
 - It waits there for about 24 hours
 
-**Step 2: The Sperm**
+### Step 2: The Sperm
+
 - When sex happens, millions of sperm enter the vagina
 - They swim up searching for the egg
 - Only one sperm can enter the egg
 
-**Step 3: The Meeting**
+### Step 3: The Meeting
+
 - If sperm meets egg = pregnancy possible
 - If no meeting = the egg leaves with your period
 
 Simple, right?
 
----
-
-### The Monthly Cycle
+## The Monthly Cycle
 
 Your body runs on a monthly clock. Here's how it works:
 
@@ -83,15 +78,13 @@ This is when pregnancy is most likely. These are your "fertile days."
 **The Yellow and Red Days:**
 Pregnancy is much less likely (but not impossible!).
 
----
-
-### So... Sex is ONLY for Babies?
+## So... Sex is ONLY for Babies?
 
 Here's where many people get stuck.
 
-They think: *"The purpose of sex is reproduction. So once we have enough children, why bother?"*
+They think: "The purpose of sex is reproduction. So once we have enough children, why bother?"
 
-This is like saying: *"The purpose of eating is survival. So once I'm not starving, why enjoy food?"*
+This is like saying: "The purpose of eating is survival. So once I'm not starving, why enjoy food?"
 
 See how silly that sounds?
 
@@ -102,9 +95,7 @@ Nature designed sex to:
 
 **The pleasure and bonding happen EVERY time. The baby only happens SOMETIMES.**
 
----
-
-### Why Does Sex Feel Good?
+## Why Does Sex Feel Good?
 
 Think about it. Nature is smart.
 
@@ -121,9 +112,7 @@ These chemicals are designed to make couples want to be close again and again.
 
 **Pleasure isn't an accident. It's the design.**
 
----
-
-### What About "Good Women"?
+## What About "Good Women"?
 
 Some people believe:
 
@@ -140,9 +129,7 @@ No, no, and no.
 
 **Wanting pleasure is natural. Enjoying your husband is part of marriage. There is nothing shameful about feeling good with your spouse.**
 
----
-
-### Enjoying Sex ≠ Wanting Babies
+## Enjoying Sex ≠ Wanting Babies
 
 This is important:
 
@@ -160,9 +147,7 @@ Using protection means you can:
 
 *You can have the pleasure without the pressure.*
 
----
-
-### A Sneak Preview
+## A Sneak Preview
 
 In your body, there is something amazing.
 
@@ -176,49 +161,25 @@ This part is called the **clitoris**.
 
 And in Chapter 4, we're going to meet it properly.
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Ovulation**: When your body releases an egg (fertile time).
 
-**Ovulation** — When your body releases an egg (fertile time).
+**Uterus**: The "womb" where a baby grows.
 
-**Uterus** — The "womb" where a baby grows.
+**Sperm**: The tiny swimmers from your husband that can fertilize an egg.
 
-**Sperm** — The tiny swimmers from your husband that can fertilize an egg.
+**Clitoris**: A special pleasure button (we'll learn more soon!).
 
-**Clitoris** — A special pleasure button (we'll learn more soon!).
+**Family Planning**: Using methods to control when you get pregnant.
 
-**Family Planning** — Using methods to control when you get pregnant.
+## Something to Think About
 
----
+Have I been using my "smartphone" at only 10% capacity? What would change if I saw intimacy as something for ME too, not just for babies or duty?
 
-### Something to Think About
+## Coming Up Next
 
-Ask yourself honestly:
-
-*"Have I been using my 'smartphone' at only 10% capacity?"*
-
-*"What would change if I saw intimacy as something for ME too, not just for babies or duty?"*
-
----
-
-### Coming Up Next...
-
-Remember that tiny button we just mentioned? The clitoris?
-
-Here's something shocking:
-
-**It has 8,000 nerve endings.**
-
-That's twice as many as the penis tip!
-
-And yet most women don't know it exists. They've never touched it. Their husbands don't know about it either.
-
-Chapter 4 will introduce you to the **Magic Button** — the single most important thing for female pleasure.
-
-This is where everything changes. 💫
-
----
+Remember that tiny button we just mentioned? The clitoris? Here's something shocking: It has 8,000 nerve endings. That's twice as many as the penis tip! And yet most women don't know it exists. They've never touched it. Their husbands don't know about it either. Chapter 4 will introduce you to the **Magic Button** — the single most important thing for female pleasure. This is where everything changes. 💫
 
 ## Quiz
 

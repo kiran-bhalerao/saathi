@@ -1,9 +1,7 @@
 # Chapter 12: Aftercare & Emotional Connection
 ## What Happens After Matters Just as Much
 
----
-
-### A Little Story
+## A Little Story
 
 You finished a wonderful meal at a restaurant.
 
@@ -11,7 +9,7 @@ The food was delicious. The service was excellent.
 
 But then... the waiter snatched your plate, dropped the bill, and pushed you toward the door.
 
-*"Out, out! We need the table!"*
+"Out, out! We need the table!"
 
 How would you feel?
 
@@ -27,9 +25,7 @@ Now imagine if instead:
 
 Intimacy works exactly the same way.
 
----
-
-### The Often-Ignored Truth
+## The Often-Ignored Truth
 
 Here's what happens in many bedrooms:
 
@@ -44,31 +40,29 @@ But she? She's flooded with hormones that make her want CONNECTION.
 
 **This mismatch creates the "used" feeling many women describe.**
 
----
-
-### What Is Aftercare?
+## What Is Aftercare?
 
 **Aftercare** is everything that happens after intimacy ends.
 
 It includes:
 
-**Physical aftercare:**
+### Physical aftercare
+
 - Gentle cleaning up
 - Providing tissues or comfort
 - Drinking water (intimacy is tiring!)
 - Using the bathroom (important for health)
 - Getting comfortable
 
-**Emotional aftercare:**
+### Emotional aftercare
+
 - Cuddling, holding each other
 - Soft talking, whispering
-- Words of affection: *"That was wonderful"*
+- Words of affection: "That was wonderful"
 - Gentle touch: stroking hair, holding hands
 - Simply being present, not rushing away
 
----
-
-### Why It Matters
+## Why It Matters
 
 After intimacy, the body is vulnerable.
 
@@ -86,9 +80,7 @@ But with aftercare, the message becomes:
 
 **Same act. Completely different meaning.**
 
----
-
-### The "Pillow Talk" Connection
+## The "Pillow Talk" Connection
 
 There's something magical about conversations that happen while lying together after intimacy.
 
@@ -102,33 +94,32 @@ These moments can be used for:
 
 Some of the deepest connections happen in these quiet moments.
 
----
-
-### What Women Need (Often)
+## What Women Need (Often)
 
 Every woman is different. But commonly, women appreciate:
 
-**Immediately after:**
+### Immediately after
+
 - Stay close for at least a few minutes
 - Don't grab your phone
 - Don't turn on the TV
 - Hold her, even if you're sleepy
 
-**Words that help:**
-- *"I love being with you"*
-- *"That was amazing"*
-- *"You're beautiful"*
-- *"How are you feeling?"*
+### Words that help
 
-**Actions that help:**
+- "I love being with you"
+- "That was amazing"
+- "You're beautiful"
+- "How are you feeling?"
+
+### Actions that help
+
 - Stroke her hair
 - Kiss her forehead
 - Pull her close
 - Get her water or a tissue if she needs
 
----
-
-### What Men Should Know
+## What Men Should Know
 
 If you share this section:
 
@@ -141,27 +132,25 @@ But knowing this doesn't mean he can't try.
 **Suggestions for him:**
 - Fight the sleep for 10 minutes
 - If you must sleep, at least hold her as you drift off
-- Set an intention: *"After we finish, I will stay close for a bit"*
+- Set an intention: "After we finish, I will stay close for a bit"
 - Understand that these 10 minutes mean MORE to her than the act itself sometimes
 
----
-
-### The Health Importance
+## The Health Importance
 
 Aftercare isn't just emotional. Some parts are about health:
 
-**For women:**
+### For women
+
 - **Urinate after intimacy** — This prevents urinary tract infections (UTIs)
 - Bacteria can enter the urethra during sex; urinating flushes them out
 
-**For both:**
+### For both
+
 - **Gentle cleaning** — Wipe external areas with plain water
 - **Don't douche** — The vagina cleans itself
 - **Drink water** — Rehydrate after physical activity
 
----
-
-### When Things Didn't Go Well
+## When Things Didn't Go Well
 
 Sometimes intimacy isn't great:
 - One of you was tired
@@ -173,15 +162,13 @@ Aftercare is STILL important. Maybe even more so.
 
 **After a less-than-ideal experience:**
 - Don't blame or criticize
-- Offer reassurance: *"We'll try again next time"*
+- Offer reassurance: "We'll try again next time"
 - Cuddle anyway
 - Talk about it gently later (not right now)
 
 One awkward session doesn't define your relationship.
 
----
-
-### The Complete Cycle
+## The Complete Cycle
 
 Think of intimacy as a full circle:
 
@@ -214,21 +201,17 @@ Many couples focus only on the ACT. They rush the BEFORE and skip the AFTER.
 
 **For sustainable intimacy, all three parts need attention.**
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Aftercare**: The care and connection after intimacy ends.
 
-**Aftercare** — The care and connection after intimacy ends.
+**Pillow talk**: Intimate conversations while lying together.
 
-**Pillow talk** — Intimate conversations while lying together.
+**Emotional connection**: Feeling close beyond just the physical act.
 
-**Emotional connection** — Feeling close beyond just the physical act.
+**UTI (Urinary Tract Infection)**: An infection that can be prevented by urinating after sex.
 
-**UTI (Urinary Tract Infection)** — An infection that can be prevented by urinating after sex.
-
----
-
-### The End of the Journey... And the Beginning
+## The End of the Journey... And the Beginning
 
 Congratulations.
 
@@ -245,9 +228,7 @@ You now know:
 
 **This is more than most women learn in a lifetime.**
 
----
-
-### What Happens Now?
+## What Happens Now?
 
 This app isn't just about reading. It's about DOING.
 
@@ -265,9 +246,7 @@ This app isn't just about reading. It's about DOING.
 
 6. **Celebrate wins.** When something works — acknowledge it!
 
----
-
-### A Final Word
+## A Final Word
 
 This journey was never just about sex.
 
@@ -285,11 +264,7 @@ Now go — gently, patiently, confidently — and build the intimate life you de
 
 **Your Saathi (Companion) will always be here if you need to return.** 💜
 
----
-
 *Thank you for trusting us on this journey.*
-
----
 
 ## Quiz
 

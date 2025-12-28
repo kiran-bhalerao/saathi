@@ -1,27 +1,23 @@
 # Chapter 7: Making It Work
 ## Intercourse Mechanics — Positions & Techniques
 
----
-
-### A Little Story
+## A Little Story
 
 Rekha and Amit tried sleeping on a small bed together.
 
-*"Move your arm!"*
-*"Your leg is crushing me!"*
-*"This angle is uncomfortable!"*
+"Move your arm!"
+"Your leg is crushing me!"
+"This angle is uncomfortable!"
 
 After 10 minutes of adjusting, they finally found the perfect position. Both comfortable. Both cozy.
 
-*"Why didn't we figure this out earlier?"* Rekha laughed.
+"Why didn't we figure this out earlier?" Rekha laughed.
 
-*"Because we never TALKED about what was uncomfortable!"*
+"Because we never TALKED about what was uncomfortable!"
 
 Sex is exactly like this.
 
----
-
-### What We've Learned So Far
+## What We've Learned So Far
 
 Let's recap:
 
@@ -33,46 +29,48 @@ Now the practical question:
 
 **HOW do we actually do this during sex?**
 
----
-
-### The Basic Positions
+## The Basic Positions
 
 There are many positions. Let's learn three simple ones that most couples start with:
 
-**Position 1: Missionary (Face-to-Face)**
+### Position 1: Missionary (Face-to-Face)
+
 ```
      Him: _____
           ↓    \
      Her: _____ \
           (lying on back)
 ```
+
 - She lies on her back
 - He is on top, facing her
 - Most common position
 
-**Position 2: Woman on Top**
+### Position 2: Woman on Top
+
 ```
      She: _____
           ↓    \  (sitting/leaning)
      Him: _____ 
           (lying on back)
 ```
+
 - He lies on his back
 - She sits or leans on top
 - SHE controls the movement
 
-**Position 3: Spooning (Side-by-Side)**
+### Position 3: Spooning (Side-by-Side)
+
 ```
      Him: ___\
      Her: ___/  (both facing same direction)
 ```
+
 - Both lie on their sides
 - He is behind her
 - Gentle, relaxed position
 
----
-
-### The Clitoris Problem in Each Position
+## The Clitoris Problem in Each Position
 
 Now, here's the thing:
 
@@ -84,9 +82,7 @@ In most positions, the penis enters the vagina. But remember — the clitoris is
 
 So what do we do?
 
----
-
-### Solution 1: Add Hands
+## Solution 1: Add Hands
 
 This is the simplest fix:
 
@@ -100,9 +96,7 @@ But think about it — if both partners finish, who cares which hand helped?
 
 **It's teamwork, not cheating!**
 
----
-
-### Solution 2: Grinding Instead of Thrusting
+## Solution 2: Grinding Instead of Thrusting
 
 Here's a secret:
 
@@ -117,9 +111,7 @@ But **grinding** — rocking back and forth together — can create friction bet
 
 *Less "porn movie" movement. More pleasure for her.*
 
----
-
-### Solution 3: The Pillow Trick
+## Solution 3: The Pillow Trick
 
 A simple pillow can change everything.
 
@@ -142,9 +134,7 @@ A simple pillow can change everything.
 
 Try different pillow heights to find what works.
 
----
-
-### The Rhythm Secret
+## The Rhythm Secret
 
 Another common problem:
 
@@ -154,37 +144,33 @@ Imagine you're climbing a ladder. Every few seconds, someone shakes the ladder a
 
 **For her to climb to the peak, rhythm must stay CONSISTENT.**
 
-Once she says *"yes, like that"* — **don't change anything!**
+Once she says "yes, like that" — **don't change anything!**
 
 Same speed. Same angle. Same pressure.
 
 Let her climb without interruption.
 
----
-
-### Communication During Sex
+## Communication During Sex
 
 Many couples feel awkward talking during intimacy.
 
 But small words make a HUGE difference:
 
 **Helpful things to say:**
-- *"A little slower"*
-- *"Yes, right there!"*
-- *"Can you move your hand here?"*
-- *"That feels good"*
-- *"Let's try a different position"*
+- "A little slower"
+- "Yes, right there!"
+- "Can you move your hand here?"
+- "That feels good"
+- "Let's try a different position"
 
 **How he can ask:**
-- *"Is this good?"*
-- *"Faster or slower?"*
-- *"Tell me what you need"*
+- "Is this good?"
+- "Faster or slower?"
+- "Tell me what you need"
 
 It doesn't have to be a speech. Just a few words. And it transforms everything.
 
----
-
-### When to Change Position vs. Stay
+## When to Change Position vs. Stay
 
 Here's a simple rule:
 
@@ -201,9 +187,7 @@ Here's a simple rule:
 
 *When she's climbing, don't shake the ladder!*
 
----
-
-### A Note About Pain
+## A Note About Pain
 
 Sex should NOT hurt.
 
@@ -213,51 +197,31 @@ If something is painful:
 - Add more lubrication
 - Try a different position
 
-Pain is your body saying *"something is wrong."*
+Pain is your body saying "something is wrong."
 
 Don't push through pain. Address it.
 
 (We'll discuss pain in more detail in Chapter 12)
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Penetration**: When the penis enters the vagina.
 
-**Penetration** — When the penis enters the vagina.
+**Thrust**: The in-and-out movement during sex.
 
-**Thrust** — The in-and-out movement during sex.
+**Grinding**: A rocking, rubbing movement instead of thrusting.
 
-**Grinding** — A rocking, rubbing movement instead of thrusting.
+**Rhythm**: The speed and pattern of movement.
 
-**Rhythm** — The speed and pattern of movement.
+**Lubricant/Lube**: Slippery gel to reduce friction (natural or store-bought).
 
-**Lubricant/Lube** — Slippery gel to reduce friction (natural or store-bought).
+## Something to Think About
 
----
+Which of these tips could help YOU? Adding hand touch? Grinding instead of thrusting? The pillow trick? Better communication? Pick ONE to try next time. Small changes, big differences.
 
-### Something to Think About
+## Coming Up Next
 
-Which of these tips could help YOU?
-- Adding hand touch?
-- Grinding instead of thrusting?
-- The pillow trick?
-- Better communication?
-
-Pick ONE to try next time. Small changes, big differences.
-
----
-
-### Coming Up Next...
-
-There's another way to give the clitoris attention — one that many couples find even MORE effective than hands.
-
-It's the tongue. Soft, precise, and gentle.
-
-Chapter 8 explores **"Using Your Mouth"** — oral sex basics for both partners.
-
-This is a topic that some find uncomfortable. That's okay. Read it anyway. Knowledge removes fear. 👅
-
----
+There's another way to give the clitoris attention — one that many couples find even MORE effective than hands. It's the tongue. Soft, precise, and gentle. Chapter 8 explores **"Using Your Mouth"** — oral sex basics for both partners. This is a topic that some find uncomfortable. That's okay. Read it anyway. Knowledge removes fear. 👅
 
 ## Quiz
 

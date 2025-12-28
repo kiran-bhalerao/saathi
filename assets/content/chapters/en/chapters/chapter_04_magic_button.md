@@ -1,9 +1,7 @@
 # Chapter 4: The Magic Button
 ## The Clitoris — Your Body's Secret Treasure
 
----
-
-### A Little Story
+## A Little Story
 
 Imagine a house with a beautiful doorbell.
 
@@ -19,11 +17,9 @@ One day, a wise guest notices the bell and presses it.
 
 Suddenly, lights flicker on! Music fills the air! The whole house comes alive!
 
-*"Why didn't anyone tell us about this?"* the guests wonder.
+"Why didn't anyone tell us about this?" the guests wonder.
 
----
-
-### The Secret That Changes Everything
+## The Secret That Changes Everything
 
 There is a button on your body.
 
@@ -37,9 +33,7 @@ Not for peeing. Not for babies. Not for periods.
 
 Its name? The **clitoris** (say: KLIT-or-is).
 
----
-
-### Where Is It?
+## Where Is It?
 
 Remember Chapter 2? We talked about the "clitoral hood" — a tiny fold of skin at the top where your inner lips meet.
 
@@ -65,9 +59,7 @@ To find it yourself:
 
 That's it. That's the magic button.
 
----
-
-### Why Is It So Special?
+## Why Is It So Special?
 
 Here's an incredible fact:
 
@@ -81,9 +73,7 @@ This makes it the most sensitive spot on the human body.
 
 It's like a supercomputer for pleasure — packed into something the size of a pea.
 
----
-
-### The Iceberg Secret
+## The Iceberg Secret
 
 Here's something most people don't know:
 
@@ -104,11 +94,9 @@ Think of an iceberg. You only see 10% above water. 90% is hidden below.
 
 The clitoris has internal parts that wrap around the vaginal area. This is why different kinds of touch can feel pleasurable!
 
----
+## Why Nobody Told You
 
-### Why Nobody Told You
-
-You might be wondering: *"If this is so important, why didn't I know?"*
+You might be wondering: "If this is so important, why didn't I know?"
 
 Good question. Several reasons:
 
@@ -121,9 +109,7 @@ But here's the truth:
 
 **Your clitoris was designed by nature. It's not shameful. It's part of you.**
 
----
-
-### What Happens When You Touch It?
+## What Happens When You Touch It?
 
 When the clitoris is touched gently and consistently:
 
@@ -135,9 +121,7 @@ When the clitoris is touched gently and consistently:
 
 This is how your body was designed to work. It's natural and healthy.
 
----
-
-### Self-Exploration: Is It Okay?
+## Self-Exploration: Is It Okay?
 
 Some women feel guilty about touching themselves.
 
@@ -153,9 +137,7 @@ In fact, **how can you guide your partner if you don't know yourself?**
 
 Many doctors recommend self-exploration so women can understand their own pleasure. It's the first step to better intimacy.
 
----
-
-### Why This Matters for Couples
+## Why This Matters for Couples
 
 Here's a crucial truth we'll explore more in later chapters:
 
@@ -169,9 +151,7 @@ When your partner learns about the clitoris and how to touch it — everything c
 
 But first, HE needs to know it exists. And YOU need to know how it works.
 
----
-
-### Simple Tips for Exploration
+## Simple Tips for Exploration
 
 If you want to try:
 
@@ -184,41 +164,25 @@ If you want to try:
 
 Some women feel sensation quickly. For others, it takes time and practice. Both are normal.
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Clitoris**: The small pleasure button at the top of the vulva.
 
-**Clitoris** — The small pleasure button at the top of the vulva.
+**Clitoral Hood**: The small fold of skin covering and protecting the clitoris.
 
-**Clitoral Hood** — The small fold of skin covering and protecting the clitoris.
+**Nerve Endings**: Tiny sensors that send pleasure signals to your brain.
 
-**Nerve Endings** — Tiny sensors that send pleasure signals to your brain.
+**Stimulation**: Touching or rubbing in a way that creates sensation.
 
-**Stimulation** — Touching or rubbing in a way that creates sensation.
+**Sensitivity**: How strongly you feel touch.
 
-**Sensitivity** — How strongly you feel touch.
+## Something to Think About
 
----
+You now know something many women discover only after years of marriage — or never discover at all. The clitoris exists. It's yours. And it's designed for pleasure. How does it feel to know this?
 
-### Something to Think About
+## Coming Up Next
 
-You now know something many women discover only after years of marriage — or never discover at all.
-
-**The clitoris exists. It's yours. And it's designed for pleasure.**
-
-How does it feel to know this?
-
----
-
-### Coming Up Next...
-
-Okay, so the magic button exists. But how does it lead to that "fireworks" feeling everyone talks about?
-
-In Chapter 5, we'll climb **"The Ladder to the Stars"** — understanding how arousal builds slowly and what an orgasm actually feels like.
-
-Get ready to learn the journey from "nice touch" to "amazing peak." 🌟
-
----
+Okay, so the magic button exists. But how does it lead to that "fireworks" feeling everyone talks about? In Chapter 5, we'll climb **"The Ladder to the Stars"** — understanding how arousal builds slowly and what an orgasm actually feels like. Get ready to learn the journey from "nice touch" to "amazing peak." 🌟
 
 ## Quiz
 

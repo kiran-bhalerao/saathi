@@ -28,7 +28,7 @@ class ContentParser {
   Future<String> _getChapterFilename(int chapterNumber, String locale) async {
     final basePath = locale == 'en'
         ? AppConstants.chaptersPathEn
-        : AppConstants.chaptersPathHi;
+        : AppConstants.chaptersPathMr;
 
     // Map of chapter numbers to their filenames
     // This avoids needing to parse AssetManifest.json
@@ -111,22 +111,25 @@ class ContentParser {
 
         currentSectionTitle = line.replaceAll(RegExp(r'^#{2,3}\s*'), '');
 
-        // Check for special sections
-        if (currentSectionTitle == 'New Words You\'ll Know') {
+        // Check for special sections (English and Marathi)
+        if (currentSectionTitle == 'New Words You\'ll Know' ||
+            currentSectionTitle == 'नवीन शब्द जे तुम्हाला माहित होतील') {
           // Parse vocabulary section
           vocabulary.addAll(_parseVocabulary(lines, i + 1, chapterNumber));
           currentSectionTitle = null; // Don't create a section for this
           continue;
         }
 
-        if (currentSectionTitle == 'Something to Think About') {
+        if (currentSectionTitle == 'Something to Think About' ||
+            currentSectionTitle == 'विचार करण्यासारखी गोष्ट') {
           // Parse reflection question
           reflection = _parseReflection(lines, i + 1);
           currentSectionTitle = null;
           continue;
         }
 
-        if (currentSectionTitle == 'Coming Up Next') {
+        if (currentSectionTitle == 'Coming Up Next' ||
+            currentSectionTitle == 'पुढे काय येणार आहे') {
           comingUpNext = _extractComingUpNext(lines, i + 1);
           currentSectionTitle = null;
           continue;
@@ -134,7 +137,8 @@ class ContentParser {
 
         // Skip Quiz section - parse separately, don't add to sections
         if (currentSectionTitle == 'Quiz' ||
-            currentSectionTitle == 'Chapter Quiz') {
+            currentSectionTitle == 'Chapter Quiz' ||
+            currentSectionTitle == 'प्रश्नमंजुषा') {
           quizQuestions = _parseQuiz(lines, i + 1);
           currentSectionTitle = null;
           continue;
@@ -316,15 +320,19 @@ class ContentParser {
       if (line.startsWith('##')) break;
       if (line.isEmpty) continue;
 
-      // Format: Question: [question text]
-      if (line.toLowerCase().startsWith('question:')) {
+      // Format: Question: [question text] or प्रश्न: [question text]
+      if (line.toLowerCase().startsWith('question:') ||
+          line.startsWith('प्रश्न:')) {
         currentQuestion = line.substring(line.indexOf(':') + 1).trim();
       }
-      // Format: Answer: Yes/No
-      else if (line.toLowerCase().startsWith('answer:') &&
+      // Format: Answer: Yes/No or उत्तर: होय/नाही
+      else if ((line.toLowerCase().startsWith('answer:') ||
+              line.startsWith('उत्तर:')) &&
           currentQuestion != null) {
         final answerText = line.substring(line.indexOf(':') + 1).trim();
-        final correctAnswer = answerText.toLowerCase() == 'yes';
+        // Support both English (Yes/No) and Marathi (होय/नाही)
+        final correctAnswer =
+            answerText.toLowerCase() == 'yes' || answerText == 'होय';
 
         questions.add(QuizQuestion(
           question: currentQuestion,

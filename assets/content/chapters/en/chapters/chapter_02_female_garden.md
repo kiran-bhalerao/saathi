@@ -1,29 +1,25 @@
 # Chapter 2: The Female Garden
 ## Basic Anatomy — Know Your Own Body
 
----
-
-### A Little Story
+## A Little Story
 
 Priya was 26 years old and married for two years.
 
-One day at the clinic, the lady doctor asked: *"Where exactly does it hurt?"*
+One day at the clinic, the lady doctor asked: "Where exactly does it hurt?"
 
-Priya pointed vaguely downward. *"There... you know... that area."*
+Priya pointed vaguely downward. "There... you know... that area."
 
-*"Can you be more specific? The vulva? The vaginal opening? Near the urethra?"*
+"Can you be more specific? The vulva? The vaginal opening? Near the urethra?"
 
 Priya blushed. She had no idea what any of those words meant.
 
-*"I never learned,"* she whispered.
+"I never learned," she whispered.
 
-The doctor smiled kindly. *"You're not alone. Let me show you."*
+The doctor smiled kindly. "You're not alone. Let me show you."
 
----
+## Why Don't We Know?
 
-### Why Don't We Know?
-
-Think about it. 
+Think about it.
 
 We learn the names of every body part as children:
 - Eyes 👀
@@ -31,17 +27,15 @@ We learn the names of every body part as children:
 - Ears 👂
 - Hands ✋
 
-But when it comes to "down there"? 
+But when it comes to "down there"?
 
-Parents say vague things like *"private parts"* or *"sharam ki jagah"* (place of shame).
+Parents say vague things like "private parts" or "sharam ki jagah" (place of shame).
 
 No wonder we grow up confused!
 
 How can you take care of something you can't even name?
 
----
-
-### Meet Your "Garden"
+## Meet Your "Garden"
 
 Let's give proper names to everything. Don't worry — we'll go slowly!
 
@@ -63,34 +57,33 @@ Think of your private area as a beautiful garden with different parts:
              |o|       ← Anus (back door)
 ```
 
----
-
-### The Three Doors
+## The Three Doors
 
 Your body has **three separate openings** down there. Not one, not two — **three!**
 
 Many women don't know this. Even some men don't!
 
-**Door 1: The Urethral Opening (Pee Hole)**
+### Door 1: The Urethral Opening (Pee Hole)
+
 - Very small — about the size of a pencil tip
 - Only for urinating (peeing)
 - Located *above* the vaginal opening
 - Nothing goes IN here — only urine comes OUT
 
-**Door 2: The Vaginal Opening (The Main Entrance)**
+### Door 2: The Vaginal Opening (The Main Entrance)
+
 - This is where menstrual blood comes out
 - Where babies are born
 - Where penetration happens during sex
 - It's elastic — stretches and shrinks
 
-**Door 3: The Anus (The Back Door)**
+### Door 3: The Anus (The Back Door)
+
 - For bowel movements only
 - Separate system entirely!
 - Never confuse this with the vagina
 
----
-
-### The Vulva vs. The Vagina
+## The Vulva vs. The Vagina
 
 Here's something important:
 
@@ -105,18 +98,18 @@ Here's something important:
 
 Most people say "vagina" when they mean "vulva." Now you know the difference!
 
----
-
-### The Lips (Labia)
+## The Lips (Labia)
 
 You have two sets of "lips":
 
-**Outer Lips (Labia Majora)**
+### Outer Lips (Labia Majora)
+
 - Fatty, fleshy folds on the outside
 - Usually have hair on them
 - Protect everything inside
 
-**Inner Lips (Labia Minora)**
+### Inner Lips (Labia Minora)
+
 - Thinner, softer folds inside the outer lips
 - Don't have hair
 - Very sensitive to touch
@@ -128,9 +121,7 @@ Some are long, some are short. Some are even, some are not. Some are darker, som
 
 *All of these are normal. There is no "correct" shape.*
 
----
-
-### The Little Hood
+## The Little Hood
 
 At the very top, where your inner lips meet, there's a small fold of skin — like a tiny hood or cap.
 
@@ -142,9 +133,7 @@ We call it the **Magic Button** — but we'll learn all about it in Chapter 4.
 
 For now, just know: it's there, it's small, and it's incredibly important.
 
----
-
-### Is Down There "Dirty"?
+## Is Down There "Dirty"?
 
 Let's bust this myth right now:
 
@@ -163,14 +152,14 @@ This discharge is normal:
 - Wear breathable cotton underwear
 - Change pads/panties regularly during periods
 
----
-
-### "But Mine Looks Different..."
+## "But Mine Looks Different..."
 
 Maybe you've seen pictures and worried:
 
 *"My lips are too long"*
+
 *"One side is bigger than the other"*
+
 *"It's too dark"*
 
 Stop right there.
@@ -181,56 +170,25 @@ Porn and unrealistic images have made many women feel abnormal. But doctors will
 
 Your garden is unique. And that's perfectly fine.
 
----
+## New Words You'll Know
 
-### New Words You'll Know
+**Vulva**: The whole outside area you can see (lips, hood, openings).
 
-**Vulva** — The whole outside area you can see (lips, hood, openings).
+**Vagina**: Only the inside tunnel/passage.
 
-**Vagina** — Only the inside tunnel/passage.
+**Labia**: The "lips" (outer and inner folds of skin).
 
-**Labia** — The "lips" (outer and inner folds of skin).
+**Urethra**: The tiny hole where urine comes out.
 
-**Urethra** — The tiny hole where urine comes out.
+**Clitoral Hood**: The small fold of skin covering the clitoris.
 
-**Clitoral Hood** — The small fold of skin covering the clitoris.
+## Something to Think About
 
----
+Have you ever looked at your own body with a mirror? Many women never have. It feels "wrong" or "shameful." But how can you understand something you've never seen? If you feel comfortable, try looking gently. You're not doing anything wrong. You're just learning your own geography.
 
-### A Quick Quiz for Yourself
+## Coming Up Next
 
-Close your eyes and point (in your imagination) to:
-1. Where does pee come out?
-2. Where do periods come out?
-3. What protects the "magic button"?
-
-If you got all three — congratulations! You know more than most!
-
----
-
-### Something to Think About
-
-Have you ever looked at your own body with a mirror?
-
-Many women never have. It feels "wrong" or "shameful."
-
-But how can you understand something you've never seen?
-
-*If you feel comfortable, try looking gently. You're not doing anything wrong. You're just learning your own geography.*
-
----
-
-### Coming Up Next...
-
-Now that you know the map of your garden, let's talk about what happens inside.
-
-Ever wondered *exactly* how babies are made? And why sex isn't *only* for making babies?
-
-Chapter 3 will explain the "Baby Maker" — and reveal a secret that most married couples don't fully understand.
-
-Get ready to look at intimacy in a whole new way. 🍼✨
-
----
+Now that you know the map of your garden, let's talk about what happens inside. Ever wondered exactly how babies are made? And why sex isn't only for making babies? Chapter 3 will explain the "Baby Maker" — and reveal a secret that most married couples don't fully understand. Get ready to look at intimacy in a whole new way. 🍼✨
 
 ## Quiz
 

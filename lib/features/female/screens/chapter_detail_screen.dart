@@ -35,6 +35,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
 
   Future<void> _loadChapter() async {
     try {
+      // Always load chapter in English for the detail screen
       final chapter = await _parser.parseChapter(widget.chapterNumber);
       setState(() {
         _chapter = chapter;

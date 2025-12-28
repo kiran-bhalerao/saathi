@@ -1,28 +1,24 @@
 # Chapter 1: The Partnership
 ## More Than Just Duty
 
----
-
-### A Little Story
+## A Little Story
 
 Sunita and Ravi got married three years ago.
 Every day follows the same pattern. Ravi goes to work. Sunita manages the home. They eat dinner together. They sleep. Repeat.
 
-One day, Sunita's friend asked her: *"Are you happy?"*
+One day, Sunita's friend asked her: "Are you happy?"
 
 Sunita paused. She had never thought about it.
 
-*"I do my duty,"* she replied. *"Ravi provides. I cook and clean. What more is there?"*
+"I do my duty," she replied. "Ravi provides. I cook and clean. What more is there?"
 
-Her friend smiled. *"A cup of chai."*
+Her friend smiled. "A cup of chai."
 
-*"What?"*
+"What?"
 
-*"Think about it. Would you drink chai made with just water and tea leaves? It's drinkable, but boring! You need sugar for sweetness. Cardamom for excitement. Maybe some ginger for kick!"*
+"Think about it. Would you drink chai made with just water and tea leaves? It's drinkable, but boring! You need sugar for sweetness. Cardamom for excitement. Maybe some ginger for kick!"
 
----
-
-### More Than Duties
+## More Than Duties
 
 Marriage isn't just a list of tasks:
 - He earns money ✓
@@ -41,9 +37,7 @@ Many couples forget that marriage is also about:
 
 This isn't "extra" stuff. This is the sugar and spice that makes marriage worth living.
 
----
-
-### The Equal Partnership
+## The Equal Partnership
 
 Here's a truth that might surprise you:
 
@@ -62,9 +56,7 @@ A partnership means:
 - Both giving AND receiving
 - Both voices matter equally
 
----
-
-### The Safe Space
+## The Safe Space
 
 Have you ever tried to relax when someone is yelling at you?
 
@@ -81,9 +73,7 @@ When you feel safe, your body opens up naturally. When you feel forced or scared
 
 *A flower blooms in sunshine, not in storms.*
 
----
-
-### "But I'm Always Tired..."
+## "But I'm Always Tired..."
 
 Does this sound familiar?
 
@@ -97,9 +87,7 @@ When you give all day and receive nothing, your energy drains. When intimacy fee
 
 This is where things need to change.
 
----
-
-### Pleasure Isn't Selfish
+## Pleasure Isn't Selfish
 
 Let's address the elephant in the room.
 
@@ -118,55 +106,21 @@ Wanting to feel good isn't selfish.
 
 It's natural. It's healthy. It's your **right**.
 
----
+## New Words You'll Know
 
-### What This App Will Do
+**Intimacy**: Being close to someone, emotionally and physically. Not just sex — also cuddling, talking, sharing secrets.
 
-Over the next chapters, you'll learn:
-- How your body works (many women don't know!)
-- What feels good and why
-- How to communicate with your partner
-- How to make intimacy enjoyable for *you*
+**Consent**: Saying yes freely and happily. Not just "allowing" something because you feel you have to.
 
-You can read at your own pace. Share what you choose with your partner. Keep your thoughts private.
+**Partnership**: Two people working together as equals. Not one boss and one servant.
 
-This is *your* journey.
+## Something to Think About
 
----
+When was the last time I felt truly happy with my partner — not just doing duty, but actually enjoying the moment? If you can't remember... that's okay. That's why you're here.
 
-### New Words You'll Know
+## Coming Up Next
 
-**Intimacy** — Being close to someone, emotionally and physically. Not just sex — also cuddling, talking, sharing secrets.
-
-**Consent** — Saying yes freely and happily. Not just "allowing" something because you feel you have to.
-
-**Partnership** — Two people working together as equals. Not one boss and one servant.
-
----
-
-### Something to Think About
-
-Before you move to the next chapter, answer this honestly (just in your mind):
-
-*When was the last time I felt truly happy with my partner — not just doing duty, but actually enjoying the moment?*
-
-If you can't remember... that's okay. That's why you're here.
-
----
-
-### Coming Up Next...
-
-Before we can talk about pleasure, we need to talk about the body. And here's a secret:
-
-**Many women don't actually know their own anatomy.**
-
-Not because they're ignorant. Because nobody ever taught them!
-
-In Chapter 2, we'll take a tour of *"The Female Garden"* — with a simple map that will change everything you think you know.
-
-Trust us. This will be eye-opening. 🌸
-
----
+Before we can talk about pleasure, we need to talk about the body. Many women don't actually know their own anatomy. Not because they're ignorant. Because nobody ever taught them! In Chapter 2, we'll take a tour of "The Female Garden" — with a simple map that will change everything you think you know. Trust us. This will be eye-opening. 🌸
 
 ## Quiz
 

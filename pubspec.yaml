@@ -75,6 +75,7 @@ flutter:
   
   assets:
     - assets/content/chapters/en/chapters/
+    - assets/content/chapters/mr/chapters/
     - assets/images/
   
   # Fonts will be loaded via google_fonts package
