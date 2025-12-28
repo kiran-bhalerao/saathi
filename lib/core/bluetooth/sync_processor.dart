@@ -28,6 +28,7 @@ class SyncProcessor {
     final sectionId = data['sectionId'] as String;
     final sectionTitle = data['sectionTitle'] as String;
     final sectionContentJson = jsonEncode(data['sectionContent']);
+    final pingedAt = DateTime.parse(data['pingedAt'] as String);
 
     // Check for duplicates by querying all pings
     final existingPings = await _pingRepo.getAllPings();
@@ -35,11 +36,13 @@ class SyncProcessor {
       return; // Already processed
     }
     
-    await _pingRepo.pingSection(
+    // Use saveReceivedPing instead of pingSection to avoid sync queue loop
+    await _pingRepo.saveReceivedPing(
       chapterNumber: chapterNumber,
       sectionId: sectionId,
       sectionTitle: sectionTitle,
       sectionContentJson: sectionContentJson,
+      pingedAt: pingedAt,
     );
   }
 
@@ -53,6 +56,7 @@ class SyncProcessor {
     final chapterNumber = data['chapterNumber'] as int;
     final sender = data['sender'] as String;
     final messageText = data['messageText'] as String;
+    final sentAt = DateTime.parse(data['sentAt'] as String);
 
     // Check for duplicates by querying messages for this chapter
     final existing = await _discussionRepo.getMessagesForChapter(chapterNumber);
@@ -60,10 +64,13 @@ class SyncProcessor {
       return; // Already processed
     }
 
-    await _discussionRepo.sendMessage(
+    // Use saveReceivedMessage instead of sendMessage to avoid sync queue loop
+    await _discussionRepo.saveReceivedMessage(
+      messageId: messageId,
       chapterNumber: chapterNumber,
       sender: sender,
       messageText: messageText,
+      sentAt: sentAt,
     );
   }
 

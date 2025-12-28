@@ -46,8 +46,8 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     setState(() => _isConnecting = false);
 
     if (success) {
-      // Navigate to PIN setup (male continues onboarding)
-      Navigator.pushReplacementNamed(context, '/pin-setup');
+      // Navigate to Male Home after successful pairing
+      Navigator.pushReplacementNamed(context, '/male-home');
     } else {
       // Show error
       if (mounted) {

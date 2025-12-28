@@ -20,9 +20,32 @@ class PairingRepository {
     return code;
   }
 
+  /// Save pairing code (for Male device joining)
+  Future<void> savePairingCode(String code) async {
+    final db = await _dbService.database;
+    
+    // Check if exists first
+    final existing = await db.query(
+      'partner_pairing',
+      where: 'pairing_code = ?',
+      whereArgs: [code],
+    );
+
+    if (existing.isEmpty) {
+      final pairing = PartnerPairing(
+        pairingCode: code,
+        createdAt: DateTime.now(),
+      );
+      await db.insert('partner_pairing', pairing.toMap());
+    }
+  }
+
   /// Complete pairing after successful connection
   Future<void> completePairing(String code, String deviceId) async {
     final db = await _dbService.database;
+    
+    // Ensure record exists (upsert logic)
+    await savePairingCode(code);
     
     await db.update(
       'partner_pairing',

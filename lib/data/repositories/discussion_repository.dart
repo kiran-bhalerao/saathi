@@ -4,13 +4,15 @@ import '../../core/database/database_service.dart';
 import '../../config/constants.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:uuid/uuid.dart';
+import './pairing_repository.dart';
 
 /// Repository for managing chapter discussion messages
 class DiscussionRepository {
   final DatabaseService _databaseService = DatabaseService.instance;
   final Uuid _uuid = const Uuid();
+  final PairingRepository _pairingRepo = PairingRepository();
 
-  /// Send a message to a chapter discussion
+  /// Send a message to a chapter discussion (and queue for sync)
   Future<void> sendMessage({
     required int chapterNumber,
     required String sender,
@@ -28,6 +30,49 @@ class DiscussionRepository {
       messageText: messageText,
       sentAt: DateTime.now(),
       synced: false,
+      autoDeleteAt: autoDeleteAt,
+    );
+
+    // Save to local database
+    await db.insert(
+      'discussion_messages',
+      message.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    
+    // Add to sync queue for sending to partner
+    await _pairingRepo.queueForSync(
+      type: 'message',
+      payload: {
+        'messageId': message.id,
+        'chapterNumber': chapterNumber,
+        'sender': sender,
+        'messageText': messageText,
+        'sentAt': message.sentAt.toIso8601String(),
+      },
+    );
+  }
+
+  /// Internal: Save received message to DB only (no sync queue)
+  /// Used by SyncProcessor when receiving messages from partner
+  Future<void> saveReceivedMessage({
+    required String messageId,
+    required int chapterNumber,
+    required String sender,
+    required String messageText,
+    required DateTime sentAt,
+  }) async {
+    final db = await _databaseService.database;
+    
+    final autoDeleteAt = sentAt.add(Duration(days: AppConstants.messageRetentionDays));
+    
+    final message = DiscussionMessage(
+      id: messageId,
+      chapterNumber: chapterNumber,
+      sender: sender,
+      messageText: messageText,
+      sentAt: sentAt,
+      synced: true, // Already received from partner
       autoDeleteAt: autoDeleteAt,
     );
 

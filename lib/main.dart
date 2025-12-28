@@ -5,9 +5,10 @@ import 'config/constants.dart';
 import 'routes/app_routes.dart';
 import 'providers/bluetooth_provider.dart';
 import 'data/repositories/pairing_repository.dart';
+import 'data/repositories/user_repository.dart';
 import 'data/repositories/ping_repository.dart';
 import 'data/repositories/discussion_repository.dart';
-import 'core/bluetooth/bluetooth_manager.dart';
+import 'core/connections/connection_manager.dart';
 
 void main() {
   runApp(const SaathiApp());
@@ -20,6 +21,7 @@ class SaathiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize repositories
     final pairingRepo = PairingRepository();
+    final userRepo = UserRepository();
     final pingRepo = PingRepository();
     final discussionRepo = DiscussionRepository();
     
@@ -28,7 +30,8 @@ class SaathiApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => BluetoothProvider(
             pairingRepository: pairingRepo,
-            bluetoothManager: BluetoothManager(
+            userRepository: userRepo,
+            connectionManager: ConnectionManager(
               pairingRepo: pairingRepo,
               pingRepo: pingRepo,
               discussionRepo: discussionRepo,

@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/bluetooth_provider.dart';
 import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/sync_models.dart';
@@ -33,6 +36,8 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   List<String> _vocabularyTerms = [];
   bool _isLoading = true;
   String _currentUserType = 'female';
+  Timer? _refreshTimer;
+  int _lastThreadLength = 0;
 
   @override
   void initState() {
@@ -40,6 +45,11 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
     _loadData();
     _prepareVocabulary();
     _loadUserType();
+    
+    // Periodic refresh to check for new messages from partner
+    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      _refreshThread();
+    });
   }
 
   Future<void> _loadUserType() async {
@@ -54,6 +64,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
     
     // Load merged thread (messages + pings chronologically)
     _thread = await _discussionRepo.getChapterThread(widget.chapter.number);
+    _lastThreadLength = _thread.length;
     
     setState(() => _isLoading = false);
     
@@ -63,6 +74,32 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
+  }
+
+  /// Silent background refresh to check for new messages
+  Future<void> _refreshThread() async {
+    if (!mounted) return;
+    
+    final newThread = await _discussionRepo.getChapterThread(widget.chapter.number);
+    
+    // Only update if thread has new items
+    if (newThread.length != _lastThreadLength) {
+      setState(() {
+        _thread = newThread;
+        _lastThreadLength = newThread.length;
+      });
+      
+      // Auto-scroll to bottom if new messages arrived
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
   }
 
   void _prepareVocabulary() {
@@ -83,6 +120,14 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
       sender: _currentUserType,
       messageText: messageText,
     );
+    
+    // Auto-sync message immediately if connected
+    if (mounted) {
+      final provider = Provider.of<BluetoothProvider>(context, listen: false);
+      if (provider.isConnected) {
+        provider.syncNow();
+      }
+    }
     
     _textController.clear();
     await _loadData();
@@ -107,6 +152,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     _scrollController.dispose();
     _textController.dispose();
     super.dispose();

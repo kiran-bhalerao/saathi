@@ -1,12 +1,15 @@
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:convert';
 import '../models/sync_models.dart';
 import '../../core/database/database_service.dart';
+import './pairing_repository.dart';
 
 /// Ping repository - handles section sharing with partner
 class PingRepository {
   final DatabaseService _databaseService = DatabaseService.instance;
   final Uuid _uuid = const Uuid();
+  final PairingRepository _pairingRepo = PairingRepository();
 
   /// Create a new ping (share section with partner)
   Future<void> pingSection({
@@ -24,7 +27,48 @@ class PingRepository {
       sectionTitle: sectionTitle,
       sectionContentJson: sectionContentJson,
       pingedAt: DateTime.now(),
-      synced: false, // Will be synced in Phase 2
+      synced: false,
+    );
+    
+    // Save to local database
+    await db.insert(
+      'pinged_sections',
+      ping.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    
+    // Add to sync queue for sending to partner
+    await _pairingRepo.queueForSync(
+      type: 'ping',
+      payload: {
+        'chapterNumber': chapterNumber,
+        'sectionId': sectionId,
+        'sectionTitle': sectionTitle,
+        'sectionContent': jsonDecode(sectionContentJson), // Ensure it's a map
+        'pingedAt': ping.pingedAt.toIso8601String(),
+      },
+    );
+  }
+
+  /// Internal: Save received ping to DB only (no sync queue)
+  /// Used by SyncProcessor when receiving pings from partner
+  Future<void> saveReceivedPing({
+    required int chapterNumber,
+    required String sectionId,
+    required String sectionTitle,
+    required String sectionContentJson,
+    required DateTime pingedAt,
+  }) async {
+    final db = await _databaseService.database;
+    
+    final ping = PingedSection(
+      id: _uuid.v4(),
+      chapterNumber: chapterNumber,
+      sectionId: sectionId,
+      sectionTitle: sectionTitle,
+      sectionContentJson: sectionContentJson,
+      pingedAt: pingedAt,
+      synced: true, // Already received from partner
     );
     
     await db.insert(

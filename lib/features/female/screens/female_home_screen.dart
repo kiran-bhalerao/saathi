@@ -8,6 +8,7 @@ import '../../../data/repositories/chapter_progress_repository.dart';
 import '../../../data/models/bluetooth_enums.dart';
 import '../../../providers/bluetooth_provider.dart';
 import '../widgets/chapter_card.dart';
+import '../../shared/widgets/bluetooth_status_icon.dart';
 
 /// Female home screen - chapter list with progress
 class FemaleHomeScreen extends StatefulWidget {
@@ -86,24 +87,9 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
-                // Bluetooth connection icon
-                Consumer<BluetoothProvider>(
-                  builder: (context, bt, _) => IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.bluetooth,
-                        color: _getBluetoothIconColor(bt.connectionStatus),
-                        size: 20,
-                      ),
-                    ),
-                    onPressed: () => _handleBluetoothTap(bt),
-                  ),
-                ),
+                // Bluetooth connection icon (New Widget)
+                const BluetoothStatusIcon(),
+                
                 const SizedBox(width: 8),
                 // Settings icon
                 IconButton(
@@ -269,7 +255,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   }
 
   Widget _buildProgressCard() {
-    final percentage = _completedChapters / AppConstants.totalChapters;
+    final percentage = _completedChapters == 0 ? 0.0 : _completedChapters / AppConstants.totalChapters;
     
     return Container(
       padding: const EdgeInsets.all(20),
@@ -372,51 +358,5 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
         ],
       ),
     );
-  }
-
-  /// Get Bluetooth icon color based on connection status
-  Color _getBluetoothIconColor(ConnectionStatus status) {
-    switch (status) {
-      case ConnectionStatus.connected:
-        return Colors.white; // Connected - white on gradient
-      case ConnectionStatus.syncing:
-        return const Color(0xFFFFF176); // Syncing - yellow
-      case ConnectionStatus.scanning:
-      case ConnectionStatus.connecting:
-        return Colors.blue[200]!; // Connecting - light blue
-      case ConnectionStatus.disconnected:
-      default:
-        return Colors.white.withOpacity(0.5); // Disconnected - semi-transparent
-    }
-  }
-
-  /// Handle Bluetooth icon tap
-  void _handleBluetoothTap(BluetoothProvider provider) {
-    if (!provider.isPaired) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Not paired with partner. Go to Settings to pair.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else if (provider.isConnected) {
-      // Trigger manual sync
-      provider.syncNow();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Syncing with partner...'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    } else {
-      // Try to reconnect
-      provider.reconnect();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Reconnecting to partner...'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
   }
 }
