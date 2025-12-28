@@ -6,7 +6,6 @@
 ### A Little Story
 
 Sunita and Ravi got married three years ago.
-
 Every day follows the same pattern. Ravi goes to work. Sunita manages the home. They eat dinner together. They sleep. Repeat.
 
 One day, Sunita's friend asked her: *"Are you happy?"*

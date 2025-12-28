@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../config/app_colors.dart';
 
-import '../../../shared/widgets/pin_input_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../core/services/data_export_service.dart';
-import '../../../data/repositories/user_repository.dart';
+import '../../../config/app_colors.dart';
 import '../../../core/database/database_service.dart';
+import '../../../core/services/data_export_service.dart';
+import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/pin_input_widget.dart';
 
 /// Settings screen - app configuration and data management
 class SettingsScreen extends StatefulWidget {
@@ -17,7 +16,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final DataExportService _exportService = DataExportService();
-  final UserRepository _userRepo = UserRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +33,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               border: Border.all(color: const Color(0xFFE57373), width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: Color(0xFFE57373), size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -60,9 +59,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: 'Manage device pairing and sync',
             onTap: () => Navigator.of(context).pushNamed('/partner-connection'),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Data Management Section
           _buildSectionHeader('Data Management'),
           const SizedBox(height: 12),
@@ -79,9 +78,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: 'Restore from a backup file',
             onTap: _showImportDialog,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Privacy Section
           _buildSectionHeader('Privacy'),
           const SizedBox(height: 12),
@@ -92,9 +91,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: _showDeleteDialog,
             isDestructive: true,
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // About Section
           _buildSectionHeader('About'),
           const SizedBox(height: 12),
@@ -146,13 +145,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: (isDestructive ? const Color(0xFFFF5252) : const Color(0xFFE57373))
+                color: (isDestructive
+                        ? const Color(0xFFFF5252)
+                        : const Color(0xFFE57373))
                     .withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: isDestructive ? const Color(0xFFFF5252) : const Color(0xFFE57373),
+                color: isDestructive
+                    ? const Color(0xFFFF5252)
+                    : const Color(0xFFE57373),
                 size: 22,
               ),
             ),
@@ -218,33 +221,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // ========== Export Dialog ==========
-  
+
   void _showExportDialog() {
     showDialog(
       context: context,
       builder: (dialogContext) => _PINVerificationDialog(
         title: 'Export Data',
         message: 'Enter your PIN to verify and export your data',
-        hint: 'Remember this PIN! You will need it to import this backup on any device.',
+        hint:
+            'Remember this PIN! You will need it to import this backup on any device.',
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
-          
+
           if (!mounted) return;
           LoadingOverlay.show(context, message: 'Exporting data...');
-          
+
           try {
             final exportPath = await _exportService.exportDatabase(pin);
-            
+
             if (!mounted) return;
             LoadingOverlay.hide(context);
-            
+
             if (exportPath != null) {
               _showExportSuccessDialog(exportPath);
             }
           } catch (e) {
             if (!mounted) return;
             LoadingOverlay.hide(context);
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Export failed: ${e.toString()}')),
             );
@@ -292,13 +296,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // ========== Import Dialog ==========
-  
+
   void _showImportDialog() async {
     final filePath = await _exportService.pickImportFile();
-    
+
     if (filePath == null) return;
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) => _PINVerificationDialog(
@@ -307,9 +311,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         hint: 'This is the PIN from the device where you created the backup.',
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
-          
+
           if (!mounted) return;
-          
+
           // Show confirmation dialog before proceeding
           _showImportConfirmDialog(filePath, pin);
         },
@@ -321,11 +325,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.warning_amber_rounded, color: AppColors.error),
-            const SizedBox(width: 12),
-            const Text('Confirm Import'),
+            SizedBox(width: 12),
+            Text('Confirm Import'),
           ],
         ),
         content: const Text(
@@ -346,21 +350,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             onPressed: () async {
               Navigator.pop(context);
-              
+
               if (!mounted) return;
               LoadingOverlay.show(context, message: 'Importing data...');
-              
+
               try {
                 await _exportService.importDatabase(filePath, pin);
-                
+
                 if (!mounted) return;
                 LoadingOverlay.hide(context);
-                
+
                 _showImportSuccessDialog();
               } catch (e) {
                 if (!mounted) return;
                 LoadingOverlay.hide(context);
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Import failed: ${e.toString()}')),
                 );
@@ -397,7 +401,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // ========== Delete Dialog ==========
-  
+
   void _showDeleteDialog() {
     showDialog(
       context: context,
@@ -438,16 +442,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         message: 'Enter your PIN to confirm deletion',
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
-          
+
           if (!mounted) return;
           LoadingOverlay.show(context, message: 'Deleting data...');
-          
+
           try {
             await DatabaseService.instance.deleteDatabase();
-            
+
             if (!mounted) return;
             LoadingOverlay.hide(context);
-            
+
             // Navigate to splash (restart flow)
             Navigator.of(context).pushNamedAndRemoveUntil(
               '/',
@@ -456,7 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           } catch (e) {
             if (!mounted) return;
             LoadingOverlay.hide(context);
-            
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Delete failed: ${e.toString()}')),
             );
@@ -472,7 +476,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 class _PINVerificationDialog extends StatefulWidget {
   final String title;
   final String message;
-  final String? hint;  // Optional hint message
+  final String? hint; // Optional hint message
   final Function(String pin) onConfirm;
 
   const _PINVerificationDialog({
@@ -519,12 +523,13 @@ class _PINVerificationDialogState extends State<_PINVerificationDialog> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, size: 16, color: AppColors.primary),
+                  const Icon(Icons.info_outline,
+                      size: 16, color: AppColors.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       widget.hint!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),

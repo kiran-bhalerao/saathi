@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../config/app_colors.dart';
 
 /// Chat input widget with send button
 class ChatInput extends StatefulWidget {
   final Function(String) onSendMessage;
-  final TextEditingController? textController;  // Optional external controller
+  final TextEditingController? textController; // Optional external controller
   final VoidCallback? onShareSection;
 
   const ChatInput({
@@ -52,13 +51,13 @@ class _ChatInputState extends State<ChatInput> {
   void insertText(String text) {
     final currentText = _controller.text;
     final selection = _controller.selection;
-    
+
     final newText = currentText.replaceRange(
       selection.start,
       selection.end,
       text,
     );
-    
+
     _controller.text = newText;
     _controller.selection = TextSelection.collapsed(
       offset: selection.start + text.length,
@@ -84,7 +83,8 @@ class _ChatInputState extends State<ChatInput> {
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               style: const TextStyle(
                 fontSize: 15,
@@ -95,9 +95,9 @@ class _ChatInputState extends State<ChatInput> {
               onSubmitted: (_) => _sendMessage(),
             ),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // Send button
           Material(
             color: const Color(0xFFE57373),

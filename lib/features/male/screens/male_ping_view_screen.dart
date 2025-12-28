@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
 import '../../../config/app_text_styles.dart';
-
-import '../../../data/models/sync_models.dart';
 import '../../../data/models/chapter_model.dart';
-import 'dart:convert';
+import '../../../data/models/sync_models.dart';
 
 /// Male ping viewer - view specific pinged section content
 class MalePingViewScreen extends StatelessWidget {
@@ -26,7 +27,6 @@ class MalePingViewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chapter ${ping.chapterNumber}'),
-
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -43,7 +43,7 @@ class MalePingViewScreen extends StatelessWidget {
                   color: AppColors.primary.withOpacity(0.3),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
@@ -51,7 +51,7 @@ class MalePingViewScreen extends StatelessWidget {
                     size: 16,
                     color: AppColors.primary,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     'Shared by your partner',
                     style: TextStyle(
@@ -64,19 +64,19 @@ class MalePingViewScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Section title
             Text(
               ping.sectionTitle,
               style: AppTextStyles.sectionHeading,
             ),
             const SizedBox(height: 16),
-            
+
             // Render content blocks
             ...blocks.map((block) => _buildContentBlock(context, block)),
-            
+
             const SizedBox(height: 48),
-            
+
             // Info message
             Container(
               padding: const EdgeInsets.all(20),
@@ -89,7 +89,7 @@ class MalePingViewScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, color: AppColors.primary),
+                      const Icon(Icons.info_outline, color: AppColors.primary),
                       const SizedBox(width: 8),
                       Text(
                         'Why was this shared?',
@@ -125,7 +125,7 @@ class MalePingViewScreen extends StatelessWidget {
         ),
       );
     }
-    
+
     if (block is ListBlock) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
@@ -135,7 +135,7 @@ class MalePingViewScreen extends StatelessWidget {
             final index = entry.key;
             final item = entry.value;
             final prefix = block.ordered ? '${index + 1}. ' : '• ';
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 8, left: 16),
               child: Row(
@@ -152,7 +152,7 @@ class MalePingViewScreen extends StatelessWidget {
         ),
       );
     }
-    
+
     if (block is CodeBlock) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
@@ -169,7 +169,7 @@ class MalePingViewScreen extends StatelessWidget {
         ),
       );
     }
-    
+
     if (block is HeadingBlock) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 12, top: 8),
@@ -181,7 +181,7 @@ class MalePingViewScreen extends StatelessWidget {
         ),
       );
     }
-    
+
     if (block is StoryBlock) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -198,7 +198,7 @@ class MalePingViewScreen extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              const Icon(
                 Icons.format_quote,
                 color: AppColors.primary,
                 size: 24,
@@ -218,7 +218,7 @@ class MalePingViewScreen extends StatelessWidget {
         ),
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 }

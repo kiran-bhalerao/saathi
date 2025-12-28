@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import '../../config/app_colors.dart';
 import '../../core/security/pin_manager.dart';
 import '../../shared/widgets/pin_input_widget.dart';
@@ -14,7 +14,8 @@ class AppLockWrapper extends StatefulWidget {
   State<AppLockWrapper> createState() => _AppLockWrapperState();
 }
 
-class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObserver {
+class _AppLockWrapperState extends State<AppLockWrapper>
+    with WidgetsBindingObserver {
   final PINManager _pinManager = PINManager();
   bool _isLocked = false;
   bool _isPinSet = false;
@@ -56,11 +57,11 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
       setState(() {
         _isPinSet = hasPin;
         _isLoading = false;
-        
+
         // Only lock on resume, not on initial launch
         // This allows users to complete onboarding first
         if (hasPin && !isLaunch) {
-           _isLocked = true;
+          _isLocked = true;
         }
       });
     } catch (e) {
@@ -80,7 +81,7 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
     return Stack(
       children: [
         widget.child,
-        
+
         // Lock Overlay with its own Overlay support for TextFields
         if (_isLocked && _isPinSet)
           Positioned.fill(
@@ -192,16 +193,13 @@ class _LockScreenState extends State<_LockScreen> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    
                     PINInputWidget(
                       controller: _pinInputController,
                       length: 4,
                       onCompleted: _onPinEntered,
                       errorMessage: _errorMessage,
                     ),
-                    
                     const SizedBox(height: 32),
-                    
                     if (_isValidating)
                       const CircularProgressIndicator(color: AppColors.primary),
                   ],

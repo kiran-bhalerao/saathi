@@ -1,13 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import '../../../config/app_colors.dart';
-import '../../../config/constants.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/content_parser.dart';
 import '../../../data/repositories/discussion_repository.dart';
-import '../../../providers/bluetooth_provider.dart';
-import '../../../data/models/bluetooth_enums.dart';
 import '../../female/screens/chapter_discussion_screen.dart';
 import '../../shared/widgets/bluetooth_status_icon.dart';
 
@@ -22,7 +20,7 @@ class MaleHomeScreen extends StatefulWidget {
 class _MaleHomeScreenState extends State<MaleHomeScreen> {
   final ContentParser _contentParser = ContentParser();
   final DiscussionRepository _discussionRepo = DiscussionRepository();
-  
+
   List<Map<String, dynamic>> _activeChapters = [];
   bool _isLoading = true;
   Timer? _refreshTimer;
@@ -32,7 +30,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
   void initState() {
     super.initState();
     _loadActiveChapters();
-    
+
     // Periodic refresh every 3 seconds to detect new messages
     _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       _refreshActiveChapters();
@@ -54,10 +52,10 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
   /// Silent background refresh
   Future<void> _refreshActiveChapters() async {
     if (!mounted) return;
-    
+
     final oldTotal = _lastTotalMessages;
     await _fetchChapters();
-    
+
     // Only setState if total message count changed
     if (_lastTotalMessages != oldTotal) {
       if (mounted) setState(() {});
@@ -67,7 +65,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
   Future<void> _fetchChapters() async {
     // Get chapters with activity
     final chapterNumbers = await _discussionRepo.getChaptersWithActivity();
-    
+
     // Load full chapter data for each
     final chapters = <Map<String, dynamic>>[];
     int totalMsgs = 0;
@@ -75,27 +73,24 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
     for (final item in chapterNumbers) {
       final chapterNum = item['chapter_number'] as int;
       final chapter = await _contentParser.parseChapter(chapterNum);
-      
-      if (chapter != null) {
-        // Get thread to check for activity count
-        final thread = await _discussionRepo.getChapterThread(chapterNum);
-        totalMsgs += thread.length;
-        
-        chapters.add({
-          'chapter': chapter,
-          'messageCount': thread.length,
-          'lastActivity': thread.isNotEmpty 
+
+      // Get thread to check for activity count
+      final thread = await _discussionRepo.getChapterThread(chapterNum);
+      totalMsgs += thread.length;
+
+      chapters.add({
+        'chapter': chapter,
+        'messageCount': thread.length,
+        'lastActivity': thread.isNotEmpty
             ? thread.last['timestamp'] as DateTime
             : DateTime.now(),
-        });
-      }
+      });
     }
-    
+
     // Sort by last activity (most recent first)
-    chapters.sort((a, b) => 
-      (b['lastActivity'] as DateTime).compareTo(a['lastActivity'] as DateTime)
-    );
-    
+    chapters.sort((a, b) => (b['lastActivity'] as DateTime)
+        .compareTo(a['lastActivity'] as DateTime));
+
     _activeChapters = chapters;
     _lastTotalMessages = totalMsgs;
   }
@@ -118,7 +113,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
               actions: [
                 // Bluetooth connection icon (New Widget)
                 const BluetoothStatusIcon(),
-                
+
                 const SizedBox(width: 2),
                 // Settings icon
                 IconButton(
@@ -128,7 +123,8 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.settings_outlined, color: Colors.white, size: 20),
+                    child: const Icon(Icons.settings_outlined,
+                        color: Colors.white, size: 20),
                   ),
                   onPressed: () => Navigator.of(context).pushNamed('/settings'),
                 ),
@@ -208,7 +204,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                 ),
               ),
             ),
-            
+
             // Activity summary card
             SliverToBoxAdapter(
               child: Padding(
@@ -216,7 +212,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                 child: _buildActivityCard(),
               ),
             ),
-            
+
             // Chapter list header
             if (_activeChapters.isNotEmpty)
               SliverToBoxAdapter(
@@ -245,11 +241,12 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                   ),
                 ),
               ),
-            
+
             // Chapter list OR empty state
             if (_isLoading)
-              SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+              const SliverFillRemaining(
+                child: Center(
+                    child: CircularProgressIndicator(color: AppColors.primary)),
               )
             else if (_activeChapters.isEmpty)
               SliverFillRemaining(
@@ -257,9 +254,10 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey[300]),
+                      Icon(Icons.chat_bubble_outline,
+                          size: 80, color: Colors.grey[300]),
                       const SizedBox(height: 24),
-                      Text(
+                      const Text(
                         'No discussions yet',
                         style: TextStyle(
                           fontSize: 18,
@@ -268,8 +266,8 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 48),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 48),
                         child: Text(
                           'Your partner hasn\'t shared any content',
                           textAlign: TextAlign.center,
@@ -292,7 +290,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                       final item = _activeChapters[index];
                       final chapter = item['chapter'] as Chapter;
                       final count = item['messageCount'] as int;
-                      
+
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _ChapterCard(
@@ -302,7 +300,8 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => ChapterDiscussionScreen(chapter: chapter),
+                                builder: (_) =>
+                                    ChapterDiscussionScreen(chapter: chapter),
                               ),
                             );
                             // Reload after returning
@@ -315,7 +314,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                   ),
                 ),
               ),
-            
+
             // Bottom spacing
             const SliverToBoxAdapter(
               child: SizedBox(height: 32),
@@ -331,7 +330,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
       0,
       (sum, item) => sum + (item['messageCount'] as int),
     );
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -365,7 +364,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Your Discussions',
                   style: TextStyle(
                     fontSize: 16,
@@ -378,7 +377,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                   totalMessages == 0
                       ? 'No new updates'
                       : '$totalMessages ${totalMessages == 1 ? 'message' : 'messages'} in ${_activeChapters.length} ${_activeChapters.length == 1 ? 'chapter' : 'chapters'}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textLight,
                     fontWeight: FontWeight.w500,
@@ -459,7 +458,7 @@ class _ChapterCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Chapter info
               Expanded(
                 child: Column(
@@ -478,11 +477,12 @@ class _ChapterCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.message_rounded, size: 14, color: Colors.grey[500]),
+                        Icon(Icons.message_rounded,
+                            size: 14, color: Colors.grey[500]),
                         const SizedBox(width: 4),
                         Text(
                           '$messageCount ${messageCount == 1 ? 'item' : 'items'}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textLight,
                             fontWeight: FontWeight.w500,
@@ -493,7 +493,7 @@ class _ChapterCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Arrow
               Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
             ],

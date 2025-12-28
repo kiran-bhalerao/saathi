@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 /// Content block types for chapter sections
 abstract class ContentBlock {
   const ContentBlock(); // Add default constructor
-  
+
   String get type;
   Map<String, dynamic> toJson();
-  
+
   factory ContentBlock.fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String;
     switch (type) {

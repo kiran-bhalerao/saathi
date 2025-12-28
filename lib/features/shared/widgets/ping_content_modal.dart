@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
 
 /// Modal bottom sheet for displaying full ping content
@@ -6,13 +7,13 @@ import '../../../config/app_colors.dart';
 class PingContentModal extends StatelessWidget {
   final String sectionTitle;
   final String content;
-  
+
   const PingContentModal({
     super.key,
     required this.sectionTitle,
     required this.content,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,7 +34,7 @@ class PingContentModal extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Text(
                     'Shared Content',
                     style: TextStyle(
@@ -44,13 +45,13 @@ class PingContentModal extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, color: AppColors.textSecondary),
+                  icon: const Icon(Icons.close, color: AppColors.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
           ),
-          
+
           // Content (scrollable)
           Expanded(
             child: SingleChildScrollView(
@@ -61,7 +62,7 @@ class PingContentModal extends StatelessWidget {
                   // Section title
                   Text(
                     sectionTitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -69,7 +70,7 @@ class PingContentModal extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Divider
                   Container(
                     height: 2,
@@ -80,11 +81,11 @@ class PingContentModal extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Content
                   Text(
                     content,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       height: 1.8,
                       color: AppColors.textPrimary,

@@ -1,17 +1,19 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/bluetooth_provider.dart';
+
 import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/sync_models.dart';
 import '../../../data/repositories/discussion_repository.dart';
 import '../../../data/repositories/user_repository.dart';
-import '../widgets/message_bubble.dart';
-import '../widgets/vocabulary_chip_bar.dart';
-import '../widgets/chat_input.dart';
+import '../../../providers/bluetooth_provider.dart';
 import '../../shared/widgets/ping_card.dart';
 import '../../shared/widgets/ping_content_modal.dart';
+import '../widgets/chat_input.dart';
+import '../widgets/message_bubble.dart';
+import '../widgets/vocabulary_chip_bar.dart';
 
 /// Chapter Discussion Screen - per-chapter chat
 class ChapterDiscussionScreen extends StatefulWidget {
@@ -23,7 +25,8 @@ class ChapterDiscussionScreen extends StatefulWidget {
   });
 
   @override
-  State<ChapterDiscussionScreen> createState() => _ChapterDiscussionScreenState();
+  State<ChapterDiscussionScreen> createState() =>
+      _ChapterDiscussionScreenState();
 }
 
 class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
@@ -31,8 +34,8 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   final UserRepository _userRepo = UserRepository();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textController = TextEditingController();
-  
-  List<Map<String, dynamic>> _thread = [];  // Merged messages + pings
+
+  List<Map<String, dynamic>> _thread = []; // Merged messages + pings
   List<String> _vocabularyTerms = [];
   bool _isLoading = true;
   String _currentUserType = 'female';
@@ -45,7 +48,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
     _loadData();
     _prepareVocabulary();
     _loadUserType();
-    
+
     // Periodic refresh to check for new messages from partner
     _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       _refreshThread();
@@ -61,13 +64,13 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    
+
     // Load merged thread (messages + pings chronologically)
     _thread = await _discussionRepo.getChapterThread(widget.chapter.number);
     _lastThreadLength = _thread.length;
-    
+
     setState(() => _isLoading = false);
-    
+
     // Scroll to bottom after loading
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -79,16 +82,17 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   /// Silent background refresh to check for new messages
   Future<void> _refreshThread() async {
     if (!mounted) return;
-    
-    final newThread = await _discussionRepo.getChapterThread(widget.chapter.number);
-    
+
+    final newThread =
+        await _discussionRepo.getChapterThread(widget.chapter.number);
+
     // Only update if thread has new items
     if (newThread.length != _lastThreadLength) {
       setState(() {
         _thread = newThread;
         _lastThreadLength = newThread.length;
       });
-      
+
       // Auto-scroll to bottom if new messages arrived
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
@@ -104,23 +108,21 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
 
   void _prepareVocabulary() {
     // Extract vocabulary terms from chapter
-    _vocabularyTerms = widget.chapter.vocabulary
-        .map((v) => v.term)
-        .toList();
-    
+    _vocabularyTerms = widget.chapter.vocabulary.map((v) => v.term).toList();
+
     // Add some common terms
     _vocabularyTerms.addAll(['Consent', 'Pleasure', 'Comfort', 'Intimacy']);
   }
 
   Future<void> _sendMessage(String messageText) async {
     if (messageText.trim().isEmpty) return;
-    
+
     await _discussionRepo.sendMessage(
       chapterNumber: widget.chapter.number,
       sender: _currentUserType,
       messageText: messageText,
     );
-    
+
     // Auto-sync message immediately if connected
     if (mounted) {
       final provider = Provider.of<BluetoothProvider>(context, listen: false);
@@ -128,7 +130,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
         provider.syncNow();
       }
     }
-    
+
     _textController.clear();
     await _loadData();
   }
@@ -146,7 +148,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
       // No definition found, just send the term in bold
       message = '**$term**';
     }
-    
+
     _sendMessage(message);
   }
 
@@ -174,13 +176,14 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
               border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.arrow_back, color: AppColors.primary, size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.chapter.title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -199,34 +202,39 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
           // Thread (messages + pinged sections)
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator(color: AppColors.primary))
+                ? const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary))
                 : _thread.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey[300]),
+                            Icon(Icons.chat_bubble_outline,
+                                size: 64, color: Colors.grey[300]),
                             const SizedBox(height: 16),
-                            Text(
+                            const Text(
                               'No messages yet',
-                              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                              style: TextStyle(
+                                  fontSize: 16, color: AppColors.textSecondary),
                             ),
                             const SizedBox(height: 8),
-                            Text(
+                            const Text(
                               'Start a conversation about this chapter',
-                              style: TextStyle(fontSize: 14, color: AppColors.textLight),
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColors.textLight),
                             ),
                           ],
                         ),
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.only(top: 12, bottom: 12),  // Only top/bottom padding
+                        padding: const EdgeInsets.only(
+                            top: 12, bottom: 12), // Only top/bottom padding
                         itemCount: _thread.length,
                         itemBuilder: (context, index) {
                           final item = _thread[index];
                           final type = item['type'] as String;
-                          
+
                           if (type == 'message') {
                             final message = item['data'] as DiscussionMessage;
                             return MessageBubble(
@@ -242,9 +250,9 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                               // If male, he is the receiver (Left aligned)
                               isCurrentUser: _currentUserType == 'female',
                               // Add tap handler for male to view full content
-                              onTap: _currentUserType == 'male' 
-                                ? () => _showPingContent(ping)
-                                : null,
+                              onTap: _currentUserType == 'male'
+                                  ? () => _showPingContent(ping)
+                                  : null,
                             );
                           }
                         },
@@ -273,20 +281,5 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
         content: ping['section_content_json'] as String,
       ),
     );
-  }
-
-  String _formatTimestamp(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-    
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'Just now';
-    }
   }
 }

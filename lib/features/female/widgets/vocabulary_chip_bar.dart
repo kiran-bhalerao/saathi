@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
 
 /// Vocabulary chip bar for quick text insertion
@@ -37,14 +38,14 @@ class VocabularyChipBar extends StatelessWidget {
             child: ActionChip(
               label: Text(
                 terms[index],
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               backgroundColor: Colors.white,
-              side: BorderSide(color: AppColors.primary, width: 1),
+              side: const BorderSide(color: AppColors.primary, width: 1),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               onPressed: () => onTermSelected(terms[index]),
             ),

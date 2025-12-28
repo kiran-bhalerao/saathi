@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
 
 /// Shared widget for displaying pinged section cards in discussions
@@ -6,25 +7,25 @@ import '../../../config/app_colors.dart';
 class PingCard extends StatelessWidget {
   final Map<String, dynamic> ping;
   final VoidCallback? onTap;
-  final bool isCurrentUser;  // Determines alignment (sender vs receiver)
-  
+  final bool isCurrentUser; // Determines alignment (sender vs receiver)
+
   const PingCard({
     super.key,
     required this.ping,
     required this.isCurrentUser,
     this.onTap,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final content = _decodeContent(ping['section_content_json'] as String);
     final sectionTitle = ping['section_title'] as String? ?? 'Shared Quote';
-    
+
     // Detect if this is a vocabulary term
-    final isVocabulary = sectionTitle.toLowerCase() != 'shared quote' && 
-                         !sectionTitle.toLowerCase().contains('quote');
-    
+    final isVocabulary = sectionTitle.toLowerCase() != 'shared quote' &&
+        !sectionTitle.toLowerCase().contains('quote');
+
     final card = Container(
       margin: EdgeInsets.only(
         left: isCurrentUser ? 0 : 12,
@@ -36,8 +37,12 @@ class PingCard extends StatelessWidget {
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(16),
           topRight: const Radius.circular(16),
-          bottomLeft: isCurrentUser ? const Radius.circular(16) : const Radius.circular(4),
-          bottomRight: isCurrentUser ? const Radius.circular(4) : const Radius.circular(16),
+          bottomLeft: isCurrentUser
+              ? const Radius.circular(16)
+              : const Radius.circular(4),
+          bottomRight: isCurrentUser
+              ? const Radius.circular(4)
+              : const Radius.circular(16),
         ),
         boxShadow: [
           BoxShadow(
@@ -46,7 +51,8 @@ class PingCard extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: AppColors.primary.withOpacity(0.12), width: 1),
+        border:
+            Border.all(color: AppColors.primary.withOpacity(0.12), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +67,9 @@ class PingCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isVocabulary ? Icons.auto_stories : Icons.format_quote_rounded,
+                  isVocabulary
+                      ? Icons.auto_stories
+                      : Icons.format_quote_rounded,
                   size: 14,
                   color: AppColors.primary,
                 ),
@@ -69,7 +77,7 @@ class PingCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 isVocabulary ? 'Vocabulary' : 'Shared Quote',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primary,
@@ -80,7 +88,7 @@ class PingCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Content with accent bar
           IntrinsicHeight(
             child: Row(
@@ -115,7 +123,9 @@ class PingCard extends StatelessWidget {
                           fontSize: 14,
                           height: 1.4,
                           // Vocabulary definition is regular, Quotes are italic
-                          fontStyle: isVocabulary ? FontStyle.normal : FontStyle.italic, 
+                          fontStyle: isVocabulary
+                              ? FontStyle.normal
+                              : FontStyle.italic,
                           color: const Color(0xFF4A4A4A),
                         ),
                         maxLines: 8,
@@ -127,7 +137,7 @@ class PingCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.bottomRight,
@@ -143,39 +153,39 @@ class PingCard extends StatelessWidget {
         ],
       ),
     );
-    
+
     // Align based on sender (matching MessageBubble behavior)
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: isCurrentUser 
-            ? MainAxisAlignment.end    // Right for current user (sender)
-            : MainAxisAlignment.start,  // Left for partner (receiver)
+        mainAxisAlignment: isCurrentUser
+            ? MainAxisAlignment.end // Right for current user (sender)
+            : MainAxisAlignment.start, // Left for partner (receiver)
         children: [
           SizedBox(
-             // Slightly wider constraint for better readability
+            // Slightly wider constraint for better readability
             width: screenWidth * 0.75,
-            child: onTap != null 
-              ? GestureDetector(onTap: onTap, child: card)
-              : card,
+            child: onTap != null
+                ? GestureDetector(onTap: onTap, child: card)
+                : card,
           ),
         ],
       ),
     );
   }
-  
+
   /// Decode JSON-escaped content to remove escape characters
   String _decodeContent(String jsonString) {
     return jsonString
-        .replaceAll(r'\"', '"')      // Replace \" with "
-        .replaceAll(r"\'", "'")      // Replace \' with '
-        .replaceAll(r'\\', '\\');    // Replace \\ with \
+        .replaceAll(r'\"', '"') // Replace \" with "
+        .replaceAll(r"\'", "'") // Replace \' with '
+        .replaceAll(r'\\', '\\'); // Replace \\ with \
   }
-  
+
   String _formatTimestamp(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {

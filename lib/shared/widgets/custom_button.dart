@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../config/app_colors.dart';
-import '../../config/app_text_styles.dart';
 
 /// Reusable primary button (follows DRY principle)
 class CustomButton extends StatelessWidget {

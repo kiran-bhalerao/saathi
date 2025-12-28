@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../config/app_colors.dart';
 
-import '../../../data/repositories/content_parser.dart';
+import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
-import '../../../data/repositories/chapter_progress_repository.dart';
 import '../../../data/models/chapter_progress_model.dart';
+import '../../../data/repositories/chapter_progress_repository.dart';
+import '../../../data/repositories/content_parser.dart';
 import 'chapter_discussion_screen.dart';
 
 /// Chapter detail screen - shows chapter info before reading
@@ -22,7 +22,7 @@ class ChapterDetailScreen extends StatefulWidget {
 
 class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
   final ContentParser _parser = ContentParser();
-  
+
   Chapter? _chapter;
   bool _isLoading = true;
   String? _errorMessage;
@@ -55,9 +55,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
         backgroundColor: AppColors.background,
         appBar: AppBar(
           backgroundColor: AppColors.primary,
-
         ),
-       body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -74,7 +73,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64, color: AppColors.error),
+                const Icon(Icons.error_outline,
+                    size: 64, color: AppColors.error),
                 const SizedBox(height: 16),
                 Text(
                   'Error loading chapter',
@@ -108,18 +108,21 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
               border: Border.all(color: const Color(0xFFE57373), width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: Color(0xFFE57373), size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.chat_bubble_outline, color: Color(0xFFE57373), size: 22),
+            icon: const Icon(Icons.chat_bubble_outline,
+                color: Color(0xFFE57373), size: 22),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChapterDiscussionScreen(chapter: _chapter!),
+                  builder: (context) =>
+                      ChapterDiscussionScreen(chapter: _chapter!),
                 ),
               );
             },
@@ -139,7 +142,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                   height: 1,
                   color: Colors.grey[200],
                 ),
-                
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(28, 24, 28, 120),
                   child: Column(
@@ -147,7 +150,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                     children: [
                       // Minimal Chapter Badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
                           color: const Color(0xFFE57373).withOpacity(0.08),
                           borderRadius: BorderRadius.circular(20),
@@ -162,9 +166,9 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Big Title
                       Text(
                         chapter.title,
@@ -176,9 +180,9 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                           letterSpacing: -0.5,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 12),
-                      
+
                       // Subtitle
                       Text(
                         chapter.subtitle,
@@ -189,12 +193,13 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      
+
                       const SizedBox(height: 32),
-                      
+
                       // Stats Row with Dividers
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 20),
                         decoration: BoxDecoration(
                           color: Colors.grey[50],
                           borderRadius: BorderRadius.circular(16),
@@ -202,15 +207,20 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _buildStatItem(Icons.schedule, '${chapter.estimatedReadMinutes} min', 'Read Time'),
-                            Container(width: 1, height: 24, color: Colors.grey[300]),
-                            _buildStatItem(Icons.style_outlined, '${chapter.sections.length}', 'Sections'),
+                            _buildStatItem(
+                                Icons.schedule,
+                                '${chapter.estimatedReadMinutes} min',
+                                'Read Time'),
+                            Container(
+                                width: 1, height: 24, color: Colors.grey[300]),
+                            _buildStatItem(Icons.style_outlined,
+                                '${chapter.sections.length}', 'Sections'),
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // Content Title
                       const Text(
                         'What You\'ll Learn',
@@ -220,9 +230,9 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                           color: Color(0xFF2D2D2D),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Sections List (Clean Editorial Style)
                       ListView.separated(
                         shrinkWrap: true,
@@ -235,7 +245,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                         ),
                         itemBuilder: (context, index) {
                           final section = chapter.sections[index];
-                          
+
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Row(
@@ -245,7 +255,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w900,
-                                    color: const Color(0xFFE57373).withOpacity(0.3),
+                                    color: const Color(0xFFE57373)
+                                        .withOpacity(0.3),
                                     fontFamily: 'monospace',
                                     letterSpacing: -1,
                                   ),
@@ -273,7 +284,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
               ],
             ),
           ),
-          
+
           // Gradient Fade at bottom for smooth scroll under
           Positioned(
             left: 0,
@@ -302,8 +313,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary, const Color(0xFFEF5350)],
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, Color(0xFFEF5350)],
                 ),
                 borderRadius: BorderRadius.circular(30), // Stadium shape
                 boxShadow: [
@@ -318,8 +329,9 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                 onPressed: () async {
                   // Mark chapter as in progress
                   final progressRepo = ChapterProgressRepository();
-                  final existingProgress = await progressRepo.getChapterProgress(chapter.number);
-                  
+                  final existingProgress =
+                      await progressRepo.getChapterProgress(chapter.number);
+
                   if (existingProgress == null) {
                     await progressRepo.updateProgress(
                       ChapterProgress(
@@ -337,7 +349,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                       ),
                     );
                   }
-                  
+
                   if (context.mounted) {
                     Navigator.of(context).pushNamed(
                       '/chapter-reader',
@@ -355,7 +367,8 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.menu_book_rounded, color: Colors.white, size: 22),
+                    Icon(Icons.menu_book_rounded,
+                        color: Colors.white, size: 22),
                     SizedBox(width: 12),
                     Text(
                       'Start Reading',

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/bluetooth_provider.dart';
-import '../../../data/models/bluetooth_enums.dart';
+
 import '../../../config/app_colors.dart';
+import '../../../data/models/bluetooth_enums.dart';
+import '../../../providers/bluetooth_provider.dart';
 
 /// Female pairing code screen - shows 4-digit code during onboarding
 class PairingCodeScreen extends StatefulWidget {
@@ -26,10 +27,10 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
     // Wait for the next frame to ensure context is available
     await Future.delayed(Duration.zero);
     if (!mounted) return;
-    
+
     final provider = context.read<BluetoothProvider>();
     final code = await provider.generatePairingCode();
-    
+
     if (mounted) {
       setState(() {
         _pairingCode = code;
@@ -68,7 +69,7 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
           child: Column(
             children: [
               const Spacer(),
-              
+
               // Bluetooth Icon
               Container(
                 padding: const EdgeInsets.all(24),
@@ -82,9 +83,9 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                   color: AppColors.primary,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Title
               const Text(
                 'Share this code with\nyour partner',
@@ -96,9 +97,9 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Pairing Code Display
               _isLoading
                   ? const SizedBox(
@@ -134,7 +135,8 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                _pairingCode != null && _pairingCode!.length > index
+                                _pairingCode != null &&
+                                        _pairingCode!.length > index
                                     ? _pairingCode![index]
                                     : '',
                                 style: const TextStyle(
@@ -149,9 +151,9 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                         }),
                       ),
                     ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Waiting indicator
               Consumer<BluetoothProvider>(
                 builder: (context, provider, child) {
@@ -165,9 +167,9 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                   }
 
                   return provider.pairingStatus == PairingStatus.pairing
-                      ? Column(
+                      ? const Column(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
@@ -175,8 +177,8 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                                 strokeWidth: 2.5,
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            const Text(
+                            SizedBox(height: 12),
+                            Text(
                               'Waiting for partner to connect...',
                               style: TextStyle(
                                 fontSize: 14,
@@ -188,10 +190,10 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                       : const SizedBox.shrink();
                 },
               ),
-              
+
               const Spacer(),
               const Spacer(),
-              
+
               // Skip button
               TextButton(
                 onPressed: _skipPairing,
@@ -210,17 +212,17 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 4),
-              
-              Text(
+
+              const Text(
                 '(You can pair later from Settings)',
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColors.textLight,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
             ],
           ),

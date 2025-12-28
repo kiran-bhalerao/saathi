@@ -1,44 +1,45 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:nearby_connections/nearby_connections.dart';
-import '../bluetooth/bluetooth_protocol.dart';
-import '../bluetooth/sync_processor.dart';
+
+import '../../data/models/sync_result.dart';
+import '../../data/repositories/discussion_repository.dart';
 import '../../data/repositories/pairing_repository.dart';
 import '../../data/repositories/ping_repository.dart';
-import '../../data/repositories/discussion_repository.dart';
-import '../../data/models/sync_result.dart';
-import '../../data/models/pairing_models.dart';
+import '../bluetooth/bluetooth_protocol.dart';
+import '../bluetooth/sync_processor.dart';
 
 /// Core Connection service for device pairing and data synchronization
 /// Uses Google's Nearby Connections API for reliable P2P discovery
 class ConnectionManager {
   // Nearby Connections instance
   final Nearby _nearby = Nearby();
-  
+
   // Strategy for connections (1:1 pairing)
   static const Strategy _strategy = Strategy.P2P_POINT_TO_POINT;
-  
+
   // Service ID for app identification
   static const String _serviceId = 'com.example.saathi';
-  
+
   // Connection state
   String? _connectedEndpointId;
   String? _currentPairingCode;
   bool _isAdvertising = false;
   bool _isDiscovering = false;
-  
+
   // Dependencies for sync
   final PairingRepository _pairingRepo;
   final PingRepository _pingRepo;
   final DiscussionRepository _discussionRepo;
   late final SyncProcessor _syncProcessor;
-  
+
   // Callbacks
   Function(String endpointId)? onConnectionSuccess;
   Function()? onDisconnected;
   Function(Map<String, dynamic> data)? onDataReceived;
-  
+
   ConnectionManager({
     required PairingRepository pairingRepo,
     required PingRepository pingRepo,
@@ -58,13 +59,13 @@ class ConnectionManager {
     try {
       _currentPairingCode = pairingCode;
       _isAdvertising = true;
-      
+
       await _nearby.startAdvertising(
         'Saathi_User', // User display name
         _strategy,
         onConnectionInitiated: (String endpointId, ConnectionInfo info) {
           print('Connection initiated from: ${info.endpointName}');
-          
+
           // Verify pairing code matches
           if (info.endpointName.contains(pairingCode)) {
             print('Pairing code match! Accepting connection.');
@@ -94,7 +95,7 @@ class ConnectionManager {
         },
         serviceId: _serviceId,
       );
-      
+
       print('Started advertising with code: $pairingCode');
     } catch (e) {
       _isAdvertising = false;
@@ -107,13 +108,14 @@ class ConnectionManager {
     try {
       _currentPairingCode = pairingCode;
       _isDiscovering = true;
-      
+
       await _nearby.startDiscovery(
         'Saathi_M_$pairingCode', // Male user name with code
         _strategy,
-        onEndpointFound: (String endpointId, String endpointName, String serviceId) {
+        onEndpointFound:
+            (String endpointId, String endpointName, String serviceId) {
           print('Found endpoint: $endpointName');
-          
+
           // Check if this is a Saathi advertiser
           if (serviceId == _serviceId && endpointName.contains('Saathi')) {
             print('Found partner device! Requesting connection.');
@@ -125,7 +127,7 @@ class ConnectionManager {
         },
         serviceId: _serviceId,
       );
-      
+
       print('Started discovery for code: $pairingCode');
     } catch (e) {
       _isDiscovering = false;
@@ -168,17 +170,17 @@ class ConnectionManager {
   /// Payload received callback
   void _onPayloadReceived(String endpointId, Payload payload) async {
     print('Received payload from: $endpointId');
-    
+
     if (payload.type == PayloadType.BYTES && payload.bytes != null) {
       try {
         final jsonString = utf8.decode(payload.bytes!);
         final Map<String, dynamic> data = jsonDecode(jsonString);
-        
+
         print('Received data: ${data.keys}');
-        
+
         // Notify callback
         onDataReceived?.call(data);
-        
+
         // Process through sync processor
         if (data.containsKey('type') && data.containsKey('payload')) {
           final packet = BluetoothPacket.create(
@@ -186,10 +188,10 @@ class ConnectionManager {
             payload: data['payload'],
             messageId: data['messageId'],
           );
-          
+
           // Process the packet
           await _syncProcessor.processPacket(packet);
-          
+
           // Send ACK back to confirm receipt (unless it's already an ACK)
           if (data['type'] != 'ack') {
             try {
@@ -213,13 +215,15 @@ class ConnectionManager {
   }
 
   /// Payload transfer update callback
-  void _onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+  void _onPayloadTransferUpdate(
+      String endpointId, PayloadTransferUpdate update) {
     if (update.status == PayloadStatus.SUCCESS) {
       print('Payload sent successfully to: $endpointId');
     } else if (update.status == PayloadStatus.FAILURE) {
       print('Payload transfer failed');
     } else if (update.status == PayloadStatus.IN_PROGRESS) {
-      final progress = (update.bytesTransferred / update.totalBytes * 100).toStringAsFixed(1);
+      final progress = (update.bytesTransferred / update.totalBytes * 100)
+          .toStringAsFixed(1);
       print('Transfer progress: $progress%');
     }
   }
@@ -229,11 +233,11 @@ class ConnectionManager {
     if (_connectedEndpointId == null) {
       throw Exception('Not connected to any device');
     }
-    
+
     try {
       final jsonString = jsonEncode(data);
       final bytes = Uint8List.fromList(utf8.encode(jsonString));
-      
+
       await _nearby.sendBytesPayload(_connectedEndpointId!, bytes);
       print('Sent ${bytes.length} bytes to partner');
     } catch (e) {
@@ -254,7 +258,7 @@ class ConnectionManager {
     try {
       // Get pending items from local queue
       final pendingItems = await _pairingRepo.getPendingItems(limit: 20);
-      
+
       // Send each item
       for (final item in pendingItems) {
         try {
@@ -263,7 +267,7 @@ class ConnectionManager {
             'payload': item.payload,
             'messageId': item.id,
           };
-          
+
           await sendData(data);
           await _pairingRepo.markAsSent([item.id]);
           sentCount++;
@@ -272,7 +276,7 @@ class ConnectionManager {
           await _pairingRepo.incrementRetryCount(item.id, e.toString());
         }
       }
-      
+
       // Complete sync log
       await _pairingRepo.completeSyncLog(
         logId,
@@ -308,11 +312,11 @@ class ConnectionManager {
       if (_connectedEndpointId != null) {
         await _nearby.disconnectFromEndpoint(_connectedEndpointId!);
       }
-      
+
       if (_isAdvertising) {
         await _nearby.stopAdvertising();
       }
-      
+
       if (_isDiscovering) {
         await _nearby.stopDiscovery();
       }

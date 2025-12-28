@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
-import '../../../shared/widgets/custom_button.dart';
 
 /// Welcome screen - introduces the app purpose
 class WelcomeScreen extends StatelessWidget {
@@ -8,8 +8,6 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -18,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
-              
+
               // Illustration/Icon
               Container(
                 width: 180,
@@ -27,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: AppColors.primary.withOpacity(0.05),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.favorite_rounded,
                     size: 80,
@@ -35,11 +33,11 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Title
-              Text(
+              const Text(
                 'Welcome to Saathi',
                 style: TextStyle(
                   fontSize: 26,
@@ -49,12 +47,12 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Learn and communicate about intimate health topics in a safe, private, and culturally sensitive way.',
                   style: TextStyle(
@@ -66,11 +64,11 @@ class WelcomeScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const Spacer(flex: 3),
-              
+
               // Privacy message
-              Text(
+              const Text(
                 '100% Private & Offline',
                 style: TextStyle(
                   fontSize: 13,
@@ -79,9 +77,9 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 10),
-              
+
               // Get Started button
               Container(
                 width: double.infinity,
@@ -109,7 +107,7 @@ class WelcomeScreen extends StatelessWidget {
                       Navigator.of(context).pushNamed('/pin-setup');
                     },
                     borderRadius: BorderRadius.circular(16),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         'Get Started',
                         style: TextStyle(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
 
@@ -48,15 +49,15 @@ class _PINInputWidgetState extends State<PINInputWidget> {
   @override
   void initState() {
     super.initState();
-    
+
     // Attach controller
     widget.controller?._attach(() => clear());
-    
+
     for (int i = 0; i < widget.length; i++) {
       _controllers.add(TextEditingController());
       final focusNode = FocusNode();
       _focusNodes.add(focusNode);
-      
+
       // Auto-focus first field on init
       if (i == 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -69,7 +70,7 @@ class _PINInputWidgetState extends State<PINInputWidget> {
   @override
   void dispose() {
     widget.controller?._detach();
-    
+
     for (var controller in _controllers) {
       controller.dispose();
     }
@@ -94,7 +95,7 @@ class _PINInputWidgetState extends State<PINInputWidget> {
         // Last field filled - unfocus and check if complete
         _focusNodes[index].unfocus();
       }
-      
+
       // Check if all fields are now filled
       _checkAndSubmit();
     }
@@ -108,7 +109,8 @@ class _PINInputWidgetState extends State<PINInputWidget> {
   }
 
   void _fillFromPaste(String value) {
-    final digits = value.replaceAll(RegExp(r'\D'), '').substring(0, widget.length);
+    final digits =
+        value.replaceAll(RegExp(r'\D'), '').substring(0, widget.length);
     for (int i = 0; i < digits.length; i++) {
       _controllers[i].text = digits[i];
     }
@@ -140,7 +142,8 @@ class _PINInputWidgetState extends State<PINInputWidget> {
                 width: 64, // Increased size
                 height: 76,
                 child: KeyboardListener(
-                  focusNode: FocusNode(), // Use a separate FocusNode for listener to avoid conflict? No, wrapper needs it. But usually wrapping TextField works.
+                  focusNode:
+                      FocusNode(), // Use a separate FocusNode for listener to avoid conflict? No, wrapper needs it. But usually wrapping TextField works.
                   // Actually, TextField consumes keys?
                   // Providing a new FocusNode() to KeyboardListener works as long as it's part of the focus chain?
                   // Better: Wrap TextField in RawKeyboardListener/KeyboardListener but use the TextField's focus node?
@@ -161,7 +164,8 @@ class _PINInputWidgetState extends State<PINInputWidget> {
                     controller: _controllers[index],
                     focusNode: _focusNodes[index],
                     keyboardType: TextInputType.number,
-                    textInputAction: isLast ? TextInputAction.done : TextInputAction.next,
+                    textInputAction:
+                        isLast ? TextInputAction.done : TextInputAction.next,
                     textAlign: TextAlign.center,
                     textAlignVertical: TextAlignVertical.center,
                     cursorColor: AppColors.primary,
@@ -213,7 +217,7 @@ class _PINInputWidgetState extends State<PINInputWidget> {
           const SizedBox(height: 16),
           Text(
             widget.errorMessage!,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.error,
               fontSize: 14,
             ),

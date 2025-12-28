@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../config/app_colors.dart';
+
 import '../../../data/models/sync_models.dart';
 
 /// Message bubble widget for chat display
@@ -16,15 +16,16 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Detect if this is a vocabulary term (format: **Term**\nDefinition)
-    final isVocabulary = message.messageText.contains('**') && 
-                         message.messageText.contains('\n');
-    
+    final isVocabulary = message.messageText.contains('**') &&
+        message.messageText.contains('\n');
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
-        mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           // Use SizedBox to force specific width
           SizedBox(
@@ -38,7 +39,7 @@ class MessageBubble extends StatelessWidget {
               decoration: BoxDecoration(
                 // Use gradient for current user (sender), solid color for partner
                 color: isCurrentUser ? null : Colors.white,
-                gradient: isCurrentUser 
+                gradient: isCurrentUser
                     ? const LinearGradient(
                         colors: [Color(0xFFE57373), Color(0xFFEF5350)],
                         begin: Alignment.topLeft,
@@ -55,8 +56,12 @@ class MessageBubble extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(20),
                   topRight: const Radius.circular(20),
-                  bottomLeft: isCurrentUser ? const Radius.circular(20) : const Radius.circular(4),
-                  bottomRight: isCurrentUser ? const Radius.circular(4) : const Radius.circular(20),
+                  bottomLeft: isCurrentUser
+                      ? const Radius.circular(20)
+                      : const Radius.circular(4),
+                  bottomRight: isCurrentUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(20),
                 ),
               ),
               child: Column(
@@ -65,7 +70,7 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   _buildMessageText(),
                   const SizedBox(height: 4),
-                  
+
                   // Timestamp row - different layout for vocabulary
                   if (isVocabulary)
                     Row(
@@ -75,14 +80,18 @@ class MessageBubble extends StatelessWidget {
                           'Vocabulary',
                           style: TextStyle(
                             fontSize: 11,
-                            color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                            color: isCurrentUser
+                                ? Colors.white70
+                                : Colors.grey[600],
                           ),
                         ),
                         Text(
                           _formatTime(message.sentAt),
                           style: TextStyle(
                             fontSize: 11,
-                            color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                            color: isCurrentUser
+                                ? Colors.white70
+                                : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -92,7 +101,8 @@ class MessageBubble extends StatelessWidget {
                       _formatTime(message.sentAt),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                        color:
+                            isCurrentUser ? Colors.white70 : Colors.grey[600],
                       ),
                     ),
                 ],
@@ -106,13 +116,13 @@ class MessageBubble extends StatelessWidget {
 
   Widget _buildMessageText() {
     final text = message.messageText;
-    
+
     // Check if message has bold markdown (**text**)
     if (text.contains('**')) {
       final parts = <TextSpan>[];
       final regex = RegExp(r'\*\*(.*?)\*\*');
       int lastIndex = 0;
-      
+
       for (final match in regex.allMatches(text)) {
         // Add text before match
         if (match.start > lastIndex) {
@@ -120,7 +130,7 @@ class MessageBubble extends StatelessWidget {
             text: text.substring(lastIndex, match.start),
           ));
         }
-        
+
         // Add bold text
         parts.add(TextSpan(
           text: match.group(1),
@@ -129,17 +139,17 @@ class MessageBubble extends StatelessWidget {
             fontSize: 16,
           ),
         ));
-        
+
         lastIndex = match.end;
       }
-      
+
       // Add remaining text
       if (lastIndex < text.length) {
         parts.add(TextSpan(
           text: text.substring(lastIndex),
         ));
       }
-      
+
       return RichText(
         text: TextSpan(
           style: TextStyle(

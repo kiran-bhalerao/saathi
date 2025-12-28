@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../../config/app_colors.dart';
-import '../../../shared/widgets/custom_button.dart';
-import '../../../data/repositories/user_repository.dart';
-import '../../../data/models/user_model.dart';
 import '../../../core/security/pin_manager.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/repositories/user_repository.dart';
+import '../../../shared/widgets/custom_button.dart';
 
 /// Gender selection screen - choose between Female and Male user type
 class GenderSelectionScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
 
   Future<void> _continue() async {
     if (_selectedGender == null) return;
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -34,18 +35,18 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       // Save user profile to database
       final userRepo = UserRepository();
       final pinCreds = await PINManager().getPINCredentials();
-      
+
       final user = UserModel(
         userType: _selectedGender!,
         pinHash: pinCreds['hash']!,
         pinSalt: pinCreds['salt']!,
         createdAt: DateTime.now(),
       );
-      
+
       await userRepo.createUser(user);
-      
+
       if (!mounted) return;
-      
+
       // Navigate to pairing screens based on gender
       if (_selectedGender == 'female') {
         // Female: Show pairing code screen (can skip)
@@ -56,11 +57,11 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
-      
+
       setState(() {
         _isLoading = false;
       });
@@ -79,7 +80,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
           child: Column(
             children: [
               const Spacer(),
-              
+
               // Title
               Text(
                 'Who will use this app?',
@@ -90,7 +91,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
-              
+
               // Female option
               _GenderCard(
                 icon: Icons.person,
@@ -100,7 +101,7 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 onTap: () => _selectGender('female'),
               ),
               const SizedBox(height: 16),
-              
+
               // Male option
               _GenderCard(
                 icon: Icons.person_outline,
@@ -109,9 +110,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                 isSelected: _selectedGender == 'male',
                 onTap: () => _selectGender('male'),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Info note
               Container(
                 padding: const EdgeInsets.all(16),
@@ -127,9 +128,9 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Continue button
               CustomButton(
                 text: 'Continue',
@@ -213,7 +214,7 @@ class _GenderCard extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: AppColors.primary,
                 size: 24,

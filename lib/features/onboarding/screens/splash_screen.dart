@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../../config/app_colors.dart';
 import '../../../config/constants.dart';
 import '../../../data/repositories/user_repository.dart';
@@ -22,17 +23,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigateToNext() async {
     // Wait for splash duration
     await Future.delayed(AppConstants.splashDuration);
-    
+
     if (!mounted) return;
-    
+
     // Check if user setup is complete
     final userRepo = UserRepository();
     final userExists = await userRepo.userExists();
-    
+
     if (userExists) {
       // User already set up - get user and navigate to appropriate home
       final user = await userRepo.getUser();
-      
+
       if (user!.isFemale) {
         Navigator.of(context).pushReplacementNamed('/female-home');
       } else {
@@ -56,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: AppColors.pinkGradient,
         ),
         child: Center(
@@ -64,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Disguised icon - wellness/health theme
-              Icon(
+              const Icon(
                 Icons.favorite_rounded,
                 size: 100,
                 color: AppColors.primary,

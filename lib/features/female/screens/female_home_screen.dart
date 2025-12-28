@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import '../../../config/constants.dart';
-import '../../../config/app_colors.dart';
 import '../../../data/models/user_model.dart';
-import '../../../data/repositories/user_repository.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
-import '../../../data/models/bluetooth_enums.dart';
-import '../../../providers/bluetooth_provider.dart';
-import '../widgets/chapter_card.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../shared/widgets/bluetooth_status_icon.dart';
+import '../widgets/chapter_card.dart';
 
 /// Female home screen - chapter list with progress
 class FemaleHomeScreen extends StatefulWidget {
@@ -21,7 +18,7 @@ class FemaleHomeScreen extends StatefulWidget {
 class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   final UserRepository _userRepo = UserRepository();
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
-  
+
   UserModel? _user;
   int _completedChapters = 0;
   bool _isLoading = true;
@@ -37,15 +34,15 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   Future<void> _loadData() async {
     // Skip if already loading to avoid multiple simultaneous calls
     if (_isLoading && _hasLoadedOnce) return;
-    
+
     if (!_hasLoadedOnce) {
       setState(() => _isLoading = true);
     }
-    
+
     try {
       final user = await _userRepo.getUser();
       final completedCount = await _progressRepo.getCompletedCount();
-      
+
       if (mounted) {
         setState(() {
           _user = user;
@@ -89,7 +86,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
               actions: [
                 // Bluetooth connection icon (New Widget)
                 const BluetoothStatusIcon(),
-                
+
                 const SizedBox(width: 2),
                 // Settings icon
                 IconButton(
@@ -99,7 +96,8 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                       color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.settings_outlined, color: Colors.white, size: 20),
+                    child: const Icon(Icons.settings_outlined,
+                        color: Colors.white, size: 20),
                   ),
                   onPressed: () => Navigator.of(context).pushNamed('/settings'),
                 )
@@ -178,7 +176,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                 ),
               ),
             ),
-            
+
             // Progress card
             SliverToBoxAdapter(
               child: Padding(
@@ -186,7 +184,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                 child: _buildProgressCard(),
               ),
             ),
-            
+
             // Chapter list header
             SliverToBoxAdapter(
               child: Padding(
@@ -214,19 +212,20 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                 ),
               ),
             ),
-            
+
             // Chapter list
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                   (context, index) {
+                  (context, index) {
                     final chapterNumber = index + 1;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: ChapterCard(
                         // Use ValueKey with rebuild counter to force refresh
-                        key: ValueKey('chapter_$chapterNumber\_$_rebuildCounter'),
+                        key: ValueKey(
+                            'chapter_${chapterNumber}_$_rebuildCounter'),
                         chapterNumber: chapterNumber,
                         onTap: () async {
                           await Navigator.of(context).pushNamed(
@@ -243,7 +242,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                 ),
               ),
             ),
-            
+
             // Bottom spacing
             const SliverToBoxAdapter(
               child: SizedBox(height: 32),
@@ -255,8 +254,10 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   }
 
   Widget _buildProgressCard() {
-    final percentage = _completedChapters == 0 ? 0.0 : _completedChapters / AppConstants.totalChapters;
-    
+    final percentage = _completedChapters == 0
+        ? 0.0
+        : _completedChapters / AppConstants.totalChapters;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -303,7 +304,8 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE57373).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),

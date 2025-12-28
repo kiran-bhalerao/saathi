@@ -1,5 +1,5 @@
-import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../core/database/database_service.dart';
 import '../models/pairing_models.dart';
 
@@ -10,7 +10,7 @@ class PairingRepository {
   /// Create new pairing record with code
   Future<String> createPairing(String code) async {
     final db = await _dbService.database;
-    
+
     final pairing = PartnerPairing(
       pairingCode: code,
       createdAt: DateTime.now(),
@@ -23,7 +23,7 @@ class PairingRepository {
   /// Save pairing code (for Male device joining)
   Future<void> savePairingCode(String code) async {
     final db = await _dbService.database;
-    
+
     // Check if exists first
     final existing = await db.query(
       'partner_pairing',
@@ -43,10 +43,10 @@ class PairingRepository {
   /// Complete pairing after successful connection
   Future<void> completePairing(String code, String deviceId) async {
     final db = await _dbService.database;
-    
+
     // Ensure record exists (upsert logic)
     await savePairingCode(code);
-    
+
     await db.update(
       'partner_pairing',
       {
@@ -63,7 +63,7 @@ class PairingRepository {
   /// Get current pairing
   Future<PartnerPairing?> getPairing() async {
     final db = await _dbService.database;
-    
+
     final results = await db.query(
       'partner_pairing',
       where: 'is_paired = ?',
@@ -85,7 +85,7 @@ class PairingRepository {
   /// Update last connected timestamp
   Future<void> updateLastConnected() async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'partner_pairing',
       {'last_connected_at': DateTime.now().toIso8601String()},
@@ -97,7 +97,7 @@ class PairingRepository {
   /// Unpair device
   Future<void> unpairDevice() async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'partner_pairing',
       {
@@ -114,7 +114,7 @@ class PairingRepository {
   /// Get pending sync count
   Future<int> getPendingSyncCount() async {
     final db = await _dbService.database;
-    
+
     final result = await db.rawQuery(
       'SELECT COUNT(*) as count FROM sync_queue WHERE synced_at IS NULL',
     );
@@ -127,7 +127,7 @@ class PairingRepository {
     required Map<String, dynamic> payload,
   }) async {
     final db = await _dbService.database;
-    
+
     final item = SyncQueueItem(
       id: const Uuid().v4(),
       dataType: type,
@@ -141,7 +141,7 @@ class PairingRepository {
   /// Get unsent sync items
   Future<List<SyncQueueItem>> getUnsentItems() async {
     final db = await _dbService.database;
-    
+
     final results = await db.query(
       'sync_queue',
       where: 'synced_at IS NULL',
@@ -154,10 +154,10 @@ class PairingRepository {
   /// Mark items as synced
   Future<void> markSynced(List<String> ids) async {
     if (ids.isEmpty) return;
-    
+
     final db = await _dbService.database;
     final placeholders = List.filled(ids.length, '?').join(', ');
-    
+
     await db.update(
       'sync_queue',
       {'synced_at': DateTime.now().toIso8601String()},
@@ -169,7 +169,7 @@ class PairingRepository {
   /// Mark item as failed
   Future<void> markFailed(String id, String error) async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'sync_queue',
       {
@@ -184,7 +184,7 @@ class PairingRepository {
   /// Log sync session
   Future<int> createSyncLog(String syncType) async {
     final db = await _dbService.database;
-    
+
     final log = SyncLog(
       syncType: syncType,
       startedAt: DateTime.now(),
@@ -202,7 +202,7 @@ class PairingRepository {
     String? errorMessage,
   }) async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'sync_log',
       {
@@ -220,7 +220,7 @@ class PairingRepository {
   /// Get recent sync logs
   Future<List<SyncLog>> getRecentSyncs({int limit = 10}) async {
     final db = await _dbService.database;
-    
+
     final results = await db.query(
       'sync_log',
       orderBy: 'started_at DESC',
@@ -234,7 +234,7 @@ class PairingRepository {
   Future<void> cleanupOldSyncLogs() async {
     final db = await _dbService.database;
     final cutoff = DateTime.now().subtract(const Duration(days: 30));
-    
+
     await db.delete(
       'sync_log',
       where: 'started_at < ?',
@@ -245,7 +245,7 @@ class PairingRepository {
   /// Get pending items (unsynced or un-acked)
   Future<List<SyncQueueItem>> getPendingItems({int limit = 10}) async {
     final db = await _dbService.database;
-    
+
     final results = await db.query(
       'sync_queue',
       where: 'synced_at IS NULL OR (needs_ack = 1 AND ack_received = 0)',
@@ -259,10 +259,10 @@ class PairingRepository {
   /// Mark items as sent (waiting for ACK)
   Future<void> markAsSent(List<String> ids) async {
     if (ids.isEmpty) return;
-    
+
     final db = await _dbService.database;
     final placeholders = List.filled(ids.length, '?').join(', ');
-    
+
     await db.update(
       'sync_queue',
       {'synced_at': DateTime.now().toIso8601String()},
@@ -274,7 +274,7 @@ class PairingRepository {
   /// Process acknowledgment (mark as delivered)
   Future<void> markAsAcknowledged(String messageId) async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'sync_queue',
       {'ack_received': 1},
@@ -286,7 +286,7 @@ class PairingRepository {
   /// Increment retry count for failed items
   Future<void> incrementRetryCount(String id, String error) async {
     final db = await _dbService.database;
-    
+
     final result = await db.query(
       'sync_queue',
       where: 'id = ?',
@@ -295,7 +295,7 @@ class PairingRepository {
 
     if (result.isNotEmpty) {
       final currentRetry = result.first['retry_count'] as int? ?? 0;
-      
+
       await db.update(
         'sync_queue',
         {
@@ -311,8 +311,9 @@ class PairingRepository {
   /// Clear old synced items (housekeeping)
   Future<void> clearSyncedItems({DateTime? olderThan}) async {
     final db = await _dbService.database;
-    final cutoff = olderThan ?? DateTime.now().subtract(const Duration(days: 7));
-    
+    final cutoff =
+        olderThan ?? DateTime.now().subtract(const Duration(days: 7));
+
     await db.delete(
       'sync_queue',
       where: 'synced_at IS NOT NULL AND ack_received = 1 AND synced_at < ?',
@@ -321,9 +322,10 @@ class PairingRepository {
   }
 
   /// Update message delivery status
-  Future<void> updateMessageDeliveryStatus(String messageId, String status) async {
+  Future<void> updateMessageDeliveryStatus(
+      String messageId, String status) async {
     final db = await _dbService.database;
-    
+
     await db.update(
       'discussion_messages',
       {'delivery_status': status},
@@ -335,7 +337,7 @@ class PairingRepository {
   /// Get undelivered messages
   Future<int> getUndeliveredCount() async {
     final db = await _dbService.database;
-    
+
     final result = await db.rawQuery(
       "SELECT COUNT(*) as count FROM discussion_messages WHERE delivery_status != 'delivered'",
     );

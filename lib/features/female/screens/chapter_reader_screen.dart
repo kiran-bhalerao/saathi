@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/chapter_progress_model.dart';
@@ -26,7 +27,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
   final PingRepository _pingRepo = PingRepository();
   final ScrollController _scrollController = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -145,19 +146,19 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           .map((line) => line.trim())
           .where((line) => line.isNotEmpty)
           .join('\n'); // Use single newline to compact text
-          
+
       if (sanitizedText.isEmpty) return;
 
       // Generate a unique section ID for the shared text
       final sectionId = 'shared_${DateTime.now().millisecondsSinceEpoch}';
-      
+
       await _pingRepo.pingSection(
         chapterNumber: widget.chapter.number,
         sectionId: sectionId,
         sectionTitle: 'Shared Quote',
         sectionContentJson: sanitizedText,
       );
-      
+
       // Auto-sync immediately if connected
       if (mounted) {
         final provider = Provider.of<BluetoothProvider>(context, listen: false);
@@ -165,7 +166,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           provider.syncNow();
         }
       }
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -204,7 +205,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               border: Border.all(color: const Color(0xFFE57373), width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: Color(0xFFE57373), size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -218,12 +220,14 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.chat_bubble_outline, color: Color(0xFFE57373), size: 22),
+            icon: const Icon(Icons.chat_bubble_outline,
+                color: Color(0xFFE57373), size: 22),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChapterDiscussionScreen(chapter: widget.chapter),
+                  builder: (context) =>
+                      ChapterDiscussionScreen(chapter: widget.chapter),
                 ),
               );
             },
@@ -241,7 +245,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               height: 1,
               color: Colors.grey[200],
             ),
-            
+
             // Chapter title header
             Padding(
               padding: const EdgeInsets.fromLTRB(32, 40, 32, 32),
@@ -256,7 +260,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 ),
               ),
             ),
-            
+
             // Content sections
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -269,9 +273,9 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                     if (i < widget.chapter.sections.length - 1)
                       const SizedBox(height: 32),
                   ],
-                  
+
                   const SizedBox(height: 40),
-                  
+
                   // Take quiz button
                   Center(
                     child: Container(
@@ -288,8 +292,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                             _markAsCompleted().then((_) {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: const Text('Chapter completed! 🎉'),
+                                  const SnackBar(
+                                    content: Text('Chapter completed! 🎉'),
                                     backgroundColor: AppColors.success,
                                   ),
                                 );
@@ -301,7 +305,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChapterQuizScreen(chapter: widget.chapter),
+                                builder: (context) =>
+                                    ChapterQuizScreen(chapter: widget.chapter),
                               ),
                             );
                           }
@@ -317,8 +322,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              widget.chapter.quizQuestions.isEmpty 
-                                  ? Icons.check_circle_outline 
+                              widget.chapter.quizQuestions.isEmpty
+                                  ? Icons.check_circle_outline
                                   : Icons.quiz_outlined,
                               color: Colors.white,
                               size: 20,
@@ -339,7 +344,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 40),
                 ],
               ),
@@ -352,8 +357,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
 
   Widget _buildSection(Section section, int index) {
     final List<Widget> widgets = [];
-    
-    // Section header (removed share button)
+
+    // Section header
     widgets.addAll([
       Text(
         section.title,
@@ -369,7 +374,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
 
     // Group adjacent ParagraphBlocks
     final List<ParagraphBlock> paragraphBuffer = [];
-    
+
     for (final block in section.blocks) {
       if (block is ParagraphBlock) {
         paragraphBuffer.add(block);
@@ -383,7 +388,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         widgets.add(_buildContentBlock(block));
       }
     }
-    
+
     // Flush remaining buffer
     if (paragraphBuffer.isNotEmpty) {
       widgets.add(_buildMergedParagraphs(List.from(paragraphBuffer)));
@@ -404,7 +409,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             final index = entry.key;
             final block = entry.value;
             final isLast = index == blocks.length - 1;
-            
+
             return TextSpan(
               children: [
                 TextSpan(
@@ -413,8 +418,12 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                     fontSize: 16,
                     height: 1.7,
                     color: Colors.grey[800],
-                    fontWeight: block.formatting?['bold'] == true ? FontWeight.bold : FontWeight.normal,
-                    fontStyle: block.formatting?['italic'] == true ? FontStyle.italic : FontStyle.normal,
+                    fontWeight: block.formatting?['bold'] == true
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    fontStyle: block.formatting?['italic'] == true
+                        ? FontStyle.italic
+                        : FontStyle.normal,
                   ),
                 ),
                 if (!isLast) const TextSpan(text: '\n\n'),
@@ -426,16 +435,16 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         contextMenuBuilder: (context, editableTextState) {
           final textSelection = editableTextState.textEditingValue.selection;
           if (textSelection.isCollapsed) return const SizedBox.shrink();
-          
-          final selectedText = editableTextState.textEditingValue.text.substring(
-            textSelection.start, textSelection.end
-          );
-          
+
+          final selectedText = editableTextState.textEditingValue.text
+              .substring(textSelection.start, textSelection.end);
+
           return AdaptiveTextSelectionToolbar(
             anchors: editableTextState.contextMenuAnchors,
             children: [
               TextSelectionToolbarTextButton(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 onPressed: () {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _showShareConfirmation(selectedText);
@@ -478,25 +487,31 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             fontSize: 16,
             height: 1.7,
             color: Colors.grey[800],
-            fontWeight: block.formatting?['bold'] == true ? FontWeight.bold : FontWeight.normal,
-            fontStyle: block.formatting?['italic'] == true ? FontStyle.italic : FontStyle.normal,
+            fontWeight: block.formatting?['bold'] == true
+                ? FontWeight.bold
+                : FontWeight.normal,
+            fontStyle: block.formatting?['italic'] == true
+                ? FontStyle.italic
+                : FontStyle.normal,
           ),
           contextMenuBuilder: (context, editableTextState) {
             final textSelection = editableTextState.textEditingValue.selection;
             if (textSelection.isCollapsed) {
               return const SizedBox.shrink();
             }
-            
-            final selectedText = editableTextState.textEditingValue.text.substring(
+
+            final selectedText =
+                editableTextState.textEditingValue.text.substring(
               textSelection.start,
               textSelection.end,
             );
-            
+
             return AdaptiveTextSelectionToolbar(
               anchors: editableTextState.contextMenuAnchors,
               children: [
                 TextSelectionToolbarTextButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onPressed: () {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       _showShareConfirmation(selectedText);
@@ -523,7 +538,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
       );
     }
-    
+
     // Story blocks
     if (block is StoryBlock) {
       return Container(
@@ -555,18 +570,19 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   color: Colors.grey[700],
                 ),
                 contextMenuBuilder: (context, editableTextState) {
-                  final textSelection = editableTextState.textEditingValue.selection;
+                  final textSelection =
+                      editableTextState.textEditingValue.selection;
                   if (textSelection.isCollapsed) return const SizedBox.shrink();
-                  
-                  final selectedText = editableTextState.textEditingValue.text.substring(
-                    textSelection.start, textSelection.end
-                  );
-                  
+
+                  final selectedText = editableTextState.textEditingValue.text
+                      .substring(textSelection.start, textSelection.end);
+
                   return AdaptiveTextSelectionToolbar(
                     anchors: editableTextState.contextMenuAnchors,
                     children: [
                       TextSelectionToolbarTextButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         onPressed: () {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             _showShareConfirmation(selectedText);
@@ -575,7 +591,8 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.share, size: 18, color: Color(0xFFE57373)),
+                            Icon(Icons.share,
+                                size: 18, color: Color(0xFFE57373)),
                             SizedBox(width: 6),
                             Text(
                               'Share',
@@ -596,94 +613,104 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
       );
     }
-    
+
     // Lists
     if (block is ListBlock) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: block.items.asMap().entries.map((entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (block.ordered)
-                  SizedBox(
-                    width: 24,
-                    child: Text(
-                      '${entry.key + 1}.',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFE57373),
-                      ),
-                    ),
-                  )
-                else
-                  Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    width: 5,
-                    height: 5,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE57373),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                SizedBox(width: (block.ordered) ? 8 : 12),
-                Expanded(
-                  child: SelectableText(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.6,
-                      color: Colors.grey[800],
-                    ),
-                    contextMenuBuilder: (context, editableTextState) {
-                      final textSelection = editableTextState.textEditingValue.selection;
-                      if (textSelection.isCollapsed) return const SizedBox.shrink();
-                      
-                      final selectedText = editableTextState.textEditingValue.text.substring(
-                        textSelection.start, textSelection.end
-                      );
-                      
-                      return AdaptiveTextSelectionToolbar(
-                        anchors: editableTextState.contextMenuAnchors,
-                        children: [
-                          TextSelectionToolbarTextButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            onPressed: () {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                _showShareConfirmation(selectedText);
-                              });
-                            },
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.share, size: 18, color: Color(0xFFE57373)),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Share',
-                                  style: TextStyle(
-                                    color: Color(0xFFE57373),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+          children: block.items
+              .asMap()
+              .entries
+              .map((entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (block.ordered)
+                          SizedBox(
+                            width: 24,
+                            child: Text(
+                              '${entry.key + 1}.',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFE57373),
+                              ),
+                            ),
+                          )
+                        else
+                          Container(
+                            margin: const EdgeInsets.only(top: 8),
+                            width: 5,
+                            height: 5,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFE57373),
+                              shape: BoxShape.circle,
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
+                        SizedBox(width: (block.ordered) ? 8 : 12),
+                        Expanded(
+                          child: SelectableText(
+                            entry.value,
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: 1.6,
+                              color: Colors.grey[800],
+                            ),
+                            contextMenuBuilder: (context, editableTextState) {
+                              final textSelection =
+                                  editableTextState.textEditingValue.selection;
+                              if (textSelection.isCollapsed)
+                                return const SizedBox.shrink();
+
+                              final selectedText = editableTextState
+                                  .textEditingValue.text
+                                  .substring(
+                                      textSelection.start, textSelection.end);
+
+                              return AdaptiveTextSelectionToolbar(
+                                anchors: editableTextState.contextMenuAnchors,
+                                children: [
+                                  TextSelectionToolbarTextButton(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                    onPressed: () {
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        _showShareConfirmation(selectedText);
+                                      });
+                                    },
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.share,
+                                            size: 18, color: Color(0xFFE57373)),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Share',
+                                          style: TextStyle(
+                                            color: Color(0xFFE57373),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
+              .toList(),
         ),
       );
     }
-    
+
     // Headings
     if (block is HeadingBlock) {
       return Padding(
@@ -698,7 +725,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
       );
     }
-    
+
     if (block is CodeBlock) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 16),
@@ -717,7 +744,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         ),
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 }

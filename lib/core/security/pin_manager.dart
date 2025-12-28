@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
-import 'package:crypto/crypto.dart';
-import 'package:pointycastle/export.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pointycastle/export.dart';
+
 import '../../config/constants.dart';
 
 /// PIN manager with PBKDF2 hashing for secure authentication
@@ -23,8 +23,10 @@ class PINManager {
   /// Setup new PIN (first-time setup)
   Future<void> setupPIN(String pin) async {
     // Validate PIN length
-    if (pin.length < AppConstants.minPinLength || pin.length > AppConstants.maxPinLength) {
-      throw Exception('PIN must be ${AppConstants.minPinLength}-${AppConstants.maxPinLength} digits');
+    if (pin.length < AppConstants.minPinLength ||
+        pin.length > AppConstants.maxPinLength) {
+      throw Exception(
+          'PIN must be ${AppConstants.minPinLength}-${AppConstants.maxPinLength} digits');
     }
 
     // Validate PIN contains only digits
