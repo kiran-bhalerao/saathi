@@ -75,14 +75,15 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
+              
               const Icon(
                 Icons.lock_outline,
-                size: 80,
+                size: 60,
                 color: AppColors.primary,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               const Text(
                 'Enter the code shown on\nyour partner\'s phone',
                 style: TextStyle(
@@ -140,7 +141,37 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                 }),
               ),
               
-              const SizedBox(height: 40),
+              const Spacer(),
+              
+              // Connection status text ABOVE button
+              Consumer<BluetoothProvider>(
+                builder: (context, provider, child) {
+                  if (provider.connectionStatus == ConnectionStatus.scanning) {
+                    return const Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        'Searching for partner device...',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    );
+                  } else if (provider.connectionStatus == ConnectionStatus.connecting) {
+                    return const Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        'Connecting...',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
               
               // Connect button
               SizedBox(
@@ -176,31 +207,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                 ),
               ),
               
-              const SizedBox(height: 24),
-              
-              // Connection status
-              Consumer<BluetoothProvider>(
-                builder: (context, provider, child) {
-                  if (provider.connectionStatus == ConnectionStatus.scanning) {
-                    return const Text(
-                      'Searching for partner device...',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    );
-                  } else if (provider.connectionStatus == ConnectionStatus.connecting) {
-                    return const Text(
-                      'Connecting...',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

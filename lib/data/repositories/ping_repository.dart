@@ -44,7 +44,7 @@ class PingRepository {
         'chapterNumber': chapterNumber,
         'sectionId': sectionId,
         'sectionTitle': sectionTitle,
-        'sectionContent': jsonDecode(sectionContentJson), // Ensure it's a map
+        'sectionContent': sectionContentJson,
         'pingedAt': ping.pingedAt.toIso8601String(),
       },
     );

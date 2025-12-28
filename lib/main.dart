@@ -9,6 +9,7 @@ import 'data/repositories/user_repository.dart';
 import 'data/repositories/ping_repository.dart';
 import 'data/repositories/discussion_repository.dart';
 import 'core/connections/connection_manager.dart';
+import 'core/widgets/app_lock_wrapper.dart';
 
 void main() {
   runApp(const SaathiApp());
@@ -45,6 +46,9 @@ class SaathiApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         initialRoute: AppRoutes.splash,
         onGenerateRoute: AppRoutes.generateRoute,
+        builder: (context, child) {
+          return AppLockWrapper(child: child!);
+        },
       ),
     );
   }
