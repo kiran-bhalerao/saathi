@@ -119,7 +119,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                 // Bluetooth connection icon (New Widget)
                 const BluetoothStatusIcon(),
                 
-                const SizedBox(width: 8),
+                const SizedBox(width: 2),
                 // Settings icon
                 IconButton(
                   icon: Container(

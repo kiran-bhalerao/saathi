@@ -139,6 +139,15 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
 
   Future<void> _shareWithPartner(String text) async {
     try {
+      // Sanitize text: remove empty lines and extra whitespace, then join with paragraph breaks
+      final sanitizedText = text
+          .split('\n')
+          .map((line) => line.trim())
+          .where((line) => line.isNotEmpty)
+          .join('\n'); // Use single newline to compact text
+          
+      if (sanitizedText.isEmpty) return;
+
       // Generate a unique section ID for the shared text
       final sectionId = 'shared_${DateTime.now().millisecondsSinceEpoch}';
       
@@ -146,7 +155,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         chapterNumber: widget.chapter.number,
         sectionId: sectionId,
         sectionTitle: 'Shared Quote',
-        sectionContentJson: text,
+        sectionContentJson: sanitizedText,
       );
       
       // Auto-sync immediately if connected
@@ -342,28 +351,122 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   }
 
   Widget _buildSection(Section section, int index) {
+    final List<Widget> widgets = [];
+    
+    // Section header (removed share button)
+    widgets.addAll([
+      Text(
+        section.title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFF2D2D2D),
+          height: 1.3,
+        ),
+      ),
+      const SizedBox(height: 16),
+    ]);
+
+    // Group adjacent ParagraphBlocks
+    final List<ParagraphBlock> paragraphBuffer = [];
+    
+    for (final block in section.blocks) {
+      if (block is ParagraphBlock) {
+        paragraphBuffer.add(block);
+      } else {
+        // Flush buffer if not empty
+        if (paragraphBuffer.isNotEmpty) {
+          widgets.add(_buildMergedParagraphs(List.from(paragraphBuffer)));
+          paragraphBuffer.clear();
+        }
+        // Render current non-paragraph block
+        widgets.add(_buildContentBlock(block));
+      }
+    }
+    
+    // Flush remaining buffer
+    if (paragraphBuffer.isNotEmpty) {
+      widgets.add(_buildMergedParagraphs(List.from(paragraphBuffer)));
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section header (removed share button)
-        Text(
-          section.title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF2D2D2D),
-            height: 1.3,
-          ),
+      children: widgets,
+    );
+  }
+
+  Widget _buildMergedParagraphs(List<ParagraphBlock> blocks) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: SelectableText.rich(
+        TextSpan(
+          children: blocks.asMap().entries.map((entry) {
+            final index = entry.key;
+            final block = entry.value;
+            final isLast = index == blocks.length - 1;
+            
+            return TextSpan(
+              children: [
+                TextSpan(
+                  text: block.text,
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.7,
+                    color: Colors.grey[800],
+                    fontWeight: block.formatting?['bold'] == true ? FontWeight.bold : FontWeight.normal,
+                    fontStyle: block.formatting?['italic'] == true ? FontStyle.italic : FontStyle.normal,
+                  ),
+                ),
+                if (!isLast) const TextSpan(text: '\n\n'),
+              ],
+            );
+          }).toList(),
         ),
-        const SizedBox(height: 16),
-        
-        // Section content
-        ...section.blocks.map((block) => _buildContentBlock(block)),
-      ],
+        textAlign: TextAlign.justify,
+        contextMenuBuilder: (context, editableTextState) {
+          final textSelection = editableTextState.textEditingValue.selection;
+          if (textSelection.isCollapsed) return const SizedBox.shrink();
+          
+          final selectedText = editableTextState.textEditingValue.text.substring(
+            textSelection.start, textSelection.end
+          );
+          
+          return AdaptiveTextSelectionToolbar(
+            anchors: editableTextState.contextMenuAnchors,
+            children: [
+              TextSelectionToolbarTextButton(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                onPressed: () {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _showShareConfirmation(selectedText);
+                  });
+                },
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.share, size: 18, color: Color(0xFFE57373)),
+                    SizedBox(width: 6),
+                    Text(
+                      'Share',
+                      style: TextStyle(
+                        color: Color(0xFFE57373),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
   Widget _buildContentBlock(ContentBlock block) {
+    // ParagraphBlock is now handled in _buildSection via _buildMergedParagraphs
+    if (block is ParagraphBlock) return const SizedBox.shrink();
+
     // Only text blocks are selectable for sharing
     if (block is ParagraphBlock) {
       return Padding(

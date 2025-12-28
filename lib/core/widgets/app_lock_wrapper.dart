@@ -19,6 +19,7 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
   bool _isLocked = false;
   bool _isPinSet = false;
   bool _isLoading = true;
+  bool _wasPaused = false; // Track if app was previously in background
 
   @override
   void initState() {
@@ -36,10 +37,16 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      // App going to background
+      // App truly went to background (hidden)
+      _wasPaused = true;
     } else if (state == AppLifecycleState.resumed) {
-      // App coming to foreground
-      _checkPinStatus(isLaunch: false);
+      // App came to foreground
+      if (_wasPaused) {
+        // Only trigger lock if we are coming from a PAUSED State (background)
+        // This prevents locking on simple INACTIVE states (notification shade, system dialogs)
+        _checkPinStatus(isLaunch: false);
+        _wasPaused = false; // Reset flag
+      }
     }
   }
 
@@ -50,8 +57,9 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
         _isPinSet = hasPin;
         _isLoading = false;
         
-        // Lock if PIN is set and we're launching or resuming
-        if (hasPin) {
+        // Only lock on resume, not on initial launch
+        // This allows users to complete onboarding first
+        if (hasPin && !isLaunch) {
            _isLocked = true;
         }
       });
@@ -73,16 +81,20 @@ class _AppLockWrapperState extends State<AppLockWrapper> with WidgetsBindingObse
       children: [
         widget.child,
         
-        // Lock Overlay
+        // Lock Overlay with its own Overlay support for TextFields
         if (_isLocked && _isPinSet)
-          _LockScreen(
-            onUnlock: _unlock,
-            pinManager: _pinManager,
+          Positioned.fill(
+            child: Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) => _LockScreen(
+                    onUnlock: _unlock,
+                    pinManager: _pinManager,
+                  ),
+                ),
+              ],
+            ),
           ),
-          
-         // Loading indicator only during initial check intended to block brief flash? 
-         // Actually, if we are loading, we might want to show splash or empty.
-         // But for now, we just overlay lock screen when ready.
       ],
     );
   }
@@ -104,6 +116,7 @@ class _LockScreen extends StatefulWidget {
 class _LockScreenState extends State<_LockScreen> {
   String? _errorMessage;
   bool _isValidating = false;
+  final PINInputController _pinInputController = PINInputController();
 
   void _onPinEntered(String pin) async {
     setState(() {
@@ -122,6 +135,10 @@ class _LockScreenState extends State<_LockScreen> {
             _errorMessage = 'Incorrect PIN';
             _isValidating = false;
           });
+          // Clear the PIN fields after a brief delay
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _pinInputController.clear();
+          });
         }
       }
     } catch (e) {
@@ -129,6 +146,9 @@ class _LockScreenState extends State<_LockScreen> {
         setState(() {
           _errorMessage = 'Error verifying PIN';
           _isValidating = false;
+        });
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _pinInputController.clear();
         });
       }
     }
@@ -138,48 +158,57 @@ class _LockScreenState extends State<_LockScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true, // Allow keyboard to resize content
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.lock_rounded,
-                size: 64,
-                color: AppColors.primary,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Welcome Back',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.lock_rounded,
+                      size: 64,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Welcome Back',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Enter your App PIN to continue',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    
+                    PINInputWidget(
+                      controller: _pinInputController,
+                      length: 4,
+                      onCompleted: _onPinEntered,
+                      errorMessage: _errorMessage,
+                    ),
+                    
+                    const SizedBox(height: 32),
+                    
+                    if (_isValidating)
+                      const CircularProgressIndicator(color: AppColors.primary),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Enter your App PIN to continue',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 48),
-              
-              PINInputWidget(
-                length: 4,
-                onCompleted: _onPinEntered,
-                errorMessage: _errorMessage,
-              ),
-              
-              const SizedBox(height: 32),
-              
-              if (_isValidating)
-                const CircularProgressIndicator(color: AppColors.primary),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -17,6 +17,10 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     
+    // Detect if this is a vocabulary term (format: **Term**\nDefinition)
+    final isVocabulary = message.messageText.contains('**') && 
+                         message.messageText.contains('\n');
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -30,16 +34,29 @@ class MessageBubble extends StatelessWidget {
                 left: isCurrentUser ? 0 : 12,
                 right: isCurrentUser ? 12 : 0,
               ),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
-                color: isCurrentUser 
-                    ? AppColors.primary
-                    : Colors.grey[200],
+                // Use gradient for current user (sender), solid color for partner
+                color: isCurrentUser ? null : Colors.white,
+                gradient: isCurrentUser 
+                    ? const LinearGradient(
+                        colors: [Color(0xFFE57373), Color(0xFFEF5350)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(18),
-                  topRight: const Radius.circular(18),
-                  bottomLeft: isCurrentUser ? const Radius.circular(18) : const Radius.circular(4),
-                  bottomRight: isCurrentUser ? const Radius.circular(4) : const Radius.circular(18),
+                  topLeft: const Radius.circular(20),
+                  topRight: const Radius.circular(20),
+                  bottomLeft: isCurrentUser ? const Radius.circular(20) : const Radius.circular(4),
+                  bottomRight: isCurrentUser ? const Radius.circular(4) : const Radius.circular(20),
                 ),
               ),
               child: Column(
@@ -48,13 +65,36 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   _buildMessageText(),
                   const SizedBox(height: 4),
-                  Text(
-                    _formatTime(message.sentAt),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                  
+                  // Timestamp row - different layout for vocabulary
+                  if (isVocabulary)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Vocabulary',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                          ),
+                        ),
+                        Text(
+                          _formatTime(message.sentAt),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      _formatTime(message.sentAt),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isCurrentUser ? Colors.white70 : Colors.grey[600],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

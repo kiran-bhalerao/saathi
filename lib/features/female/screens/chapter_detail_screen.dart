@@ -5,6 +5,7 @@ import '../../../data/repositories/content_parser.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
 import '../../../data/models/chapter_progress_model.dart';
+import 'chapter_discussion_screen.dart';
 
 /// Chapter detail screen - shows chapter info before reading
 class ChapterDetailScreen extends StatefulWidget {
@@ -116,7 +117,32 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            actions: [],
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 20),
+                  ),
+                  onPressed: () {
+                    if (_chapter != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChapterDiscussionScreen(chapter: _chapter!),
+                        ),
+                      );
+                    }
+                  },
+                  tooltip: 'Discussion',
+                ),
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(

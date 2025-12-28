@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/bluetooth_provider.dart';
 import '../../../data/models/bluetooth_enums.dart';
 import '../../../config/app_colors.dart';
+import '../../../shared/widgets/pin_input_widget.dart';
 
 /// Male code entry screen - BLOCKING until paired
 class EnterCodeScreen extends StatefulWidget {
@@ -13,50 +14,28 @@ class EnterCodeScreen extends StatefulWidget {
 }
 
 class _EnterCodeScreenState extends State<EnterCodeScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    4,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+  String? _errorMessage;
   bool _isConnecting = false;
 
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
-    super.dispose();
-  }
-
-  String get _code => _controllers.map((c) => c.text).join();
-
-  bool get _isCodeComplete => _code.length == 4;
-
-  Future<void> _connect() async {
-    if (!_isCodeComplete) return;
-
+  Future<void> _onCodeEntered(String code) async {
     setState(() => _isConnecting = true);
 
     final provider = context.read<BluetoothProvider>();
-    final success = await provider.connectWithCode(_code);
+    final success = await provider.connectWithCode(code);
 
     setState(() => _isConnecting = false);
 
     if (success) {
       // Navigate to Male Home after successful pairing
-      Navigator.pushReplacementNamed(context, '/male-home');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/male-home');
+      }
     } else {
       // Show error
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(provider.errorMessage ?? 'Connection failed'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        setState(() {
+          _errorMessage = provider.errorMessage ?? 'Connection failed';
+        });
       }
     }
   }
@@ -65,6 +44,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAF8F8),
+      resizeToAvoidBottomInset: true, // Allow keyboard to resize content
       appBar: AppBar(
         title: const Text('Connect to Partner'),
         backgroundColor: Colors.white,
@@ -72,144 +52,82 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              
-              const Icon(
-                Icons.lock_outline,
-                size: 60,
-                color: AppColors.primary,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Enter the code shown on\nyour partner\'s phone',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              
-              // Code input boxes
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  return Container(
-                    width: 60,
-                    height: 70,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    
+                    const Icon(
+                      Icons.lock_outline,
+                      size: 60,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Enter the code shown on\nyour partner\'s phone',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                       textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      maxLength: 1,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      decoration: InputDecoration(
-                        counterText: '',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 3,
-                          ),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value.isNotEmpty && index < 3) {
-                          _focusNodes[index + 1].requestFocus();
+                    ),
+                    const SizedBox(height: 40),
+                    
+                    // Use shared PIN input widget
+                    PINInputWidget(
+                      length: 4,
+                      onCompleted: _onCodeEntered,
+                      errorMessage: _errorMessage,
+                      isObscured: false, // Show the code digits
+                    ),
+                    
+                    const Spacer(),
+                    
+                    // Connection status text
+                    Consumer<BluetoothProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.connectionStatus == ConnectionStatus.scanning) {
+                          return const Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              'Searching for partner device...',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          );
+                        } else if (provider.connectionStatus == ConnectionStatus.connecting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              'Connecting...',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          );
                         }
-                        setState(() {});
+                        return const SizedBox.shrink();
                       },
                     ),
-                  );
-                }),
-              ),
-              
-              const Spacer(),
-              
-              // Connection status text ABOVE button
-              Consumer<BluetoothProvider>(
-                builder: (context, provider, child) {
-                  if (provider.connectionStatus == ConnectionStatus.scanning) {
-                    return const Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        'Searching for partner device...',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    );
-                  } else if (provider.connectionStatus == ConnectionStatus.connecting) {
-                    return const Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        'Connecting...',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-              
-              // Connect button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isCodeComplete && !_isConnecting
-                      ? _connect
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _isConnecting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text(
-                          'Connect',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    if (_isConnecting)
+                      const CircularProgressIndicator(color: AppColors.primary),
+                  ],
                 ),
               ),
-              
-              const SizedBox(height: 16),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

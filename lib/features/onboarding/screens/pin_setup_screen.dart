@@ -153,6 +153,7 @@ class _PINSetupScreenState extends State<PINSetupScreen> {
     
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true, // Allow keyboard to resize content
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -169,11 +170,15 @@ class _PINSetupScreenState extends State<PINSetupScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+                child: Column(
+                  children: [
+                    const Spacer(flex: 2),
               
               // Lock icon
               Padding(
@@ -268,7 +273,10 @@ class _PINSetupScreenState extends State<PINSetupScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
             ],
-          ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

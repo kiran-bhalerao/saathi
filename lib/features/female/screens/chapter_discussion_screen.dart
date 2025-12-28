@@ -238,6 +238,9 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                             final ping = item['data'] as Map<String, dynamic>;
                             return PingCard(
                               ping: ping,
+                              // If current user is female, she is the sender (Right aligned)
+                              // If male, he is the receiver (Left aligned)
+                              isCurrentUser: _currentUserType == 'female',
                               // Add tap handler for male to view full content
                               onTap: _currentUserType == 'male' 
                                 ? () => _showPingContent(ping)
