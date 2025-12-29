@@ -77,6 +77,7 @@ flutter:
     - assets/content/chapters/en/chapters/
     - assets/content/chapters/mr/chapters/
     - assets/images/
+    - assets/images/chapters/1/
   
   # Fonts will be loaded via google_fonts package
   # No need to bundle font files

@@ -111,29 +111,8 @@ class ContentParser {
 
         currentSectionTitle = line.replaceAll(RegExp(r'^#{2,3}\s*'), '');
 
-        // Check for special sections (English and Marathi)
-        if (currentSectionTitle == 'New Words You\'ll Know' ||
-            currentSectionTitle == 'नवीन शब्द जे तुम्हाला माहित होतील') {
-          // Parse vocabulary section
-          vocabulary.addAll(_parseVocabulary(lines, i + 1, chapterNumber));
-          currentSectionTitle = null; // Don't create a section for this
-          continue;
-        }
-
-        if (currentSectionTitle == 'Something to Think About' ||
-            currentSectionTitle == 'विचार करण्यासारखी गोष्ट') {
-          // Parse reflection question
-          reflection = _parseReflection(lines, i + 1);
-          currentSectionTitle = null;
-          continue;
-        }
-
-        if (currentSectionTitle == 'Coming Up Next' ||
-            currentSectionTitle == 'पुढे काय येणार आहे') {
-          comingUpNext = _extractComingUpNext(lines, i + 1);
-          currentSectionTitle = null;
-          continue;
-        }
+        // Note: "New Words You'll Know", "Something to Think About", and "Coming Up Next"
+        // are now treated as regular sections and will be displayed in the reader
 
         // Skip Quiz section - parse separately, don't add to sections
         if (currentSectionTitle == 'Quiz' ||
@@ -182,6 +161,11 @@ class ContentParser {
   /// Parse a content line into appropriate ContentBlock
   ContentBlock _parseContentLine(
       String line, List<String> allLines, int currentIndex) {
+    // Image (markdown syntax: ![alt text](path))
+    if (line.startsWith('![') && line.contains('](') && line.endsWith(')')) {
+      return _parseImage(line);
+    }
+
     // Code block (starts with backticks or indented)
     if (line.startsWith('```')) {
       return _parseCodeBlock(allLines, currentIndex);
@@ -209,8 +193,11 @@ class ContentParser {
       );
     }
 
-    // Story block (italic paragraph)
-    if (line.startsWith('*') && line.endsWith('*') && !line.startsWith('* ')) {
+    // Story block (italic paragraph) - only single * at start, not **
+    if (line.startsWith('*') &&
+        line.endsWith('*') &&
+        !line.startsWith('* ') &&
+        !line.startsWith('**')) {
       return StoryBlock(
         content: line.replaceAll('*', '').trim(),
       );
@@ -218,6 +205,21 @@ class ContentParser {
 
     // Regular paragraph
     return ParagraphBlock(text: line);
+  }
+
+  /// Parse markdown image syntax: ![alt text](path)
+  ImageBlock _parseImage(String line) {
+    final match = RegExp(r'!\[(.*?)\]\((.*?)\)').firstMatch(line);
+    if (match != null) {
+      final altText = match.group(1)?.trim();
+      final imagePath = match.group(2)?.trim() ?? '';
+      return ImageBlock(
+        imagePath: imagePath,
+        altText: altText,
+      );
+    }
+    // Fallback if parsing fails
+    return ImageBlock(imagePath: '');
   }
 
   /// Parse code block (ASCII diagrams)
@@ -240,72 +242,6 @@ class ContentParser {
     items.add(item);
 
     return ListBlock(items: items, ordered: ordered);
-  }
-
-  /// Parse vocabulary section
-  List<VocabularyTerm> _parseVocabulary(
-      List<String> lines, int startIndex, int chapterNumber) {
-    final terms = <VocabularyTerm>[];
-
-    for (int i = startIndex; i < lines.length; i++) {
-      final line = lines[i].trim();
-
-      // Stop at next section
-      if (line.startsWith('##')) break;
-      if (line.isEmpty) continue;
-
-      // Format: **Term**: Definition OR **Term** — Definition
-      if (line.startsWith('**')) {
-        // pattern to find separator: **: or ** - or ** —
-        final regex = RegExp(r'\*\*\s*[:\-\—]\s*');
-        final match = regex.firstMatch(line);
-
-        if (match != null) {
-          final termPart = line.substring(0, match.start).trim();
-          final definitionPart = line.substring(match.end).trim();
-
-          final term = termPart.replaceAll('**', '').trim();
-
-          if (term.isNotEmpty && definitionPart.isNotEmpty) {
-            terms.add(VocabularyTerm(
-              term: term,
-              definition: definitionPart,
-              chapterNumber: chapterNumber,
-            ));
-          }
-        }
-      }
-    }
-
-    return terms;
-  }
-
-  /// Parse reflection question
-  ReflectionBlock? _parseReflection(List<String> lines, int startIndex) {
-    for (int i = startIndex; i < lines.length; i++) {
-      final line = lines[i].trim();
-
-      if (line.startsWith('##')) break;
-      if (line.isEmpty) continue;
-
-      return ReflectionBlock(question: line);
-    }
-
-    return null;
-  }
-
-  /// Extract "Coming Up Next" text
-  String? _extractComingUpNext(List<String> lines, int startIndex) {
-    for (int i = startIndex; i < lines.length; i++) {
-      final line = lines[i].trim();
-
-      if (line.startsWith('##')) break;
-      if (line.isEmpty) continue;
-
-      return line;
-    }
-
-    return null;
   }
 
   /// Parse quiz questions section

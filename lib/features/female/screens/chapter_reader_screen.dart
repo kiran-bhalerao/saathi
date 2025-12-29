@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../config/app_colors.dart';
+import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/chapter_progress_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
@@ -378,72 +379,38 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   const SizedBox(height: 40),
 
                   // Take quiz button
-                  Center(
-                    child: Container(
-                      width: double.infinity,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE57373),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_currentChapter.quizQuestions.isEmpty) {
-                            // No quiz - just mark as complete
-                            _markAsCompleted().then((_) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Chapter completed! 🎉'),
-                                    backgroundColor: AppColors.success,
-                                  ),
-                                );
-                                Navigator.pop(context);
-                              }
-                            });
-                          } else {
-                            // Navigate to quiz
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ChapterQuizScreen(chapter: _currentChapter),
+                  CustomButton(
+                    onPressed: () {
+                      if (_currentChapter.quizQuestions.isEmpty) {
+                        // No quiz - just mark as complete
+                        _markAsCompleted().then((_) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Chapter completed! 🎉'),
+                                backgroundColor: AppColors.success,
                               ),
                             );
+                            Navigator.pop(context);
                           }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        });
+                      } else {
+                        // Navigate to quiz
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChapterQuizScreen(chapter: _currentChapter),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              _currentChapter.quizQuestions.isEmpty
-                                  ? Icons.check_circle_outline
-                                  : Icons.quiz_outlined,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _currentChapter.quizQuestions.isEmpty
-                                  ? 'Mark as Completed'
-                                  : 'Take Quiz',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        );
+                      }
+                    },
+                    text: _currentChapter.quizQuestions.isEmpty
+                        ? 'Mark as Completed'
+                        : 'Take Quiz',
+                    icon: _currentChapter.quizQuestions.isEmpty
+                        ? Icons.check_circle_rounded
+                        : Icons.assignment_rounded,
                   ),
 
                   const SizedBox(height: 40),
@@ -457,6 +424,165 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   }
 
   Widget _buildSection(Section section, int index) {
+    // Special styling for "Something to Think About" section
+    if (section.title == 'Something to Think About' ||
+        section.title == 'विचार करण्यासारखी गोष्ट') {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE57373).withOpacity(0.08),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon and title
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE57373).withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.lightbulb_outline,
+                    color: Color(0xFFE57373),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    section.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF2D2D2D),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Content in italic
+            ...section.blocks.map((block) {
+              if (block is ParagraphBlock) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: SelectableText.rich(
+                    TextSpan(
+                      children: _parseMarkdownText(
+                        block.text,
+                        TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          height: 1.6,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }).toList(),
+          ],
+        ),
+      );
+    }
+
+    // Special styling for "New Words You'll Know" section
+    if (section.title == "New Words You'll Know" ||
+        section.title == 'नवीन शब्द जे तुम्हाला माहित होतील') {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF4DB6AC).withOpacity(0.08),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with icon and title
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4DB6AC).withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.menu_book_rounded,
+                    color: Color(0xFF26A69A),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    section.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF2D2D2D),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Vocabulary items
+            ...section.blocks.map((block) {
+              if (block is ParagraphBlock) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF26A69A),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SelectableText.rich(
+                          TextSpan(
+                            children: _parseMarkdownText(
+                              block.text,
+                              TextStyle(
+                                fontSize: 16,
+                                height: 1.6,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }).toList(),
+          ],
+        ),
+      );
+    }
+
+    // Regular section rendering
     final List<Widget> widgets = [];
 
     // Section header
@@ -705,13 +831,17 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: SelectableText(
-                block.content,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontStyle: FontStyle.italic,
-                  height: 1.6,
-                  color: Colors.grey[700],
+              child: SelectableText.rich(
+                TextSpan(
+                  children: _parseMarkdownText(
+                    block.content,
+                    TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      height: 1.6,
+                      color: Colors.grey[700],
+                    ),
+                  ),
                 ),
                 contextMenuBuilder: (context, editableTextState) {
                   final textSelection =
@@ -796,12 +926,16 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                           ),
                         SizedBox(width: (block.ordered) ? 8 : 12),
                         Expanded(
-                          child: SelectableText(
-                            entry.value,
-                            style: TextStyle(
-                              fontSize: 16,
-                              height: 1.6,
-                              color: Colors.grey[800],
+                          child: SelectableText.rich(
+                            TextSpan(
+                              children: _parseMarkdownText(
+                                entry.value,
+                                TextStyle(
+                                  fontSize: 16,
+                                  height: 1.6,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
                             ),
                             contextMenuBuilder: (context, editableTextState) {
                               final textSelection =
@@ -851,6 +985,46 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                     ),
                   ))
               .toList(),
+        ),
+      );
+    }
+
+    // Image blocks
+    if (block is ImageBlock) {
+      return Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              block.imagePath,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(Icons.broken_image,
+                          size: 48, color: Colors.grey[400]),
+                      const SizedBox(height: 8),
+                      Text(
+                        block.altText ?? 'Image could not be loaded',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       );
     }

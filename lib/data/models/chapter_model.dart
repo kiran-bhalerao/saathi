@@ -18,6 +18,8 @@ abstract class ContentBlock {
         return HeadingBlock.fromJson(json);
       case 'story':
         return StoryBlock.fromJson(json);
+      case 'image':
+        return ImageBlock.fromJson(json);
       default:
         throw Exception('Unknown content block type: $type');
     }
@@ -160,6 +162,36 @@ class StoryBlock extends ContentBlock {
   factory StoryBlock.fromJson(Map<String, dynamic> json) {
     return StoryBlock(
       content: json['content'] as String,
+    );
+  }
+}
+
+/// Image block
+class ImageBlock extends ContentBlock {
+  final String imagePath;
+  final String? altText;
+
+  ImageBlock({
+    required this.imagePath,
+    this.altText,
+  });
+
+  @override
+  String get type => 'image';
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'imagePath': imagePath,
+      'altText': altText,
+    };
+  }
+
+  factory ImageBlock.fromJson(Map<String, dynamic> json) {
+    return ImageBlock(
+      imagePath: json['imagePath'] as String,
+      altText: json['altText'] as String?,
     );
   }
 }

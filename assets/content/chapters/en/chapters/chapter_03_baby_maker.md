@@ -63,14 +63,13 @@ Simple, right?
 
 Your body runs on a monthly clock. Here's how it works:
 
-```
-     THE MONTHLY CYCLE
-     
-Day 1-5:    🔴 Period (egg leaves as bleeding)
-Day 6-12:   🟡 Building (new egg preparing)  
-Day 12-16:  🟢 Ovulation (egg released - FERTILE!)
-Day 17-28:  🟡 Waiting (will there be a baby?)
-```
+**THE MONTHLY CYCLE**
+
+🔴 **Day 1-5: Period** (egg leaves as bleeding)  
+🟡 **Day 6-12: Building** (new egg preparing)  
+🟢 **Day 12-16: Ovulation** (egg released - FERTILE!)  
+🟡 **Day 17-28: Waiting** (will there be a baby?)
+
 
 **The Green Window (Day 12-16):**
 This is when pregnancy is most likely. These are your "fertile days."
@@ -93,7 +92,7 @@ Nature designed sex to:
 2. Feel good (always)
 3. Bond partners together (always)
 
-**The pleasure and bonding happen EVERY time. The baby only happens SOMETIMES.**
+*The pleasure and bonding happen EVERY time. The baby only happens SOMETIMES.*
 
 ## Why Does Sex Feel Good?
 
@@ -110,7 +109,7 @@ The body releases "happy chemicals" during sex:
 
 These chemicals are designed to make couples want to be close again and again.
 
-**Pleasure isn't an accident. It's the design.**
+*Pleasure isn't an accident. It's the design.*
 
 ## What About "Good Women"?
 
@@ -127,7 +126,7 @@ Think about it:
 
 No, no, and no.
 
-**Wanting pleasure is natural. Enjoying your husband is part of marriage. There is nothing shameful about feeling good with your spouse.**
+*Wanting pleasure is natural. Enjoying your husband is part of marriage. There is nothing shameful about feeling good with your spouse.*
 
 ## Enjoying Sex ≠ Wanting Babies
 

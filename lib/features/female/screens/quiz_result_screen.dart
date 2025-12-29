@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
 
@@ -25,14 +27,15 @@ class QuizResultScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-         leading: IconButton(
+        leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFFE57373), width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: Color(0xFFE57373), size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -47,7 +50,7 @@ class QuizResultScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    
+
                     // Result icon - always success
                     Container(
                       width: 120,
@@ -62,9 +65,9 @@ class QuizResultScreen extends StatelessWidget {
                         color: Color(0xFF66BB6A),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Result title - always positive
                     const Text(
                       'Great Job!',
@@ -74,9 +77,9 @@ class QuizResultScreen extends StatelessWidget {
                         color: Color(0xFF2D2D2D),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Score
                     Text(
                       '$score%',
@@ -86,9 +89,9 @@ class QuizResultScreen extends StatelessWidget {
                         color: Color(0xFF66BB6A),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Correct answers
                     Text(
                       '$correctCount out of $totalQuestions correct',
@@ -97,9 +100,9 @@ class QuizResultScreen extends StatelessWidget {
                         color: Colors.grey[600],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Feedback message - always congratulatory
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -117,13 +120,13 @@ class QuizResultScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
-            
+
             // Fixed bottom buttons
             Padding(
               padding: const EdgeInsets.all(24),
@@ -131,71 +134,38 @@ class QuizResultScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Mark Complete button (primary)
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // Mark chapter as complete
-                        final progressRepo = ChapterProgressRepository();
-                        final progress = await progressRepo.getChapterProgress(chapter.number);
-                        if (progress != null) {
-                          await progressRepo.updateProgress(
-                            progress.copyWith(
-                              completed: true,
-                              quizCompleted: true,
-                              quizScore: score,
-                            ),
-                          );
-                        }
-                        
-                        if (context.mounted) {
-                          Navigator.popUntil(context, (route) => route.isFirst);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE57373),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Mark Chapter Complete',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                  CustomButton(
+                    onPressed: () async {
+                      // Mark chapter as complete
+                      final progressRepo = ChapterProgressRepository();
+                      final progress =
+                          await progressRepo.getChapterProgress(chapter.number);
+                      if (progress != null) {
+                        await progressRepo.updateProgress(
+                          progress.copyWith(
+                            completed: true,
+                            quizCompleted: true,
+                            quizScore: score,
+                          ),
+                        );
+                      }
+
+                      if (context.mounted) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      }
+                    },
+                    text: 'Mark Chapter Complete',
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Retry button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Go back to quiz to retry
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: const BorderSide(color: Color(0xFFE57373), width: 2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Try Again',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFE57373),
-                        ),
-                      ),
-                    ),
+                  CustomButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Go back to quiz to retry
+                    },
+                    text: 'Try Again',
+                    isOutlined: true,
                   ),
                 ],
               ),

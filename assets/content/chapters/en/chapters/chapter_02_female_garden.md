@@ -41,21 +41,9 @@ Let's give proper names to everything. Don't worry — we'll go slowly!
 
 Think of your private area as a beautiful garden with different parts:
 
-```
-      THE FEMALE GARDEN (External View)
-      
-           ∧∧∧∧∧∧∧  ← Pubic Hair Area
-          /        \
-         /   -•-    \  ← Clitoral Hood (little "cap")
-        |    (●)     |  ← Clitoris (the "magic button")
-        |   /   \    |  ← Inner Lips (labia minora)
-       (    |   |    )  ← Outer Lips (labia majora)
-        \   | ○ |   /   ← Urethral Opening (pee hole)
-         \  | ◎ |  /    ← Vaginal Opening
-          \ |   | /
-           \|___|/
-             |o|       ← Anus (back door)
-```
+
+![Female Garden Diagram](assets/images/chapters/1/female-garden.png)
+
 
 ## The Three Doors
 
