@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../config/app_colors.dart';
 import '../../../core/security/pin_manager.dart';
+import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/repositories/user_repository.dart';
-import '../../../shared/widgets/custom_button.dart';
 
 /// Gender selection screen - choose between Female and Male user type
 class GenderSelectionScreen extends StatefulWidget {
@@ -71,8 +71,11 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFAF9F9),
       appBar: AppBar(
         title: const Text('Select Your Profile'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -114,16 +117,13 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               const SizedBox(height: 32),
 
               // Info note
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.cardBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'This helps us customize your experience. You can pair with your partner later.',
+                  'This helps us customize your experience.\nYou can pair with your partner later.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
+                        height: 1.5,
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -132,11 +132,13 @@ class _GenderSelectionScreenState extends State<GenderSelectionScreen> {
               const Spacer(),
 
               // Continue button
-              CustomButton(
-                text: 'Continue',
-                onPressed: _selectedGender != null ? _continue : null,
-                isLoading: _isLoading,
+              SizedBox(
                 width: double.infinity,
+                child: CustomButton(
+                  text: 'Continue',
+                  onPressed: _selectedGender != null ? _continue : null,
+                  isLoading: _isLoading,
+                ),
               ),
             ],
           ),
@@ -164,62 +166,87 @@ class _GenderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white,
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(16),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      // Scale slightly when selected? Maybe too complex for simple fix.
+      // Just shadow and border.
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: isSelected ? AppColors.primary : Colors.transparent,
+          width: 2,
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : AppColors.cardBg,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: isSelected ? Colors.white : AppColors.primary,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textPrimary,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isSelected
+                ? AppColors.primary.withOpacity(0.15)
+                : Colors.black.withOpacity(0.05),
+            blurRadius: isSelected ? 12 : 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                // Icon Circle
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.primary
+                        : const Color(0xFFFFF0F0),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 28,
+                    color: isSelected ? Colors.white : AppColors.primary,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
                         ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary.withOpacity(0.8),
+                          height: 1.3,
                         ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                if (isSelected)
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+              ],
             ),
-            if (isSelected)
-              const Icon(
-                Icons.check_circle,
-                color: AppColors.primary,
-                size: 24,
-              ),
-          ],
+          ),
         ),
       ),
     );

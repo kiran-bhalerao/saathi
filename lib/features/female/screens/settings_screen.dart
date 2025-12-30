@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../config/app_colors.dart';
 import '../../../core/database/database_service.dart';
 import '../../../core/services/data_export_service.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/pin_input_widget.dart';
 
 /// Settings screen - app configuration and data management
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({
+    super.key,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -16,6 +19,26 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final DataExportService _exportService = DataExportService();
+  final UserRepository _userRepo = UserRepository();
+  late String _currentGender = "female";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserGender();
+  }
+
+  Future<void> _loadUserGender() async {
+    final user = await _userRepo.getUser();
+    if (user != null && mounted) {
+      setState(() {
+        _currentGender = user.userType;
+      });
+    }
+  }
+
+  Color get _themeColor =>
+      _currentGender == 'male' ? AppColors.primaryMale : AppColors.primary;
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +53,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: _themeColor, width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back,
-                color: Color(0xFFE57373), size: 16),
+            child: Icon(Icons.arrow_back, color: _themeColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -145,17 +167,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: (isDestructive
-                        ? const Color(0xFFFF5252)
-                        : const Color(0xFFE57373))
+                color: (isDestructive ? const Color(0xFFFF5252) : _themeColor)
                     .withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: isDestructive
-                    ? const Color(0xFFFF5252)
-                    : const Color(0xFFE57373),
+                color: isDestructive ? const Color(0xFFFF5252) : _themeColor,
                 size: 22,
               ),
             ),
@@ -230,6 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         message: 'Enter your PIN to verify and export your data',
         hint:
             'Remember this PIN! You will need it to import this backup on any device.',
+        themeColor: _themeColor,
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
 
@@ -309,6 +328,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: 'Import Data',
         message: 'Enter the PIN that was used to encrypt this backup',
         hint: 'This is the PIN from the device where you created the backup.',
+        themeColor: _themeColor,
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
 
@@ -346,7 +366,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: _themeColor,
             ),
             onPressed: () async {
               Navigator.pop(context);
@@ -440,6 +460,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (dialogContext) => _PINVerificationDialog(
         title: 'Confirm Deletion',
         message: 'Enter your PIN to confirm deletion',
+        themeColor: _themeColor,
         onConfirm: (pin) async {
           Navigator.pop(dialogContext);
 
@@ -477,12 +498,14 @@ class _PINVerificationDialog extends StatefulWidget {
   final String title;
   final String message;
   final String? hint; // Optional hint message
+  final Color themeColor;
   final Function(String pin) onConfirm;
 
   const _PINVerificationDialog({
     required this.title,
     required this.message,
     this.hint,
+    required this.themeColor,
     required this.onConfirm,
   });
 
@@ -511,20 +534,20 @@ class _PINVerificationDialogState extends State<_PINVerificationDialog> {
             length: 4,
             onCompleted: _onPINEntered,
             errorMessage: _errorMessage,
+            size: PinInputSize.small,
           ),
           if (widget.hint != null) ...[
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: widget.themeColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                border: Border.all(color: widget.themeColor.withOpacity(0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline,
-                      size: 16, color: AppColors.primary),
+                  Icon(Icons.info_outline, size: 16, color: widget.themeColor),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

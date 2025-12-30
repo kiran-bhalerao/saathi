@@ -109,9 +109,6 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
   void _prepareVocabulary() {
     // Extract vocabulary terms from chapter
     _vocabularyTerms = widget.chapter.vocabulary.map((v) => v.term).toList();
-
-    // Add some common terms
-    _vocabularyTerms.addAll(['Consent', 'Pleasure', 'Comfort', 'Intimacy']);
   }
 
   Future<void> _sendMessage(String messageText) async {
@@ -152,6 +149,10 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
     _sendMessage(message);
   }
 
+  // Helper getters for dynamic theming
+  Color get _themeColor =>
+      _currentUserType == 'female' ? AppColors.primary : AppColors.primaryMale;
+
   @override
   void dispose() {
     _refreshTimer?.cancel();
@@ -173,11 +174,10 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.primary, width: 1.5),
+              border: Border.all(color: _themeColor, width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back,
-                color: AppColors.primary, size: 16),
+            child: Icon(Icons.arrow_back, color: _themeColor, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -202,8 +202,7 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
           // Thread (messages + pinged sections)
           Expanded(
             child: _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary))
+                ? Center(child: CircularProgressIndicator(color: _themeColor))
                 : _thread.isEmpty
                     ? Center(
                         child: Column(
@@ -240,6 +239,8 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                             return MessageBubble(
                               message: message,
                               isCurrentUser: message.sender == _currentUserType,
+                              // Pass user type to message bubble for theming
+                              userType: _currentUserType,
                             );
                           } else {
                             // Pinged section - use shared PingCard
@@ -247,7 +248,15 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
                             return PingCard(
                               ping: ping,
                               // If current user is female, she is the sender (Right aligned)
-                              // If male, he is the receiver (Left aligned)
+                              // If male, he (current user) is the receiver?
+                              // Wait, 'isCurrentUser' in PingCard usually implies alignment.
+                              // If I am female and I sent it -> Right.
+                              // If I am male (receiver) -> Left.
+                              // PingCard logic assumes 'female' sends pings.
+                              // So: isCurrentUser = (sender == myType).
+                              // Pings are sent by Female. So sender is always 'female'.
+                              // If I am 'female', isCurrentUser = true.
+                              // If I am 'male', isCurrentUser = false.
                               isCurrentUser: _currentUserType == 'female',
                               // Add tap handler for male to view full content
                               onTap: _currentUserType == 'male'
@@ -264,6 +273,8 @@ class _ChapterDiscussionScreenState extends State<ChapterDiscussionScreen> {
             child: ChatInput(
               textController: _textController,
               onSendMessage: _sendMessage,
+              // Pass theme color
+              themeColor: _themeColor,
             ),
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:saathi/routes/app_routes.dart';
 
+import '../../../config/app_colors.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
@@ -31,11 +33,11 @@ class QuizResultScreen extends StatelessWidget {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.arrow_back,
-                color: Color(0xFFE57373), size: 16),
+                color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -151,7 +153,10 @@ class QuizResultScreen extends StatelessWidget {
                       }
 
                       if (context.mounted) {
-                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.popUntil(
+                            context,
+                            (route) =>
+                                route.settings.name == AppRoutes.femaleHome);
                       }
                     },
                     text: 'Mark Chapter Complete',

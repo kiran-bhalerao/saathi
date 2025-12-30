@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/app_colors.dart';
 import '../../../data/models/sync_models.dart';
 
 /// Message bubble widget for chat display
 class MessageBubble extends StatelessWidget {
   final DiscussionMessage message;
   final bool isCurrentUser;
+  final String userType;
 
   const MessageBubble({
     super.key,
     required this.message,
     required this.isCurrentUser,
+    this.userType = 'female',
   });
 
   @override
@@ -40,11 +43,9 @@ class MessageBubble extends StatelessWidget {
                 // Use gradient for current user (sender), solid color for partner
                 color: isCurrentUser ? null : Colors.white,
                 gradient: isCurrentUser
-                    ? const LinearGradient(
-                        colors: [Color(0xFFE57373), Color(0xFFEF5350)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
+                    ? (userType == 'male'
+                        ? AppColors.maleGradient
+                        : AppColors.femaleGradient)
                     : null,
                 boxShadow: [
                   BoxShadow(

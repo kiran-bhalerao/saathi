@@ -207,7 +207,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                         await _shareWithPartner(selectedText);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE57373),
+                        backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -297,11 +297,11 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.arrow_back,
-                color: Color(0xFFE57373), size: 16),
+                color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -319,7 +319,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
               _currentLocale == 'en'
                   ? Icons.translate
                   : Icons.translate_outlined,
-              color: const Color(0xFFE57373),
+              color: AppColors.primary,
               size: 22,
             ),
             onPressed: _isLoadingLocale ? null : _toggleLocale,
@@ -329,7 +329,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline,
-                color: Color(0xFFE57373), size: 22),
+                color: AppColors.primary, size: 22),
             onPressed: () {
               Navigator.push(
                 context,
@@ -437,7 +437,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
         margin: const EdgeInsets.symmetric(vertical: 16),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFFE57373).withOpacity(0.08),
+          color: AppColors.primary.withOpacity(0.08),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -450,12 +450,12 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE57373).withOpacity(0.15),
+                    color: AppColors.primary.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.lightbulb_outline,
-                    color: Color(0xFFE57373),
+                    color: AppColors.primary,
                     size: 24,
                   ),
                 ),
@@ -729,12 +729,12 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.share, size: 18, color: Color(0xFFE57373)),
+                    Icon(Icons.share, size: 18, color: AppColors.primary),
                     SizedBox(width: 6),
                     Text(
                       'Share',
                       style: TextStyle(
-                        color: Color(0xFFE57373),
+                        color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -796,7 +796,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.share, size: 18, color: Color(0xFFE57373)),
+                      Icon(Icons.share, size: 18, color: AppColors.primary),
                       SizedBox(width: 6),
                       Text(
                         'Share',

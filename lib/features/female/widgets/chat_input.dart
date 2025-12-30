@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/app_colors.dart';
+
 /// Chat input widget with send button
 class ChatInput extends StatefulWidget {
   final Function(String) onSendMessage;
   final TextEditingController? textController; // Optional external controller
   final VoidCallback? onShareSection;
+  final Color? themeColor;
 
   const ChatInput({
     super.key,
     required this.onSendMessage,
     this.textController,
     this.onShareSection,
+    this.themeColor,
   });
 
   @override
@@ -100,7 +104,7 @@ class _ChatInputState extends State<ChatInput> {
 
           // Send button
           Material(
-            color: const Color(0xFFE57373),
+            color: widget.themeColor ?? AppColors.primary,
             borderRadius: BorderRadius.circular(24),
             child: InkWell(
               onTap: _hasText ? _sendMessage : null,

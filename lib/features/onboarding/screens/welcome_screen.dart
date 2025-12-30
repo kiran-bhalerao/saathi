@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saathi/core/widgets/custom_button.dart';
 
 import '../../../config/app_colors.dart';
 
@@ -81,44 +82,13 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               // Get Started button
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 56,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primary,
-                      AppColors.primary.withOpacity(0.85),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/pin-setup');
-                    },
-                    borderRadius: BorderRadius.circular(16),
-                    child: const Center(
-                      child: Text(
-                        'Get Started',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ),
+                child: CustomButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/pin-setup');
+                  },
+                  text: "Get Started",
                 ),
               ),
             ],

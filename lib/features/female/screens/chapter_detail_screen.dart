@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../config/app_colors.dart';
+import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/models/chapter_progress_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
@@ -106,18 +107,18 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.arrow_back,
-                color: Color(0xFFE57373), size: 16),
+                color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline,
-                color: Color(0xFFE57373), size: 22),
+                color: AppColors.primary, size: 22),
             onPressed: () {
               Navigator.push(
                 context,
@@ -154,13 +155,13 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE57373).withOpacity(0.08),
+                          color: AppColors.primary.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           'CHAPTER ${chapter.number}',
                           style: const TextStyle(
-                            color: Color(0xFFE57373),
+                            color: AppColors.primary,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.0,
@@ -256,8 +257,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w900,
-                                    color: const Color(0xFFE57373)
-                                        .withOpacity(0.3),
+                                    color: AppColors.primary.withOpacity(0.3),
                                     fontFamily: 'monospace',
                                     letterSpacing: -1,
                                   ),
@@ -306,83 +306,44 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
             ),
           ),
 
-          // Floating Button
           Positioned(
             left: 32,
             right: 32,
             bottom: 32,
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, Color(0xFFEF5350)],
-                ),
-                borderRadius: BorderRadius.circular(30), // Stadium shape
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: () async {
-                  // Mark chapter as in progress
-                  final progressRepo = ChapterProgressRepository();
-                  final existingProgress =
-                      await progressRepo.getChapterProgress(chapter.number);
+            child: CustomButton(
+              onPressed: () async {
+                // Mark chapter as in progress
+                final progressRepo = ChapterProgressRepository();
+                final existingProgress =
+                    await progressRepo.getChapterProgress(chapter.number);
 
-                  if (existingProgress == null) {
-                    await progressRepo.updateProgress(
-                      ChapterProgress(
-                        chapterNumber: chapter.number,
-                        completed: false,
-                        lastReadAt: DateTime.now(),
-                        readingTimeSeconds: 0,
-                        quizCompleted: false,
-                      ),
-                    );
-                  } else if (!existingProgress.completed) {
-                    await progressRepo.updateProgress(
-                      existingProgress.copyWith(
-                        lastReadAt: DateTime.now(),
-                      ),
-                    );
-                  }
-
-                  if (context.mounted) {
-                    Navigator.of(context).pushNamed(
-                      '/chapter-reader',
-                      arguments: chapter,
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.menu_book_rounded,
-                        color: Colors.white, size: 22),
-                    SizedBox(width: 12),
-                    Text(
-                      'Start Reading',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
+                if (existingProgress == null) {
+                  await progressRepo.updateProgress(
+                    ChapterProgress(
+                      chapterNumber: chapter.number,
+                      completed: false,
+                      lastReadAt: DateTime.now(),
+                      readingTimeSeconds: 0,
+                      quizCompleted: false,
                     ),
-                  ],
-                ),
-              ),
+                  );
+                } else if (!existingProgress.completed) {
+                  await progressRepo.updateProgress(
+                    existingProgress.copyWith(
+                      lastReadAt: DateTime.now(),
+                    ),
+                  );
+                }
+
+                if (context.mounted) {
+                  Navigator.of(context).pushNamed(
+                    '/chapter-reader',
+                    arguments: chapter,
+                  );
+                }
+              },
+              text: 'Start Reading',
+              icon: Icons.menu_book_rounded,
             ),
           ),
         ],
@@ -393,7 +354,7 @@ class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
   Widget _buildStatItem(IconData icon, String value, String label) {
     return Column(
       children: [
-        Icon(icon, size: 24, color: const Color(0xFFE57373)),
+        Icon(icon, size: 24, color: AppColors.primary),
         const SizedBox(height: 6),
         Text(
           value,

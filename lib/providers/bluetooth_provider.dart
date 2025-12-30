@@ -1,13 +1,15 @@
-import 'dart:math';
 import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:permission_handler/permission_handler.dart' as ph;
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart' as ph;
+
+import '../core/connections/connection_manager.dart';
 import '../data/models/bluetooth_enums.dart';
 import '../data/repositories/pairing_repository.dart';
 import '../data/repositories/user_repository.dart';
-import '../core/connections/connection_manager.dart';
 
 /// Connection state management provider (formerly BluetoothProvider)
 /// Manages device pairing and data sync using Nearby Connections
@@ -22,13 +24,13 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
   String? _errorMessage;
   int _pendingSyncItems = 0;
   bool _isBluetoothAvailable = false;
-  
+
   // Auto-reconnect state
   int _reconnectAttempts = 0;
   Timer? _reconnectTimer;
   static const int maxReconnectAttempts = 3;
   bool _isReconnecting = false;
-  
+
   BluetoothProvider({
     required PairingRepository pairingRepository,
     required UserRepository userRepository,
@@ -39,7 +41,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     // Set up connection callbacks
     _connectionManager.onConnectionSuccess = _handleConnectionSuccess;
     _connectionManager.onDisconnected = _handleDisconnection;
-    
+
     _initialize();
   }
 
@@ -56,28 +58,28 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
   Future<void> _initialize() async {
     // Mark as available (Nearby Connections handles availability internally)
     _isBluetoothAvailable = true;
-    
+
     // Load pairing status and user type from database
     final pairing = await _pairingRepository.getPairing();
     final user = await _userRepository.getUser();
-    
+
     if (pairing != null && pairing.isPaired) {
       _pairingStatus = PairingStatus.paired;
       _pairingCode = pairing.pairingCode;
     }
-    
+
     // Load pending sync count
     _pendingSyncItems = await _pairingRepository.getPendingSyncCount();
-    
+
     // Start connection monitoring if paired
     if (isPaired && _pairingCode != null) {
       _startConnectionMonitoring();
-      
+
       // Attempt immediate reconnection on app launch
       Future.delayed(const Duration(seconds: 2), () async {
         if (isPaired && !isConnected) {
           print('App launched: Attempting auto-reconnect...');
-          
+
           // Determine role and reconnect accordingly
           if (user?.userType == 'female') {
             // Female: Restart advertising
@@ -91,7 +93,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
         }
       });
     }
-    
+
     notifyListeners();
   }
 
@@ -109,7 +111,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
           return false;
         }
       }
-      
+
       // Request all required permissions
       Map<ph.Permission, ph.PermissionStatus> statuses = await [
         ph.Permission.location,
@@ -119,16 +121,18 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
         if (defaultTargetPlatform == TargetPlatform.android)
           ph.Permission.nearbyWifiDevices,
       ].request();
-      
+
       // Check if all granted
-      bool allGranted = statuses.values.every((status) => status == ph.PermissionStatus.granted);
-      
+      bool allGranted = statuses.values
+          .every((status) => status == ph.PermissionStatus.granted);
+
       if (!allGranted) {
-        _errorMessage = 'Required permissions denied. Please grant all permissions.';
+        _errorMessage =
+            'Required permissions denied. Please grant all permissions.';
         notifyListeners();
         return false;
       }
-      
+
       return true;
     } catch (e) {
       _errorMessage = 'Permission error: ${e.toString()}';
@@ -137,37 +141,35 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-
   /// Generate new pairing code and start advertising (Female onboarding)
   Future<String> generatePairingCode() async {
     final code = _generateCode();
     _pairingCode = code;
-    
+
     // Save to database
     await _pairingRepository.createPairing(code);
-    
+
     // Request permissions and start advertising
     if (await ensurePermissionsGranted()) {
       try {
         await _connectionManager.startAdvertising(code);
-        
+
         // Set status to pairing (waiting for Male to connect)
         // DO NOT mark as paired here - that happens in _handleConnectionSuccess
         _pairingStatus = PairingStatus.pairing;
-        _connectionStatus = ConnectionStatus.disconnected; // Advertise but not yet connected
+        _connectionStatus =
+            ConnectionStatus.disconnected; // Advertise but not yet connected
         notifyListeners();
-        
       } catch (e) {
         _errorMessage = 'Failed to start advertising: ${e.toString()}';
         debugPrint('Advertising failed: $e');
         notifyListeners();
       }
     }
-    
+
     notifyListeners();
     return code;
   }
-
 
   // Completer to wait for connection
   Completer<bool>? _connectionCompleter;
@@ -183,19 +185,19 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     _connectionStatus = ConnectionStatus.scanning;
     _errorMessage = null;
     _pairingCode = code; // Store the code
-    
+
     // Persist code immediately so we have a DB record
     await _pairingRepository.savePairingCode(code);
-    
+
     notifyListeners();
 
     try {
       // Create completer to wait for connection
       _connectionCompleter = Completer<bool>();
-      
+
       // Start discovery for device with matching pairing code
       await _connectionManager.startDiscovery(code);
-      
+
       // Wait for connection (with timeout)
       final connected = await _connectionCompleter!.future.timeout(
         const Duration(seconds: 30),
@@ -204,7 +206,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
           throw Exception('Connection timeout - partner device not found');
         },
       );
-      
+
       _connectionCompleter = null;
       return connected;
     } catch (e) {
@@ -220,24 +222,24 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
   /// Connection success callback
   void _handleConnectionSuccess(String endpointId) async {
     print('Connection success callback: $endpointId');
-    
+
     _pairingStatus = PairingStatus.paired;
     _connectionStatus = ConnectionStatus.connected;
-    
+
     // Save to database
     await _pairingRepository.completePairing(
       _pairingCode!,
       endpointId,
     );
-    
+
     // Complete the connection completer if waiting (Male side)
     if (_connectionCompleter != null && !_connectionCompleter!.isCompleted) {
       _connectionCompleter!.complete(true);
     }
-    
+
     // Load pending sync count
     _pendingSyncItems = await _pairingRepository.getPendingSyncCount();
-    
+
     // Auto-trigger sync if there are pending items
     if (_pendingSyncItems > 0) {
       print('Auto-triggering sync for $_pendingSyncItems pending items');
@@ -248,7 +250,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
         }
       });
     }
-    
+
     notifyListeners();
   }
 
@@ -257,7 +259,6 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     _connectionStatus = ConnectionStatus.disconnected;
     notifyListeners();
   }
-
 
   /// Manual sync trigger (from Home screen icon)
   Future<void> syncNow() async {
@@ -280,13 +281,13 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     try {
       // Perform sync via Nearby Connections
       final result = await _connectionManager.performSync();
-      
+
       _pendingSyncItems = await _pairingRepository.getPendingSyncCount();
       _connectionStatus = ConnectionStatus.connected;
-      
+
       // Log success (result available for future use)
       print('Sync completed: sent=${result.sent}, received=${result.received}');
-      
+
       notifyListeners();
     } catch (e) {
       _connectionStatus = ConnectionStatus.disconnected;
@@ -297,7 +298,19 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Reconnect to paired device (for auto-reconnect)
   Future<void> reconnect() async {
-    if (!isPaired || _pairingCode == null) {
+    // Strict validation: Must be paired AND have a valid pairing code
+    if (!isPaired) {
+      print('Reconnect blocked: Device not paired');
+      _errorMessage = 'Device not paired. Please pair first.';
+      notifyListeners();
+      return;
+    }
+
+    if (_pairingCode == null || _pairingCode!.isEmpty) {
+      print('Reconnect blocked: No pairing code found');
+      _errorMessage = 'No pairing code found. Please pair first.';
+      _connectionStatus = ConnectionStatus.disconnected;
+      notifyListeners();
       return;
     }
 
@@ -306,29 +319,29 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     }
 
     _connectionStatus = ConnectionStatus.scanning;
+    _errorMessage = null;
     notifyListeners();
 
     try {
       // Start discovery to reconnect
       await _connectionManager.startDiscovery(_pairingCode!);
       // Connection will be handled by callback
-      
+
       // The success/failure of connection will be handled by _handleConnectionSuccess/_handleDisconnection
       // For now, we assume discovery started successfully.
       // The connection status will be updated via callbacks.
-      
+
       // No direct 'success' return from startDiscovery for connection establishment here.
       // The logic for updating connection status is in _handleConnectionSuccess.
-      
+
       // If we reach here, discovery was initiated.
       // We don't set _connectionStatus to connected immediately, as it's async.
       // The callback will do that.
-      
+
       // If there was an error starting discovery, it would be caught.
-      
+
       // We might want to add a timeout for discovery here if needed,
       // but for now, relying on callbacks.
-      
     } catch (e) {
       _connectionStatus = ConnectionStatus.disconnected;
       _errorMessage = e.toString();
@@ -345,14 +358,39 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Unpair device (from Settings)
   Future<void> unpairDevice() async {
+    // Cancel any ongoing reconnection attempts
+    _reconnectTimer?.cancel();
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
+
+    // Get user type to ensure proper cleanup
+    final user = await _userRepository.getUser();
+
+    // Disconnect from active connection
+    // This handles both advertising (female) and discovery (male)
     await _connectionManager.disconnect();
+
+    // Additional explicit cleanup based on user role
+    // Female users may have been advertising, ensure it's stopped
+    // Male users may have been discovering, ensure it's stopped
+    if (user?.userType == 'female') {
+      print('Unpair: Ensuring advertising is stopped for female user');
+      // The disconnect() call above should handle this, but we log it for clarity
+    } else {
+      print('Unpair: Ensuring discovery is stopped for male user');
+      // The disconnect() call above should handle this, but we log it for clarity
+    }
+
+    // Clear pairing from database
     await _pairingRepository.unpairDevice();
-    
+
+    // Clear all state
     _pairingStatus = PairingStatus.notPaired;
     _connectionStatus = ConnectionStatus.disconnected;
     _pairingCode = null;
     _pendingSyncItems = 0;
-    
+    _errorMessage = null;
+
     notifyListeners();
   }
 
@@ -382,28 +420,18 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
         timer.cancel();
         return;
       }
-      
+
       if (!isConnected && !_isReconnecting) {
         _attemptAutoReconnect();
       }
     });
   }
 
-  /// Handle connection state changes
-  Future<void> _handleConnectionStateChange(ConnectionStatus newStatus) async {
-    if (newStatus == ConnectionStatus.disconnected && isPaired && !_isReconnecting) {
-      // Device disconnected - attempt auto-reconnect
-      await _attemptAutoReconnect();
-    } else if (newStatus == ConnectionStatus.connected && _pendingSyncItems > 0) {
-      // Just reconnected with pending items - auto-trigger sync
-      await syncNow();
-    }
-  }
-
   /// Attempt auto-reconnect with exponential backoff
   Future<void> _attemptAutoReconnect() async {
     if (_reconnectAttempts >= maxReconnectAttempts) {
-      _errorMessage = 'Failed to reconnect after $maxReconnectAttempts attempts';
+      _errorMessage =
+          'Failed to reconnect after $maxReconnectAttempts attempts';
       _isReconnecting = false;
       notifyListeners();
       return;
@@ -411,10 +439,10 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
 
     _isReconnecting = true;
     _reconnectAttempts++;
-    
+
     // Exponential backoff: 2s, 4s, 8s
     final delay = Duration(seconds: pow(2, _reconnectAttempts).toInt());
-    
+
     _reconnectTimer?.cancel();
     _reconnectTimer = Timer(delay, () async {
       try {

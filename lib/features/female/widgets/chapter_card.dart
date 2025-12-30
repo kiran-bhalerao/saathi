@@ -22,7 +22,6 @@ class ChapterCard extends StatefulWidget {
 class _ChapterCardState extends State<ChapterCard> {
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
   ChapterProgress? _progress;
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -45,7 +44,6 @@ class _ChapterCardState extends State<ChapterCard> {
     if (mounted) {
       setState(() {
         _progress = progress;
-        _isLoading = false;
       });
     }
   }
@@ -129,14 +127,14 @@ class _ChapterCardState extends State<ChapterCard> {
                             : const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [Color(0xFFE57373), Color(0xFFEC407A)],
+                                colors: [AppColors.primary, Color(0xFFEC407A)],
                               ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
                             color: (isLocked
                                     ? Colors.grey[400]!
-                                    : const Color(0xFFE57373))
+                                    : AppColors.primary)
                                 .withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
@@ -198,7 +196,7 @@ class _ChapterCardState extends State<ChapterCard> {
                                   decoration: BoxDecoration(
                                     color: isCompleted
                                         ? AppColors.success
-                                        : const Color(0xFFE57373),
+                                        : AppColors.primary,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -210,7 +208,7 @@ class _ChapterCardState extends State<ChapterCard> {
                                     fontWeight: FontWeight.w500,
                                     color: isCompleted
                                         ? AppColors.success
-                                        : const Color(0xFFE57373),
+                                        : AppColors.primary,
                                   ),
                                 ),
                               ],

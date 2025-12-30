@@ -21,6 +21,12 @@ class PINInputController {
   }
 }
 
+/// PIN Input Size variants
+enum PinInputSize {
+  small,
+  large,
+}
+
 /// PIN input widget for setup and verification
 class PINInputWidget extends StatefulWidget {
   final int length;
@@ -28,6 +34,7 @@ class PINInputWidget extends StatefulWidget {
   final String? errorMessage;
   final bool isObscured;
   final PINInputController? controller;
+  final PinInputSize size;
 
   const PINInputWidget({
     super.key,
@@ -36,6 +43,7 @@ class PINInputWidget extends StatefulWidget {
     this.errorMessage,
     this.isObscured = true,
     this.controller,
+    this.size = PinInputSize.large,
   });
 
   @override
@@ -129,6 +137,13 @@ class _PINInputWidgetState extends State<PINInputWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Dimensions based on size variant
+    final isSmall = widget.size == PinInputSize.small;
+    final double boxWidth = isSmall ? 50 : 64;
+    final double boxHeight = isSmall ? 60 : 76;
+    final double horizontalPadding = isSmall ? 5 : 8;
+    final double fontSize = isSmall ? 24 : 32;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -137,10 +152,10 @@ class _PINInputWidgetState extends State<PINInputWidget> {
           children: List.generate(widget.length, (index) {
             final isLast = index == widget.length - 1;
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: SizedBox(
-                width: 64, // Increased size
-                height: 76,
+                width: boxWidth,
+                height: boxHeight,
                 child: KeyboardListener(
                   focusNode:
                       FocusNode(), // Use a separate FocusNode for listener to avoid conflict? No, wrapper needs it. But usually wrapping TextField works.
@@ -169,11 +184,11 @@ class _PINInputWidgetState extends State<PINInputWidget> {
                     textAlign: TextAlign.center,
                     textAlignVertical: TextAlignVertical.center,
                     cursorColor: AppColors.primary,
-                    cursorHeight: 28,
+                    cursorHeight: fontSize * 0.9,
                     maxLength: 1,
                     obscureText: widget.isObscured,
                     style: AppTextStyles.pinInput.copyWith(
-                      fontSize: 32,
+                      fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: InputDecoration(

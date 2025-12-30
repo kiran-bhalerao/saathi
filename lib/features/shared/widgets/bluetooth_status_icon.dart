@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../providers/bluetooth_provider.dart';
+
 import '../../../../data/models/bluetooth_enums.dart';
+import '../../../../providers/bluetooth_provider.dart';
 
 class BluetoothStatusIcon extends StatefulWidget {
   final Color? disconnectColor;
   final Color? connectColor;
-  
+
   const BluetoothStatusIcon({
     super.key,
     this.disconnectColor,
@@ -17,7 +18,8 @@ class BluetoothStatusIcon extends StatefulWidget {
   State<BluetoothStatusIcon> createState() => _BluetoothStatusIconState();
 }
 
-class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTickerProviderStateMixin {
+class _BluetoothStatusIconState extends State<BluetoothStatusIcon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
 
@@ -28,8 +30,9 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     )..repeat(reverse: true); // Blink effect
-    
-    _opacityAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(_controller);
+
+    _opacityAnimation =
+        Tween<double>(begin: 0.4, end: 1.0).animate(_controller);
   }
 
   @override
@@ -43,15 +46,13 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
     return Consumer<BluetoothProvider>(
       builder: (context, bt, child) {
         final status = bt.connectionStatus;
-        final isPaired = bt.isPaired;
-        
+
         // Determine state
         final isConnected = status == ConnectionStatus.connected;
-        final isDisconnected = status == ConnectionStatus.disconnected;
-        final isConnecting = status == ConnectionStatus.connecting || 
-                             status == ConnectionStatus.scanning ||
-                             status == ConnectionStatus.syncing;
-                             
+        final isConnecting = status == ConnectionStatus.connecting ||
+            status == ConnectionStatus.scanning ||
+            status == ConnectionStatus.syncing;
+
         // Determine color
         Color iconColor;
         if (isConnected) {
@@ -69,9 +70,11 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
             shape: BoxShape.circle,
           ),
           child: Icon(
-            isConnected ? Icons.bluetooth_connected : 
-            isConnecting ? Icons.bluetooth_searching :
-            Icons.bluetooth_disabled,
+            isConnected
+                ? Icons.bluetooth_connected
+                : isConnecting
+                    ? Icons.bluetooth_searching
+                    : Icons.bluetooth_disabled,
             color: iconColor, // Color pop against white
             size: 20,
           ),
@@ -96,18 +99,25 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
 
   String _getTooltip(ConnectionStatus status) {
     switch (status) {
-      case ConnectionStatus.connected: return 'Connected (Tap to sync)';
-      case ConnectionStatus.disconnected: return 'Disconnected (Tap to reconnect)';
-      case ConnectionStatus.connecting: return 'Connecting...';
-      case ConnectionStatus.scanning: return 'Searching...';
-      case ConnectionStatus.syncing: return 'Syncing...';
+      case ConnectionStatus.connected:
+        return 'Connected (Tap to sync)';
+      case ConnectionStatus.disconnected:
+        return 'Disconnected (Tap to reconnect)';
+      case ConnectionStatus.connecting:
+        return 'Connecting...';
+      case ConnectionStatus.scanning:
+        return 'Searching...';
+      case ConnectionStatus.syncing:
+        return 'Syncing...';
     }
   }
 
   void _handleTap(BuildContext context, BluetoothProvider provider) {
-    if (!provider.isPaired) {
+    // Strict check: Must be paired AND have a pairing code
+    if (!provider.isPaired || provider.pairingCode == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not paired with partner. Go to Settings to pair.')),
+        const SnackBar(
+            content: Text('Not paired with partner. Go to Settings to pair.')),
       );
       return;
     }
@@ -122,6 +132,16 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
         ),
       );
     } else if (provider.connectionStatus == ConnectionStatus.disconnected) {
+      // Additional safety check before reconnecting
+      if (provider.pairingCode == null || provider.pairingCode!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No pairing code found. Please pair first.'),
+          ),
+        );
+        return;
+      }
+
       // Reconnect
       provider.reconnect();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +152,7 @@ class _BluetoothStatusIconState extends State<BluetoothStatusIcon> with SingleTi
       );
     } else {
       // Connecting/Scanning
-       ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Already trying to connect...'),
           duration: Duration(seconds: 1),

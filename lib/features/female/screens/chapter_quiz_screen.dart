@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../config/app_colors.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
 import '../widgets/quiz_card.dart';
@@ -19,10 +20,10 @@ class ChapterQuizScreen extends StatefulWidget {
 
 class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
-  
+
   int _currentQuestionIndex = 0;
   final List<bool> _userAnswers = [];
-  
+
   void _handleAnswer(bool answer) {
     setState(() {
       _userAnswers.add(answer);
@@ -44,10 +45,12 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
       }
     }
 
-    final score = (correctAnswers / widget.chapter.quizQuestions.length * 100).round();
+    final score =
+        (correctAnswers / widget.chapter.quizQuestions.length * 100).round();
 
     // Save quiz score only - don't mark chapter as complete yet
-    final progress = await _progressRepo.getChapterProgress(widget.chapter.number);
+    final progress =
+        await _progressRepo.getChapterProgress(widget.chapter.number);
     if (progress != null) {
       await _progressRepo.updateProgress(
         progress.copyWith(
@@ -76,7 +79,7 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
   @override
   Widget build(BuildContext context) {
     final questions = widget.chapter.quizQuestions;
-    
+
     if (questions.isEmpty) {
       return Scaffold(
         appBar: AppBar(
@@ -86,10 +89,11 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
             icon: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+                border: Border.all(color: AppColors.primary, width: 1.5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+              child: const Icon(Icons.arrow_back,
+                  color: AppColors.primary, size: 16),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -110,10 +114,11 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.arrow_back, color: Color(0xFFE57373), size: 16),
+            child: const Icon(Icons.arrow_back,
+                color: AppColors.primary, size: 16),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -142,7 +147,7 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            
+
             // Progress indicator
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -162,15 +167,15 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFFE57373),
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Linear progress bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -179,14 +184,15 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
                 child: LinearProgressIndicator(
                   value: _currentQuestionIndex / questions.length,
                   backgroundColor: const Color(0xFFE0E0E0),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE57373)),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 8,
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Quiz card stack
             Expanded(
               child: Stack(
@@ -211,7 +217,7 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
                         ),
                       ),
                     ),
-                  
+
                   // Current card
                   if (_currentQuestionIndex < questions.length)
                     QuizCard(
@@ -224,10 +230,9 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
                 ],
               ),
             ),
-            
-            
+
             const SizedBox(height: 40),
-            
+
             // Minimal swipe instruction
             Text(
               'Swipe left for NO or right for YES',
@@ -237,7 +242,7 @@ class _ChapterQuizScreenState extends State<ChapterQuizScreen> {
                 letterSpacing: 0.3,
               ),
             ),
-            
+
             const SizedBox(height: 40),
           ],
         ),

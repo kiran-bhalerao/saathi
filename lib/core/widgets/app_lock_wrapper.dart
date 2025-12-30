@@ -19,7 +19,6 @@ class _AppLockWrapperState extends State<AppLockWrapper>
   final PINManager _pinManager = PINManager();
   bool _isLocked = false;
   bool _isPinSet = false;
-  bool _isLoading = true;
   bool _wasPaused = false; // Track if app was previously in background
 
   @override
@@ -56,7 +55,6 @@ class _AppLockWrapperState extends State<AppLockWrapper>
       final hasPin = await _pinManager.isPINConfigured();
       setState(() {
         _isPinSet = hasPin;
-        _isLoading = false;
 
         // Only lock on resume, not on initial launch
         // This allows users to complete onboarding first
@@ -66,7 +64,6 @@ class _AppLockWrapperState extends State<AppLockWrapper>
       });
     } catch (e) {
       debugPrint('Error checking PIN status: $e');
-      setState(() => _isLoading = false);
     }
   }
 

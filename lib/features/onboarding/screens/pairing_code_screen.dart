@@ -47,7 +47,7 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFFAF9F9),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
@@ -58,9 +58,11 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
           style: TextStyle(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
+            fontSize: 18,
           ),
         ),
-        backgroundColor: Colors.white,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
@@ -71,29 +73,41 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
               const Spacer(),
 
               // Bluetooth Icon
+              // Bluetooth Icon
               Container(
-                padding: const EdgeInsets.all(24),
+                width: 140,
+                height: 140,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: const Color(0xFFFFF0F0),
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-                child: const Icon(
-                  Icons.bluetooth,
-                  size: 64,
-                  color: AppColors.primary,
+                child: const Center(
+                  child: Icon(
+                    Icons.bluetooth_connected_rounded,
+                    size: 64,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
 
               // Title
               const Text(
                 'Share this code with\nyour partner',
                 style: TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
-                  height: 1.3,
+                  height: 1.4,
+                  letterSpacing: -0.5,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -111,24 +125,25 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                       ),
                     )
                   : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(4, (index) {
                           return Container(
-                            width: 68,
-                            height: 80,
+                            margin: const EdgeInsets.symmetric(horizontal: 8),
+                            width: 64,
+                            height: 72,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: AppColors.primary.withOpacity(0.3),
+                                color: const Color(0xFFFFDADA),
                                 width: 2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withOpacity(0.08),
-                                  blurRadius: 12,
+                                  color: const Color(0xFFFFEBEB),
+                                  blurRadius: 0,
                                   offset: const Offset(0, 4),
                                 ),
                               ],
@@ -140,10 +155,10 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                                     ? _pairingCode![index]
                                     : '',
                                 style: const TextStyle(
-                                  fontSize: 36,
+                                  fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
-                                  fontFamily: 'monospace',
+                                  fontFamily: 'Poppins', // Or app default
                                 ),
                               ),
                             ),

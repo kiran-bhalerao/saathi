@@ -111,8 +111,14 @@ class ContentParser {
 
         currentSectionTitle = line.replaceAll(RegExp(r'^#{2,3}\s*'), '');
 
-        // Note: "New Words You'll Know", "Something to Think About", and "Coming Up Next"
-        // are now treated as regular sections and will be displayed in the reader
+        // Check for special sections (English and Marathi)
+        if (currentSectionTitle == 'New Words You\'ll Know' ||
+            currentSectionTitle == 'नवीन शब्द जे तुम्हाला माहित होतील') {
+          // Parse vocabulary section
+          vocabulary.addAll(_parseVocabulary(lines, i + 1, chapterNumber));
+          currentSectionTitle = null; // Don't create a section for this
+          continue;
+        }
 
         // Skip Quiz section - parse separately, don't add to sections
         if (currentSectionTitle == 'Quiz' ||
@@ -242,6 +248,44 @@ class ContentParser {
     items.add(item);
 
     return ListBlock(items: items, ordered: ordered);
+  }
+
+  /// Parse vocabulary section
+  List<VocabularyTerm> _parseVocabulary(
+      List<String> lines, int startIndex, int chapterNumber) {
+    final terms = <VocabularyTerm>[];
+
+    for (int i = startIndex; i < lines.length; i++) {
+      final line = lines[i].trim();
+
+      // Stop at next section
+      if (line.startsWith('##')) break;
+      if (line.isEmpty) continue;
+
+      // Format: **Term**: Definition OR **Term** — Definition
+      if (line.startsWith('**')) {
+        // pattern to find separator: **: or ** - or ** —
+        final regex = RegExp(r'\*\*\s*[:\-\—]\s*');
+        final match = regex.firstMatch(line);
+
+        if (match != null) {
+          final termPart = line.substring(0, match.start).trim();
+          final definitionPart = line.substring(match.end).trim();
+
+          final term = termPart.replaceAll('**', '').trim();
+
+          if (term.isNotEmpty && definitionPart.isNotEmpty) {
+            terms.add(VocabularyTerm(
+              term: term,
+              definition: definitionPart,
+              chapterNumber: chapterNumber,
+            ));
+          }
+        }
+      }
+    }
+
+    return terms;
   }
 
   /// Parse quiz questions section

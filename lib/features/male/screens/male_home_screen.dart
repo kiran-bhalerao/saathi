@@ -105,7 +105,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8F8),
+      backgroundColor: AppColors.background,
       body: RefreshIndicator(
         onRefresh: _loadActiveChapters,
         child: CustomScrollView(
@@ -114,7 +114,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
             SliverAppBar(
               expandedHeight: 180,
               pinned: true,
-              backgroundColor: const Color(0xFF64B5F6),
+              backgroundColor: AppColors.primaryMaleLight,
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
@@ -140,15 +140,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF64B5F6),
-                        Color(0xFF42A5F5),
-                        Color(0xFF2196F3),
-                      ],
-                    ),
+                    gradient: AppColors.maleGradient,
                   ),
                   child: Stack(
                     children: [
@@ -231,7 +223,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                         width: 4,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF64B5F6),
+                          color: AppColors.primaryMaleLight,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -241,7 +233,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF2D2D2D),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ],
@@ -357,12 +349,12 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: const Color(0xFF64B5F6).withOpacity(0.15),
+              color: AppColors.primaryMaleLight.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
               Icons.forum_rounded,
-              color: Color(0xFF64B5F6),
+              color: AppColors.primaryMaleLight,
               size: 24,
             ),
           ),
@@ -397,7 +389,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF64B5F6), Color(0xFF2196F3)],
+                colors: [AppColors.primaryMaleLight, AppColors.primaryMale],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -449,7 +441,7 @@ class _ChapterCard extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF64B5F6), Color(0xFF2196F3)],
+                    colors: [AppColors.primaryMaleLight, AppColors.primaryMale],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -476,7 +468,7 @@ class _ChapterCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D2D2D),
+                        color: AppColors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

@@ -25,7 +25,6 @@ class ConnectionManager {
 
   // Connection state
   String? _connectedEndpointId;
-  String? _currentPairingCode;
   bool _isAdvertising = false;
   bool _isDiscovering = false;
 
@@ -57,7 +56,6 @@ class ConnectionManager {
   /// Female: Start advertising with pairing code
   Future<void> startAdvertising(String pairingCode) async {
     try {
-      _currentPairingCode = pairingCode;
       _isAdvertising = true;
 
       await _nearby.startAdvertising(
@@ -106,7 +104,6 @@ class ConnectionManager {
   /// Male: Start discovery to find female device
   Future<void> startDiscovery(String pairingCode) async {
     try {
-      _currentPairingCode = pairingCode;
       _isDiscovering = true;
 
       await _nearby.startDiscovery(

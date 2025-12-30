@@ -164,11 +164,11 @@ class _PINSetupScreenState extends State<PINSetupScreen> {
           icon: Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE57373), width: 1.5),
+              border: Border.all(color: AppColors.primary, width: 1.5),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.arrow_back,
-                color: Color(0xFFE57373), size: 16),
+                color: AppColors.primary, size: 16),
           ),
           onPressed: _goBack,
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../data/models/chapter_model.dart';
 
 /// Swipeable quiz card widget
@@ -20,11 +21,12 @@ class QuizCard extends StatefulWidget {
   State<QuizCard> createState() => _QuizCardState();
 }
 
-class _QuizCardState extends State<QuizCard> with SingleTickerProviderStateMixin {
+class _QuizCardState extends State<QuizCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _rotateAnimation;
-  
+
   Offset _dragOffset = Offset.zero;
   bool _isDragging = false;
 
@@ -35,7 +37,7 @@ class _QuizCardState extends State<QuizCard> with SingleTickerProviderStateMixin
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    
+
     _slideAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: Offset.zero,
@@ -43,7 +45,7 @@ class _QuizCardState extends State<QuizCard> with SingleTickerProviderStateMixin
       parent: _controller,
       curve: Curves.easeOut,
     ));
-    
+
     _rotateAnimation = Tween<double>(
       begin: 0,
       end: 0,
@@ -83,16 +85,17 @@ class _QuizCardState extends State<QuizCard> with SingleTickerProviderStateMixin
     if (_dragOffset.dx.abs() > threshold) {
       // Swipe was significant - answer the question
       final answer = _dragOffset.dx > 0; // Right = Yes, Left = No
-      
+
       // Animate card off screen
       _slideAnimation = Tween<Offset>(
-        begin: Offset(_dragOffset.dx / screenWidth, _dragOffset.dy / MediaQuery.of(context).size.height),
+        begin: Offset(_dragOffset.dx / screenWidth,
+            _dragOffset.dy / MediaQuery.of(context).size.height),
         end: Offset(_dragOffset.dx > 0 ? 2 : -2, 0),
       ).animate(CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOut,
       ));
-      
+
       _rotateAnimation = Tween<double>(
         begin: _dragOffset.dx / screenWidth * 0.3,
         end: _dragOffset.dx > 0 ? 0.5 : -0.5,
@@ -113,35 +116,17 @@ class _QuizCardState extends State<QuizCard> with SingleTickerProviderStateMixin
     }
   }
 
-  void _answerQuestion(bool answer) {
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset(answer ? 2 : -2, 0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-    
-    _rotateAnimation = Tween<double>(
-      begin: 0,
-      end: answer ? 0.3 : -0.3,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-
-    _controller.forward().then((_) {
-      widget.onAnswer(answer);
-      _controller.reset();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final rotation = _isDragging ? _dragOffset.dx / screenWidth * 0.15 : _rotateAnimation.value;
-    final offsetX = _isDragging ? _dragOffset.dx : _slideAnimation.value.dx * screenWidth;
-    final offsetY = _isDragging ? _dragOffset.dy * 0.5 : _slideAnimation.value.dy * MediaQuery.of(context).size.height;
+    final rotation = _isDragging
+        ? _dragOffset.dx / screenWidth * 0.15
+        : _rotateAnimation.value;
+    final offsetX =
+        _isDragging ? _dragOffset.dx : _slideAnimation.value.dx * screenWidth;
+    final offsetY = _isDragging
+        ? _dragOffset.dy * 0.5
+        : _slideAnimation.value.dy * MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onPanStart: _onPanStart,

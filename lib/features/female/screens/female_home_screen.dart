@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../config/app_colors.dart';
 import '../../../config/constants.dart';
-import '../../../data/models/user_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../shared/widgets/bluetooth_status_icon.dart';
@@ -19,7 +19,6 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
   final UserRepository _userRepo = UserRepository();
   final ChapterProgressRepository _progressRepo = ChapterProgressRepository();
 
-  UserModel? _user;
   int _completedChapters = 0;
   bool _isLoading = true;
   bool _hasLoadedOnce = false;
@@ -40,12 +39,11 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
     }
 
     try {
-      final user = await _userRepo.getUser();
+      await _userRepo.getUser();
       final completedCount = await _progressRepo.getCompletedCount();
 
       if (mounted) {
         setState(() {
-          _user = user;
           _completedChapters = completedCount;
           _isLoading = false;
           _hasLoadedOnce = true;
@@ -71,7 +69,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8F8),
+      backgroundColor: AppColors.background,
       body: RefreshIndicator(
         onRefresh: _loadData,
         child: CustomScrollView(
@@ -80,7 +78,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
             SliverAppBar(
               expandedHeight: 180,
               pinned: true,
-              backgroundColor: const Color(0xFFE57373),
+              backgroundColor: AppColors.primary,
               elevation: 0,
               automaticallyImplyLeading: false,
               actions: [
@@ -105,15 +103,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFFE57373),
-                        Color(0xFFEF5350),
-                        Color(0xFFEC407A),
-                      ],
-                    ),
+                    gradient: AppColors.femaleGradient,
                   ),
                   child: Stack(
                     children: [
@@ -195,7 +185,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                       width: 4,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE57373),
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -205,7 +195,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF2D2D2D),
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ],
@@ -274,53 +264,55 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE57373).withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(12),
+          // Only show progress if > 0
+          if (_completedChapters > 0)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.trending_up_rounded,
+                        color: AppColors.primary,
+                        size: 22,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.trending_up_rounded,
-                      color: Color(0xFFE57373),
-                      size: 22,
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Your Progress',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Your Progress',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF2D2D2D),
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE57373).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  ],
                 ),
-                child: Text(
-                  '$_completedChapters/${AppConstants.totalChapters}',
-                  style: const TextStyle(
-                    color: Color(0xFFE57373),
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$_completedChapters/${AppConstants.totalChapters}',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(height: 16),
           // Progress bar
           Stack(
@@ -338,7 +330,7 @@ class _FemaleHomeScreenState extends State<FemaleHomeScreen> {
                   height: 10,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFE57373), Color(0xFFEC407A)],
+                      colors: [AppColors.primary, Color(0xFFEC407A)],
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),

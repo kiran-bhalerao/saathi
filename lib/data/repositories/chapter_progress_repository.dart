@@ -1,6 +1,7 @@
 import 'package:sqflite_sqlcipher/sqflite.dart';
-import '../models/chapter_progress_model.dart';
+
 import '../../core/database/database_service.dart';
+import '../models/chapter_progress_model.dart';
 
 /// Chapter progress repository - handles reading progress tracking
 class ChapterProgressRepository {
@@ -47,7 +48,7 @@ class ChapterProgressRepository {
 
   /// Mark chapter as completed
   Future<void> markChapterCompleted(int chapterNumber) async {
-    final db = await _databaseService.database;
+    await _databaseService.database;
     final existing = await getChapterProgress(chapterNumber);
 
     if (existing != null) {
