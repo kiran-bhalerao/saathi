@@ -116,7 +116,6 @@ class ContentParser {
             currentSectionTitle == 'नवीन शब्द जे तुम्हाला माहित होतील') {
           // Parse vocabulary section
           vocabulary.addAll(_parseVocabulary(lines, i + 1, chapterNumber));
-          currentSectionTitle = null; // Don't create a section for this
           continue;
         }
 

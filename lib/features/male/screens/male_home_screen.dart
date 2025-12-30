@@ -207,7 +207,7 @@ class _MaleHomeScreenState extends State<MaleHomeScreen> {
             // Activity summary card
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                 child: _buildActivityCard(),
               ),
             ),

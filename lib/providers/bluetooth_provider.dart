@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 
+import '../core/bluetooth/bluetooth_protocol.dart';
 import '../core/connections/connection_manager.dart';
 import '../data/models/bluetooth_enums.dart';
 import '../data/repositories/pairing_repository.dart';
@@ -41,6 +42,7 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     // Set up connection callbacks
     _connectionManager.onConnectionSuccess = _handleConnectionSuccess;
     _connectionManager.onDisconnected = _handleDisconnection;
+    _connectionManager.onUnpairReceived = _handleUnpairReceived;
 
     _initialize();
   }
@@ -356,8 +358,22 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
   }
 
+  /// Unpair received callback (partner initiated unpair)
+  void _handleUnpairReceived() async {
+    print('Partner device initiated unpair - cleaning up local state');
+
+    // Call internal unpair without sending notification again (to avoid loop)
+    await _performUnpair(sendNotification: false);
+  }
+
   /// Unpair device (from Settings)
   Future<void> unpairDevice() async {
+    // Call internal unpair with notification
+    await _performUnpair(sendNotification: true);
+  }
+
+  /// Internal unpair logic with optional notification
+  Future<void> _performUnpair({required bool sendNotification}) async {
     // Cancel any ongoing reconnection attempts
     _reconnectTimer?.cancel();
     _isReconnecting = false;
@@ -365,6 +381,30 @@ class BluetoothProvider extends ChangeNotifier with WidgetsBindingObserver {
 
     // Get user type to ensure proper cleanup
     final user = await _userRepository.getUser();
+
+    // Send unpair notification to partner device before disconnecting
+    if (sendNotification && _connectionManager.isConnected) {
+      try {
+        print('Sending unpair notification to partner device...');
+        final unpairPacket = BluetoothPacket.createUnpair();
+        final unpairData = {
+          'type': 'unpair',
+          'payload': unpairPacket.payload,
+          'messageId': unpairPacket.messageId,
+        };
+
+        // Send the unpair message
+        await _connectionManager.sendData(unpairData);
+
+        // Give a brief moment for the message to be sent
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        print('Unpair notification sent successfully');
+      } catch (e) {
+        print('Failed to send unpair notification: $e');
+        // Continue with unpair even if notification fails
+      }
+    }
 
     // Disconnect from active connection
     // This handles both advertising (female) and discovery (male)

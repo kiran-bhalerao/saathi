@@ -140,11 +140,11 @@ class _PairingCodeScreenState extends State<PairingCodeScreen> {
                                 color: const Color(0xFFFFDADA),
                                 width: 2,
                               ),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
-                                  color: const Color(0xFFFFEBEB),
+                                  color: Color(0xFFFFEBEB),
                                   blurRadius: 0,
-                                  offset: const Offset(0, 4),
+                                  offset: Offset(0, 4),
                                 ),
                               ],
                             ),

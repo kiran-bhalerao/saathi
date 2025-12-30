@@ -5,6 +5,7 @@ import '../../../config/app_colors.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/models/chapter_model.dart';
 import '../../../data/repositories/chapter_progress_repository.dart';
+import 'quiz_review_screen.dart';
 
 /// Quiz result screen showing score and feedback
 class QuizResultScreen extends StatelessWidget {
@@ -103,6 +104,41 @@ class QuizResultScreen extends StatelessWidget {
                       ),
                     ),
 
+                    const SizedBox(height: 16),
+
+                    // See Result Button
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuizReviewScreen(
+                              chapter: chapter,
+                              userAnswers: userAnswers,
+                            ),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        backgroundColor: AppColors.primary.withOpacity(0.05),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: const Text(
+                        'See Result',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 32),
 
                     // Feedback message - always congratulatory
@@ -113,7 +149,7 @@ class QuizResultScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Text(
-                        '🎉 Wonderful progress! Review your answers and mark the chapter complete when you\'re ready to continue.',
+                        '🎉 Wonderful progress! Review answers and mark complete.',
                         style: TextStyle(
                           fontSize: 15,
                           color: Color(0xFF2D2D2D),
@@ -153,10 +189,11 @@ class QuizResultScreen extends StatelessWidget {
                       }
 
                       if (context.mounted) {
-                        Navigator.popUntil(
-                            context,
-                            (route) =>
-                                route.settings.name == AppRoutes.femaleHome);
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          AppRoutes.femaleHome,
+                          (route) => false,
+                        );
                       }
                     },
                     text: 'Mark Chapter Complete',

@@ -179,6 +179,7 @@ class PingCard extends StatelessWidget {
     return jsonString
         .replaceAll(r'\"', '"') // Replace \" with "
         .replaceAll(r"\'", "'") // Replace \' with '
+        .replaceAll(r'\n', '\n') // Replace \n with actual newline
         .replaceAll(r'\\', '\\'); // Replace \\ with \
   }
 

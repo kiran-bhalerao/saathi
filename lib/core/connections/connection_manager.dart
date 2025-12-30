@@ -38,6 +38,7 @@ class ConnectionManager {
   Function(String endpointId)? onConnectionSuccess;
   Function()? onDisconnected;
   Function(Map<String, dynamic> data)? onDataReceived;
+  Function()? onUnpairReceived;
 
   ConnectionManager({
     required PairingRepository pairingRepo,
@@ -51,6 +52,11 @@ class ConnectionManager {
       discussionRepo: _discussionRepo,
       pairingRepo: _pairingRepo,
     );
+
+    // Forward the unpair callback from sync processor
+    _syncProcessor.onUnpairReceived = () {
+      onUnpairReceived?.call();
+    };
   }
 
   /// Female: Start advertising with pairing code

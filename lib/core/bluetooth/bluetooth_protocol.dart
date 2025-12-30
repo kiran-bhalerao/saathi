@@ -80,6 +80,19 @@ class BluetoothPacket {
 
   /// Validate packet data type
   static bool isValidDataType(String dataType) {
-    return ['ping', 'message', 'read_status', 'ack'].contains(dataType);
+    return ['ping', 'message', 'read_status', 'ack', 'unpair']
+        .contains(dataType);
+  }
+
+  /// Create an unpair notification packet
+  static BluetoothPacket createUnpair() {
+    final payload = {
+      'timestamp': DateTime.now().toIso8601String(),
+      'reason': 'unpair_initiated',
+    };
+    return create(
+      dataType: 'unpair',
+      payload: payload,
+    );
   }
 }

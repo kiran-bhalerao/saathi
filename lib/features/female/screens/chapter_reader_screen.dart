@@ -434,7 +434,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
     if (section.title == 'Something to Think About' ||
         section.title == 'विचार करण्यासारखी गोष्ट') {
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
+        margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: AppColors.primary.withOpacity(0.08),
@@ -504,7 +504,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
     if (section.title == "New Words You'll Know" ||
         section.title == 'नवीन शब्द जे तुम्हाला माहित होतील') {
       return Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
+        margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: const Color(0xFF4DB6AC).withOpacity(0.08),

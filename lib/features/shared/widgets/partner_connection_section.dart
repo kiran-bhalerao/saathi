@@ -222,8 +222,9 @@ class _PartnerConnectionSectionState extends State<PartnerConnectionSection> {
                           text: 'Generate Pairing Code',
                           onPressed: () async {
                             final code = await provider.generatePairingCode();
-                            if (context.mounted)
+                            if (context.mounted) {
                               _showPairingCodeDialog(context, code);
+                            }
                           },
                         ),
                       )

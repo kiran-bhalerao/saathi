@@ -1,7 +1,8 @@
 import 'dart:convert';
-import '../../../data/repositories/ping_repository.dart';
+
 import '../../../data/repositories/discussion_repository.dart';
 import '../../../data/repositories/pairing_repository.dart';
+import '../../../data/repositories/ping_repository.dart';
 import 'bluetooth_protocol.dart';
 
 /// Processes and validates received sync data
@@ -17,6 +18,17 @@ class SyncProcessor {
   })  : _pingRepo = pingRepo,
         _discussionRepo = discussionRepo,
         _pairingRepo = pairingRepo;
+
+  /// Callback when unpair message is received
+  Function()? onUnpairReceived;
+
+  /// Process unpair notification (partner initiated unpair)
+  Future<void> processUnpair(Map<String, dynamic> data) async {
+    print('Received unpair notification from partner device');
+
+    // Trigger the callback to notify BluetoothProvider
+    onUnpairReceived?.call();
+  }
 
   /// Process ping data (female shares section)
   Future<void> processPing(Map<String, dynamic> data) async {
@@ -35,7 +47,7 @@ class SyncProcessor {
     if (existingPings.any((ping) => ping.sectionId == sectionId)) {
       return; // Already processed
     }
-    
+
     // Use saveReceivedPing instead of pingSection to avoid sync queue loop
     await _pingRepo.saveReceivedPing(
       chapterNumber: chapterNumber,
@@ -97,7 +109,8 @@ class SyncProcessor {
     await _pairingRepo.markAsAcknowledged(originalMessageId);
 
     // Update message delivery status
-    await _pairingRepo.updateMessageDeliveryStatus(originalMessageId, 'delivered');
+    await _pairingRepo.updateMessageDeliveryStatus(
+        originalMessageId, 'delivered');
   }
 
   /// Validate ping data structure
@@ -141,7 +154,8 @@ class SyncProcessor {
   /// Process received data packet based on type
   Future<void> processPacket(BluetoothPacket packet) async {
     if (!packet.validateChecksum()) {
-      throw Exception('Checksum validation failed for packet ${packet.messageId}');
+      throw Exception(
+          'Checksum validation failed for packet ${packet.messageId}');
     }
 
     switch (packet.dataType) {
@@ -156,6 +170,9 @@ class SyncProcessor {
         break;
       case 'ack':
         await processAcknowledgment(packet.payload);
+        break;
+      case 'unpair':
+        await processUnpair(packet.payload);
         break;
       default:
         throw Exception('Unknown data type: ${packet.dataType}');
