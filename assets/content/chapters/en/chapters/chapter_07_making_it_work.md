@@ -33,14 +33,9 @@ Now the practical question:
 
 There are many positions. Let's learn three simple ones that most couples start with:
 
-### Position 1: Missionary (Face-to-Face)
+### Position 1: Missionary
 
-```
-     Him: _____
-          ↓    \
-     Her: _____ \
-          (lying on back)
-```
+![Missionary](assets/images/chapters/7/missionary.jpg)
 
 - She lies on her back
 - He is on top, facing her
@@ -48,23 +43,15 @@ There are many positions. Let's learn three simple ones that most couples start 
 
 ### Position 2: Woman on Top
 
-```
-     She: _____
-          ↓    \  (sitting/leaning)
-     Him: _____ 
-          (lying on back)
-```
+![Woman on Top](assets/images/chapters/7/woman-top.jpg)
 
 - He lies on his back
 - She sits or leans on top
 - SHE controls the movement
 
-### Position 3: Spooning (Side-by-Side)
+### Position 3: Spooning
 
-```
-     Him: ___\
-     Her: ___/  (both facing same direction)
-```
+![Spooning](assets/images/chapters/7/spooning.jpg)
 
 - Both lie on their sides
 - He is behind her
@@ -115,15 +102,7 @@ But **grinding** — rocking back and forth together — can create friction bet
 
 A simple pillow can change everything.
 
-```
-     THE PILLOW TRICK (Missionary Position)
-     
-     Him: lying between her legs
-          
-     Her: ____/|\_____
-              ↑
-         Pillow under hips!
-```
+![The Pillow Trick](assets/images/chapters/7/missionary-pillow.jpg)
 
 **How it helps:**
 - Place a pillow under her lower back/hips
@@ -142,7 +121,7 @@ Another common problem:
 
 Imagine you're climbing a ladder. Every few seconds, someone shakes the ladder and you slide back down. Frustrating!
 
-**For her to climb to the peak, rhythm must stay CONSISTENT.**
+*For her to climb to the peak, rhythm must stay CONSISTENT.*
 
 Once she says "yes, like that" — **don't change anything!**
 

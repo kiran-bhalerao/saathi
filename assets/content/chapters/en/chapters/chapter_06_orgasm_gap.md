@@ -81,10 +81,10 @@ Research shows:
 
 Here's something many women do (maybe you too):
 
-*He's working hard.*
-*It's been a while.*
-*He's about to finish.*
-*I'm not there yet, but I don't want to disappoint him.*
+- He's working hard.
+- It's been a while.
+- He's about to finish.
+- I'm not there yet, but I don't want to disappoint him.
 
 So... you pretend.
 
@@ -106,9 +106,9 @@ When you fake, he thinks his method WORKS. So he keeps doing the same thing. Ove
 
 Some women feel guilty:
 
-*"I shouldn't ask for more."*
-*"Good wives are satisfied with whatever they get."*
-*"His pleasure is enough for me."*
+- I shouldn't ask for more.
+- Good wives are satisfied with whatever they get.
+- His pleasure is enough for me.
 
 But think about this:
 
@@ -135,21 +135,15 @@ This requires communication and cooperation.
 
 ## What Needs to Change
 
-```
-     THE OLD WAY (Doesn't Work for Most Women)
-     
-     Foreplay (short) → Penetration → He finishes → THE END
-                                            ↑
-                                      She's still climbing!
-     
-     
-     THE BETTER WAY
-     
-     Foreplay (long) → Touch her clitoris → 
-     Keep touching → Penetration WITH clitoral touch →
-     She's close → Focus on her → SHE finishes →
-     Then focus on him → He finishes → BOTH happy!
-```
+**THE OLD WAY (Doesn't Work for Most Women)**
+
+Foreplay (short) → Penetration → He finishes → THE END
+
+(She's still climbing!)
+
+**THE BETTER WAY**
+
+Foreplay (long) → Touch her clitoris → Keep touching → Penetration WITH clitoral touch → She's close → Focus on her → SHE finishes → Then focus on him → He finishes → BOTH happy!
 
 The order can vary. What matters is that BOTH partners get what they need.
 

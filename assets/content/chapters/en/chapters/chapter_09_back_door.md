@@ -156,14 +156,11 @@ If you choose to explore this area, these rules are NOT optional:
 
 ### Rule 3: NEVER GO ANUS TO VAGINA
 
-```
-     ❌ NEVER DO THIS:
-     
-     Anus → Vagina
-     
-     Bacteria from anus entering vagina 
-     = Serious infection risk!
-```
+**❌ NEVER DO THIS:**
+
+Anus → Vagina
+
+Bacteria from anus entering vagina = Serious infection risk!
 
 - If anything touches the anus, it CANNOT then touch the vagina
 - Wash hands/toys, or change condoms before switching areas

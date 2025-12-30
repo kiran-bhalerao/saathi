@@ -146,20 +146,6 @@ Using protection means you can:
 
 *You can have the pleasure without the pressure.*
 
-## A Sneak Preview
-
-In your body, there is something amazing.
-
-A tiny part, about the size of a pea.
-
-It has only ONE job: **to give you pleasure.**
-
-It's not for making babies. It's not for urinating. It's not for anything except feeling good.
-
-This part is called the **clitoris**.
-
-And in Chapter 4, we're going to meet it properly.
-
 ## New Words You'll Know
 
 **Ovulation**: When your body releases an egg (fertile time).

@@ -61,22 +61,7 @@ It's NOT just about "being wet." It's a whole process:
 
 To climb the ladder of arousal, you need THREE things:
 
-```
-     THE AROUSAL LADDER
-     
-     ★ PEAK (Orgasm)
-     |
-     |    Need: CONTINUOUS TOUCH
-     |____Don't stop when it's building!
-     |
-     |    Need: MOISTURE
-     |____Natural or lubricant
-     |
-     |    Need: RELAXED MIND
-     |____No stress, no rushing
-     |
-   ═══ Ground Level
-```
+![THE AROUSAL LADDER](assets/images/chapters/5/arousal-ladder.png)
 
 ### 1. Relaxed Mind
 
@@ -170,16 +155,13 @@ No lubrication = friction = discomfort = body shuts down.
 
 ## The Male-Female Timing Gap
 
-```
-     TIMING GAP ILLUSTRATION
-     
-     HIM:  Start ──> Peak! ──> Done (5 mins)
-     
-     HER:  Start ─ ─ ─ ─ ─ ─ ─ ─ ─> Peak! ──> Done (20 mins)
-                   ↑
-              He stops here
-              She's still climbing!
-```
+**TIMING GAP ILLUSTRATION**
+
+**HIM:** Start → Peak! → Done (5 mins)
+
+**HER:** Start → → → → → → → → → Peak! → Done (20 mins)
+
+(He stops here, but she is still climbing!)
 
 This is why communication and teamwork matter.
 

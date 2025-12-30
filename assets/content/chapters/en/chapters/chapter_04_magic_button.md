@@ -39,17 +39,7 @@ Remember Chapter 2? We talked about the "clitoral hood" — a tiny fold of skin 
 
 The clitoris hides right underneath that hood.
 
-```
-     FINDING THE CLITORIS
-     
-        ∧ Pubic Area
-       / \
-      /___\  ← Clitoral Hood
-       (●)   ← CLITORIS (pea-sized bump)
-      / | \  ← Inner Lips
-     |  ○  | ← Urethral Opening
-     |  ◎  | ← Vaginal Opening
-```
+![FINDING THE CLITORIS](assets/images/chapters/1/female-garden.png)
 
 To find it yourself:
 1. Gently separate your outer lips
@@ -81,15 +71,6 @@ What you see outside is only the TIP of the clitoris.
 
 The rest of it is INSIDE your body!
 
-```
-     THE CLITORAL ICEBERG
-     
-    ●    ← Visible part (glans)
-   ╱ ╲   ← Internal "legs" (crura)
-  ╱   ╲  
- ╱     ╲ ← Hidden inside body
-```
-
 Think of an iceberg. You only see 10% above water. 90% is hidden below.
 
 The clitoris has internal parts that wrap around the vaginal area. This is why different kinds of touch can feel pleasurable!
@@ -107,7 +88,7 @@ Good question. Several reasons:
 
 But here's the truth:
 
-**Your clitoris was designed by nature. It's not shameful. It's part of you.**
+*Your clitoris was designed by nature. It's not shameful. It's part of you.*
 
 ## What Happens When You Touch It?
 
@@ -141,7 +122,7 @@ Many doctors recommend self-exploration so women can understand their own pleasu
 
 Here's a crucial truth we'll explore more in later chapters:
 
-**Most women cannot reach the peak of pleasure from penetration alone.**
+*Most women cannot reach the peak of pleasure from penetration alone.*
 
 They need the clitoris to be touched.
 

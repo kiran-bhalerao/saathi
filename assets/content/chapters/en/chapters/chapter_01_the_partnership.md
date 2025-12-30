@@ -41,7 +41,7 @@ This isn't "extra" stuff. This is the sugar and spice that makes marriage worth 
 
 Here's a truth that might surprise you:
 
-**Both partners deserve to be happy.**
+*Both partners deserve to be happy.*
 
 Not just him. Not just her. *Both.*
 

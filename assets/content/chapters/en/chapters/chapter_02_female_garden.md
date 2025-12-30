@@ -107,7 +107,7 @@ You have two sets of "lips":
 
 Some are long, some are short. Some are even, some are not. Some are darker, some are lighter.
 
-*All of these are normal. There is no "correct" shape.*
+**All of these are normal. There is no "correct" shape.**
 
 ## The Little Hood
 
@@ -144,15 +144,15 @@ This discharge is normal:
 
 Maybe you've seen pictures and worried:
 
-*"My lips are too long"*
+**"My lips are too long"**
 
-*"One side is bigger than the other"*
+**"One side is bigger than the other"**
 
-*"It's too dark"*
+**"It's too dark"**
 
 Stop right there.
 
-Just like faces — no two vulvas look the same. There is no "ideal" shape.
+*Just like faces — no two vulvas look the same. There is no "ideal" shape.*
 
 Porn and unrealistic images have made many women feel abnormal. But doctors will tell you: **variation is completely normal**.
 

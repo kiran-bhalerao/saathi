@@ -124,11 +124,17 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
   }
 
   Future<void> _markAsStarted() async {
+    // Get existing progress to preserve completion status
+    final existing =
+        await _progressRepo.getChapterProgress(_currentChapter.number);
+
     await _progressRepo.updateProgress(ChapterProgress(
       chapterNumber: _currentChapter.number,
       lastReadAt: DateTime.now(),
-      completed: false,
-      quizCompleted: false,
+      // Preserve completion status if chapter was already completed
+      completed: existing?.completed ?? false,
+      quizCompleted: existing?.quizCompleted ?? false,
+      quizScore: existing?.quizScore,
     ));
   }
 
@@ -488,7 +494,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 );
               }
               return const SizedBox.shrink();
-            }).toList(),
+            }),
           ],
         ),
       );
@@ -576,7 +582,7 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                 );
               }
               return const SizedBox.shrink();
-            }).toList(),
+            }),
           ],
         ),
       );
@@ -940,8 +946,9 @@ class _ChapterReaderScreenState extends State<ChapterReaderScreen> {
                             contextMenuBuilder: (context, editableTextState) {
                               final textSelection =
                                   editableTextState.textEditingValue.selection;
-                              if (textSelection.isCollapsed)
+                              if (textSelection.isCollapsed) {
                                 return const SizedBox.shrink();
+                              }
 
                               final selectedText = editableTextState
                                   .textEditingValue.text

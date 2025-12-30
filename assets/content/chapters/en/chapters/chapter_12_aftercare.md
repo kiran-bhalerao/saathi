@@ -172,30 +172,15 @@ One awkward session doesn't define your relationship.
 
 Think of intimacy as a full circle:
 
-```
-     THE INTIMACY CYCLE
-     
-         ╭───────────╮
-        ╱             ╲
-       │   BEFORE     │
-       │  (Foreplay,  │
-       │   Build-up)  │
-        ╲             ╱
-         ╲           ╱
-          ╲   ACT   ╱
-           ╲       ╱
-            ╲     ╱
-             ╲   ╱
-         ╭────╲╱────╮
-        ╱            ╲
-       │    AFTER     │
-       │  (Aftercare, │
-       │  Connection) │
-        ╲             ╱
-         ╰───────────╯
-         
-    All three parts matter!
-```
+**THE INTIMACY CYCLE**
+
+**1. BEFORE** (Foreplay, Build-up)  
+↓  
+**2. THE ACT** (Intimacy itself)  
+↓  
+**3. AFTER** (Aftercare, Connection)
+
+**All three parts matter!**
 
 Many couples focus only on the ACT. They rush the BEFORE and skip the AFTER.
 
